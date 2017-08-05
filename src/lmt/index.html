@@ -1,0 +1,43 @@
+<!doctype html>
+<html ng-app="app">
+	<head>
+		
+		<script>
+			if (typeof module === 'object') {window.module = module; module = undefined;} 
+		</script>
+
+		<link rel="stylesheet" href="style/style.css">
+
+		<script src="javascript/jquery-2.1.3.min.js"></script>
+		<script src="javascript/livemetools.js"></script>
+
+	</head>
+
+	<body onContextMenu="return false;">
+
+		<header>
+			<h1>LiveMe Tools</h1>
+
+			<div class="search">
+				<div class="select">
+					<select id="type" onChange="onTypeChange()">
+						<option value="user-lookup">UserID =</option>
+						<option value="video-lookup">VideoID =</option>
+						<option selected value="url-lookup">URL =</option>
+						<option value="search">Username Like</option>
+					</select>
+				</div>
+				<input type="search" id="query" value="" placeholder="Search" onkeypress="enterOnSearch(event)">
+				<input type="text" id="maxlevel" value="" placeholder="Max Level">
+
+				<input type="button" value="Search" onClick="beginSearch()">
+			</div>
+			<!--<img class="settings-icon" src="images/ic_settings_white_24px.svg" onClick="showSettings()">-->
+			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="closeApp()">
+		</header>
+
+		<div id="main"></div>
+		<div id="overlay"></div>
+
+	</body>
+</html>
