@@ -1,5 +1,11 @@
-# LiveMeTools v3.0 Desktop Edition
-This is being released under the GPL 3.0 license - Please adhere when creating your work off mine.
+	  _      _           __  __        _______          _     
+	 | |    (_)         |  \/  |      |__   __|        | |    
+	 | |     ___   _____| \  / | ___     | | ___   ___ | |___ 
+	 | |    | \ \ / / _ \ |\/| |/ _ \    | |/ _ \ / _ \| / __|
+	 | |____| |\ V /  __/ |  | |  __/    | | (_) | (_) | \__ \
+	 |______|_| \_/ \___|_|  |_|\___|    |_|\___/ \___/|_|___/
+
+                                                v3.x Releases
 
 
 ## Getting Started
