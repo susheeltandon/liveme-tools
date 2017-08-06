@@ -8,11 +8,11 @@
                                                 v3.x Releases
 
 
+Github Repo: https://github.com/thecoder75/liveme-tools-3.0
+Discord Server: https://discord.gg/A5p2aF4
+
 ## Getting Started
 All source code files are in the SRC directory.  Any builds will be available in the DIST folder.  
-
-## Discord Chat Serve
-This Github Repo is linked to The Coder's Discord Server (#liveme-tools-development).  You can access it at: https://discord.gg/A5p2aF4
 
 ## TODO
 - Add ability to change where downloaded videos are stored
