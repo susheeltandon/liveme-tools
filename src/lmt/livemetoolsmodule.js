@@ -55,6 +55,10 @@ exports.searchkeyword = function(k, cb) {
 
 function _dolookup() {
 
+	if (query.length == 18) {
+		_dolookup1();
+	}
+
 	request('GET', 'http://live.ksmobile.net/live/queryinfo?userid=0&videoid='+query).done(function(res){
 		var json = JSON.parse(res.getBody());
 
@@ -78,6 +82,8 @@ function _dolookup1() {
 	request('GET', 'http://live.ksmobile.net/user/getinfo?userid='+query).done( function(res){
 		var json = JSON.parse(res.getBody());
 
+		console.log(json);
+
 		if (json.status != 500) {
 			return_data.userinfo = {
 				userid: json.data.user.user_info.uid,
@@ -90,7 +96,7 @@ function _dolookup1() {
 			}
 		}
 
-		doLookup2();
+		_dolookup2();
 
 	});	
 
