@@ -17,7 +17,7 @@ your local copy.
 
 ### Installing
 
-You can download the [latest release](/releases/latest) from [Releases](releases).
+You can download the [latest release](http://github.io/thecoder75/releases/latest) from [Releases](http://github.io/thecoder75/releases).
 
 ## Built With
 
