@@ -23,8 +23,6 @@ var build_table = [], build_table2 = [];
 
 exports.getuservideos = function(u, cb) {
 
-	console.log('UserID: ' + u);
-
 	query = u;
 	callback_holder = cb;
 	return_data = {
@@ -33,7 +31,13 @@ exports.getuservideos = function(u, cb) {
 		},
 		videos: []
 	};
-	_dolookup();
+
+	if (query.length == 18) {
+		_dolookup1();
+	} else {
+		_dolookup();
+	}
+
 }
 
 exports.searchkeyword = function(k, cb) {
@@ -54,10 +58,6 @@ exports.searchkeyword = function(k, cb) {
 */
 
 function _dolookup() {
-
-	if (query.length == 18) {
-		_dolookup1();
-	}
 
 	request('GET', 'http://live.ksmobile.net/live/queryinfo?userid=0&videoid='+query).done(function(res){
 		var json = JSON.parse(res.getBody());
