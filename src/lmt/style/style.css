@@ -90,6 +90,14 @@ header h1, header h4 {
 	padding: 2px 0 0;
 	vertical-align: top;
 }
+header h1 small {
+	font-size: 10pt;
+	font-weight: 400;
+	font-style: italic;
+	position: relative;
+	top: 4px;
+	left: 4px;
+}
 
 header .search {
 	display: inline-block;
