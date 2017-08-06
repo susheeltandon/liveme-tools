@@ -9,7 +9,7 @@
 
 													v3.0.0
 		
-		(c)2017 by TheCoder - Licensed under GPL now
+		(c)2017 by TheCoder - Licensed under GPL3 now
 
 
 */
@@ -90,7 +90,6 @@ function onTypeChange() {
 	}
 }
 
-
 function beginSearch() {
 	if (isSearching) { return; }
 
@@ -127,7 +126,27 @@ function beginSearch2() {
 	$('#overlay').show();
 	$('#main').html('');
 	
-	//ipc.send('livemesearch', { type: $('#type').val, query: $('#query').val() });
+	if ($('#type').val() == 'url-lookup') {
+		var q = '', u=$('#query').val(), t=u.split('/');
+
+		if (t[t.length].indexOf('yolo') > -1) {
+			var a=t[t.length - 1].split('-');
+			q = a[1];
+		} else if (t[t.length].indexOf('/liveme/') > -1) {
+			var a=t[t.length - 1].split('.');
+			q = a[0];
+		} else if (t[t.length - 1].indexOf('videoid') > -1) {
+			var a=t[t.length - 1].split('?'),b=a[1].split('&');
+			for (i = 0; i < b.length; i++) {
+				if (b[i].indexOf('videoid') > -1) {
+					var c=b[i].split('=');
+					q = c[1];
+				}
+			}
+		} else {
+			q = 'Unsupported URL';
+		}
+	}
 
 	if ($('#type').val() == 'search') {
 		lmt.searchkeyword($('#query').val(), function(e) {
@@ -159,18 +178,15 @@ function showUser(u) {
 
 function showFollowing(u,m,n) {
 	ipc.send('open-window', { url: 'following.html?'+u+'#'+m+'#'+n });
-	//window.open('following.html?'+u+'#'+m,'_followings','width=360,height=720,resizable=no');
 }
 
 function showFans(u,m,n) {
 	ipc.send('open-window', { url: 'fans.html?'+u+'#'+m+'#'+n });
-	//window.open('fans.html?'+u+'#'+m,'_fans','width=360,height=720,resizable=no');
 }
 
 
 function playVideo(u) {
 	ipc.send('play-video', { url: u });
-	//window.open('player.html#'+u,'_player','width=360,height=640,resizable=no');
 }
 
 function downloadVideo(u) {

@@ -39,5 +39,15 @@ function beginDownload() {
 	if (f.indexOf('playlist') > -1) f = s[s.length - 2];
 	var ff = f.split('.'), filename = ff[0] + '.ts';
 	$('.entry:first-child').addClass('active');
-	m3u8stream(u, {callback: function() {$('.entry:first-child').remove();if ($('.entry').get().length > 0) {beginDownload();} else {isDownloading = false;ipc.send('hide-queue');}}}).pipe(fs.createWriteStream(os.homedir()+'/Downloads/'+filename));
+	
+	m3u8stream(u, {
+		callback: function() {
+			$('.entry:first-child').remove();if ($('.entry').get().length > 0) {
+				beginDownload();
+			} else {
+				isDownloading = false;ipc.send('hide-queue');
+			}
+		}
+	}).pipe(fs.createWriteStream(os.homedir()+'/Downloads/'+filename));
+	
 }
