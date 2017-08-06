@@ -9,10 +9,12 @@
 
 
 ## Getting Started
-You will find the Electron/NodeJS source for the desktop edition in the src directory.
-
-Be sure to run npm install when you clone this to ensure you have all the required modules installed and ready.
-
+All source code files are in the SRC directory.  Any builds will be available in the DIST folder.  
 
 ## Discord Chat Serve
-This is linked to The Coder's Discord Server (#liveme-tools-development).  You can access it at: https://discord.gg/A5p2aF4
+This Github Repo is linked to The Coder's Discord Server (#liveme-tools-development).  You can access it at: https://discord.gg/A5p2aF4
+
+## TODO
+- Add ability to change where downloaded videos are stored
+- Update Queue code to support simultaneous downloads with ability to limit how many.
+- Find better Video player that can be integrated.
