@@ -14,12 +14,14 @@
 
 */
 
-const electron = require('electron'), ipc = electron.ipcRenderer, remote = electron.remote, BrowserWindow = remote.BrowserWindow;
-const Menu = remote.Menu, lmt = require('./livemetoolsmodule');
+const {app, ipcRenderer, Menu, browserWindow, remote } = require('electron'), ipc = ipcRenderer;
+const lmt = require('./livemetoolsmodule');
  
 var isSearching = false;
 
 $(function(){
+
+	$('header h1 small').html(remote.app.getVersion());
 
 	onTypeChange();
 
