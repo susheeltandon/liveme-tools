@@ -129,10 +129,10 @@ function beginSearch2() {
 	if ($('#type').val() == 'url-lookup') {
 		var q = '', u=$('#query').val(), t=u.split('/');
 
-		if (t[t.length].indexOf('yolo') > -1) {
+		if (t[t.length-1].indexOf('yolo') > -1) {
 			var a=t[t.length - 1].split('-');
 			q = a[1];
-		} else if (t[t.length].indexOf('/liveme/') > -1) {
+		} else if (t[t.length-1].indexOf('/liveme/') > -1) {
 			var a=t[t.length - 1].split('.');
 			q = a[0];
 		} else if (t[t.length - 1].indexOf('videoid') > -1) {
@@ -158,7 +158,7 @@ function beginSearch2() {
 	} else {
 		lmt.getuservideos($('#query').val(), function(e){
 			isSearching = false;
-			if (e.userinfo.userid == 0) {
+			if ((typeof(e.userinfo.userid) === undefined) || (e.userinfo.userid == 0)) {
 				$('#main').html('<div class="emptylist">Search returned nothing.</div>');
 			} else {
 				$('#main').html('<div id="userinfo" class="panel"></div><div id="videolist" class="panel"></div>'); 
