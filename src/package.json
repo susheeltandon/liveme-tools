@@ -1,6 +1,6 @@
 {
   "name": "LiveMeTools",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "A tool designed to help in searching and viewing of LiveMe broadcasts.",
   "main": "index.js",
   "author": "TheCoder",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thecoder75/liveme-tools-3.0"
+    "url": "https://github.com/thecoder75/liveme-tools"
   },
   "keywords": [
     "node",
