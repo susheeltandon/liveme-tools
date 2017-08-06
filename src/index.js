@@ -9,7 +9,7 @@
 
 													v3.0.0
 		
-		(c)2017 by TheCoder - Licensed under GPL now
+		(c)2017 by TheCoder - Licensed under GPL3 now
 
 
 */
