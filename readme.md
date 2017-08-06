@@ -27,13 +27,13 @@ precompiled version.
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/TheCoder75/CONTRIBUTING.md) 
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) 
 for details on our code of conduct, and the process for submitting pull 
 requests to us.
 
 ## Authors
 
-* TheCoder - [TheCoder75](https://github.com/TheCoder75)
+* TheCoder
 
 ## License
 
