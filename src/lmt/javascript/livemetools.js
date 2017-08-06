@@ -221,12 +221,12 @@ function renderUserLookup(e) {
 	}
 
 	if (e.videos === undefined) {
-		$('#videolist').html('<div class="emptylist">No viden entries for this user account found.</div>');
+		$('#videolist').html('<div class="emptylist">No videos entries for this user account found.</div>');
 		return;
 	}
 
 	if (e.videos.length == 0) {
-		$('#videolist').html('<div class="emptylist">No viden entries for this user account found.</div>');
+		$('#videolist').html('<div class="emptylist">No videos entries for this user account found.</div>');
 		return;
 	}
 
@@ -274,7 +274,7 @@ function renderSearchResults(e) {
 				h += '<input type="button" class="videos" value="'+e[i].videos.length+( e[i].videosplus == true ? '+' : '')+' Videos" onClick="$(\'.vl-'+e[i].userid+'\').toggle()"></div><div class="video_list vl-'+e[i].userid+'">';
 
 				if (e[i].videosplus == true) {
-					h += '<h4 style="text-align: center;">First 20 videos listed only!</h4>';
+					h += '<h4 style="text-align: center;">First 10 videos listed only!</h4>';
 				}
 
 				for(j = 0; j < e[i].videos.length; j++) {
