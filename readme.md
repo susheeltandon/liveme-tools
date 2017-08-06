@@ -17,7 +17,8 @@ your local copy.
 
 ### Installing
 
-You can download the [latest release](https://github.com/thecoder75/releases/latest) from [Releases](https://github.com/thecoder75/releases).
+You can download the [latest release](https://github.com/thecoder75/liveme-tools/releases/latest)
+if you wish to not compile it yourself.
 
 ## Built With
 
