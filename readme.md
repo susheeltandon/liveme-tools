@@ -37,7 +37,7 @@ requests to us.
 
 ## License
 
-This project is licensed under the GPL3 License - see the [LICENSE.md](LICENSE.md) 
+This project is licensed under the GPL3 License - see the [LICENSE](LICENSE) 
 file for details
 
 ## Acknowledgments
