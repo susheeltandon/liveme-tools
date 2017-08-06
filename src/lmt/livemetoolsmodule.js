@@ -48,8 +48,13 @@ exports.searchkeyword = function(k, cb) {
 */
 function _dolookup() {
 
-	request('GET', 'http://live.ksmobile.net/live/getreplayvideos?userid='+query+'&page_size=20&page_index='+page_index).done( function(res){
+	request('GET', 'http://live.ksmobile.net/live/getreplayvideos?userid='+query+'&page_size=10&page_index='+page_index).done( function(res){
 		var json = JSON.parse(res.getBody());
+
+		if (json.data.length == 0) {
+			callback_holder(return_data);
+			return;
+		}
 
 		if (json.data.video_info !== undefined) {
 			for (i = 0; i < json.data.video_info.length; i++) {
@@ -70,9 +75,13 @@ function _dolookup() {
 
 		if (json.data.video_info !== undefined) {
 			_dolookup2();
-		} else if ((page_index < 20) && (json.data.data_info.length == 20)) {
-			page_index++;
-			_dolookup();
+		} else if (page_index < 10) {
+			if (data.json.video_info.length < 10) {
+				_dolookup2();			
+			} else {
+				page_index++;
+				_dolookup();
+			}
 		} else {
 			_dolookup2();			
 		}
@@ -123,8 +132,14 @@ function _dosearch() {
 		}
 
 		if (page_index < 3) {
-			page_index++;
-			_dosearch();
+			if (json.data.data_info.length < 10) {
+				index = 0;
+				max_count = return_data.length - 1;
+				_dosearch2();			
+			} else {
+				page_index++;
+				_dosearch();
+			}
 		} else {
 			index = 0;
 			max_count = return_data.length - 1;
