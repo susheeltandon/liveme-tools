@@ -59,4 +59,8 @@ typings/
 .DS_Store
 .DS_Store
 src/.DS_Store
+
+# Specific to our code
 dist
+build.sh
+
