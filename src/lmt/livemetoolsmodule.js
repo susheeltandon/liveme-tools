@@ -42,8 +42,6 @@ exports.getuservideos = function(u, cb) {
 
 exports.searchkeyword = function(k, cb) {
 
-	console.log('Query: ' + k);
-
 	query = k;
 	callback_holder = cb;
 	page_index = 1;
@@ -62,7 +60,6 @@ function _dolookup() {
 	request('GET', 'http://live.ksmobile.net/live/queryinfo?userid=0&videoid='+query).done(function(res){
 		var json = JSON.parse(res.getBody());
 
-		console.log(json);
 		if (json.data.length == 0) {
 			callback_holder(return_data);
 			return;
@@ -81,8 +78,6 @@ function _dolookup() {
 function _dolookup1() {
 	request('GET', 'http://live.ksmobile.net/user/getinfo?userid='+query).done( function(res){
 		var json = JSON.parse(res.getBody());
-
-		console.log(json);
 
 		if (json.status != 500) {
 			return_data.userinfo = {
@@ -107,7 +102,7 @@ function _dolookup2() {
 	request('GET', 'http://live.ksmobile.net/live/getreplayvideos?userid='+query+'&page_size=20&page_index='+page_index).done(function(res){
 		var json = JSON.parse(res.getBody());
 
-		console.log(json);
+
 		if (json.data.length == 0) {
 			callback_holder(return_data);
 			return;
