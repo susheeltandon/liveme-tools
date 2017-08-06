@@ -75,6 +75,28 @@ function _dolookup() {
 }
 
 function _dolookup1() {
+	request('GET', 'http://live.ksmobile.net/user/getinfo?userid='+query).done( function(res){
+		var json = JSON.parse(res.getBody());
+
+		if (json.status != 500) {
+			return_data.userinfo = {
+				userid: json.data.user.user_info.uid,
+				username: json.data.user.user_info.nickname,
+				sex: json.data.user.user_info.sex == 0 ? 'female' : 'male',
+				usericon: json.data.user.user_info.face,
+				level: parseInt(json.data.user.user_info.level),
+				following: parseInt(json.data.user.count_info.following_count),
+				fans: parseInt(json.data.user.count_info.follower_count)
+			}
+		}
+
+		doLookup2();
+
+	});	
+
+}
+
+function _dolookup2() {
 
 	request('GET', 'http://live.ksmobile.net/live/getreplayvideos?userid='+query+'&page_size=20&page_index='+page_index).done(function(res){
 		var json = JSON.parse(res.getBody());
@@ -103,7 +125,7 @@ function _dolookup1() {
 		}
 
 		if (json.data.video_info !== undefined) {
-			_dolookup2();
+			callback_holder(return_data);
 		} else if (page_index < 20) {
 			if (data.json.video_info.length < 20) {
 				_dolookup2();			
@@ -112,34 +134,9 @@ function _dolookup1() {
 				_dolookup();
 			}
 		} else {
-			_dolookup2();			
+			callback_holder(return_data);
 		}
 	});	
-}
-
-function _dolookup2() {
-
-	request('GET', 'http://live.ksmobile.net/user/getinfo?userid='+query).done( function(res){
-		var json = JSON.parse(res.getBody());
-
-		console.log(json);
-
-		if (json.status != 500) {
-			return_data.userinfo = {
-				userid: json.data.user.user_info.uid,
-				username: json.data.user.user_info.nickname,
-				sex: json.data.user.user_info.sex == 0 ? 'female' : 'male',
-				usericon: json.data.user.user_info.face,
-				level: parseInt(json.data.user.user_info.level),
-				following: parseInt(json.data.user.count_info.following_count),
-				fans: parseInt(json.data.user.count_info.follower_count)
-			}
-		}
-
-		callback_holder(return_data);	
-
-	});	
-
 }
 
 
