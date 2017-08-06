@@ -1,27 +1,47 @@
-	  _      _           __  __        _______          _     
-	 | |    (_)         |  \/  |      |__   __|        | |    
-	 | |     ___   _____| \  / | ___     | | ___   ___ | |___ 
-	 | |    | \ \ / / _ \ |\/| |/ _ \    | |/ _ \ / _ \| / __|
-	 | |____| |\ V /  __/ |  | |  __/    | | (_) | (_) | \__ \
-	 |______|_| \_/ \___|_|  |_|\___|    |_|\___/ \___/|_|___/
+# LiveMe Tools
 
-                                                v3.x Releases
+This is an Electron-based app developed for searching and browsing of 
+users and videos posted on the LiveMe platform.  Development is discussed 
+on [TheCoder's Discord Server](https://discord.gg/A5p2aF4) along with 
+feedback from users and any feature requests made.
 
 
-[Github Repo](https://github.com/thecoder75/liveme-tools-3.0)
-[Discord Server](https://discord.gg/A5p2aF4)
+## Getting Started
 
-### Getting Started
-All source code files are in the SRC directory.  Any builds will be available in the DIST folder.  
+After you clone this project to your computer, run:
+```
+     npm install
+```
+This will install any required packages that aren't already installed in 
+your local copy.
 
-### Required Modules
-* async
-* electron-is-dev
-* init
-* m3u8stream
+### Installing
 
+You can download pre-built version from the DIST folder for installing a 
+precompiled version.
 
-### TODO
-- Add ability to change where downloaded videos are stored
-- Update Queue code to support simultaneous downloads with ability to limit how many.
-- Find better Video player that can be integrated.
+## Built With
+
+* [Electron](http://electron.atom.io)
+* [NodeJS](http://nodejs.org)
+
+## Contributing
+
+Please read [CONTRIBUTING.md](https://gist.github.com/TheCoder75/CONTRIBUTING.md) 
+for details on our code of conduct, and the process for submitting pull 
+requests to us.
+
+## Authors
+
+* TheCoder - [PurpleBooth](https://github.com/TheCoder75)
+
+## License
+
+This project is licensed under the GPL3 License - see the [LICENSE.md](LICENSE.md) 
+file for details
+
+## Acknowledgments
+
+* Hat tip to anyone who's code was used
+* Inspiration
+* etc
