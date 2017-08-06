@@ -33,7 +33,7 @@ requests to us.
 
 ## Authors
 
-* TheCoder - [PurpleBooth](https://github.com/TheCoder75)
+* TheCoder - [TheCoder75](https://github.com/TheCoder75)
 
 ## License
 
