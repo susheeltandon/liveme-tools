@@ -17,8 +17,7 @@ your local copy.
 
 ### Installing
 
-You can download pre-built version from the DIST folder for installing a 
-precompiled version.
+You can download the [latest release](/releases/latest) from [Releases](releases).
 
 ## Built With
 
