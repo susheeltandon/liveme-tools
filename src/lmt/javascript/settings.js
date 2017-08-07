@@ -4,11 +4,6 @@ $(function(){
 	getSettings();
 });
 
-function setTracking() {
-	settings.tracking = $('#tracking').is(':checked');
-	console.log(settings.tracking);
-}
-
 function closeWindow() { window.close(); }
 
 function getSettings() {
