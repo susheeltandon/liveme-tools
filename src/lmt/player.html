@@ -12,12 +12,16 @@
 		<style>
 			body { background-color: #000 !important; }
 			#video { background-color: #000 !important; }
+			h4 {  }
 		</style>
 
 		<script>
 			const { remote, BrowserWindow } = require('electron'), ipc = require('electron').ipcRenderer;
 			$(function(){
-				var t=window.location.href.split('#'), u=t[1];
+				var t=window.location.href.split('#'), u=t[1], uu = t[1].split('/'), f=uu[uu.length - 1];
+				if (f.indexOf('playlist') > -1) {
+					f = uu[uu.length - 2]+'/'+uu[uu.length-1];
+				}
 
 				var video = document.getElementById('video');
 				var hls = new Hls();
@@ -29,6 +33,8 @@
 					video.play();
 				});
 	
+				$('header h4').html('Player - ' + f);
+
 				video.addEventListener('loadeddata', function() {
 						$('#video').show();
 				}, false);

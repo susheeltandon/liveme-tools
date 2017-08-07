@@ -82,6 +82,8 @@ header h1, header h4 {
 	margin: 0 24px 0 12px;
 	padding: 2px 0 0;
 	vertical-align: top;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 header h1 small {
 	font-size: 10pt;
@@ -108,9 +110,14 @@ header.small {
 	height: 24px;
 }
 header.small h1, header.small h4 {
+	display: block;
+	height: 24px;
+	line-height: 24px;
 	font-size: 11pt;
 	font-weight: 400;
 	letter-spacing: 0.04em;
+	width: calc(100% - 48px);
+	
 }
 header.small .close-icon {
 	top: 4px;
