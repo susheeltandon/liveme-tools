@@ -9,7 +9,7 @@
 		<link rel="stylesheet" href="style/style.css">
 
 		<script src="javascript/jquery-3.2.1.min.js"></script>
-		<script src="javascript/livemetools.js"></script>
+		<script src="javascript/settings.js"></script>
 
 		<style>
 			#download_folder { width: 100%; }
@@ -21,26 +21,17 @@
 	<body onContextMenu="return false;">
 		<header class="small">
 			<h4>Settings</h4>
-			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="closeApp()">
+			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="closeWindow()">
 		</header>
 
 		<div class="inset">
 			<h3>Downloads</h3>
-			<p>Specify where to download videos to, can be full path or just a folder name:</p>
+			<p>Specify where to download videos to:</p>
 			<input type="text" id="download_folder" placeholder="Downloads">
-			<br><br><br>
-			<h3>
-				Download Tracking
-				<span class="switch">
-					<input type="checkbox" id="s5" checked="">
-					<label for="s5" data-on="On" data-off="Off"></label>
-				</span>
-			</h3>
-			<p>
-				Download tracking is used to help let you know which videos or playlists have been 
-				previously downloaded.
-			</p>
-
+			<br><br>
+			<div style="text-align: center;">
+				<input type="button" value="Save" onClick="setSettings()">
+			</div>
 
 		</div>
 

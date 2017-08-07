@@ -20,9 +20,24 @@ const m3u8stream = require('m3u8stream');
 const fs = require('fs');
 const os = require('os');
 
-var isDownloading = false;
+var isDownloading = false, settings;
 
 $(function(){
+
+	var fn = remote.app.getPath('appData') + '/' + remote.app.getName() +'/settings.json';
+	
+	fs.readFile(fn, 'utf8', function (err,data) {
+		if (err) {
+			settings = {
+				downloadpath : app.getPath('home') + '/Downloads'
+			};
+		} else {
+			settings = JSON.parse(data);
+		}
+		return;
+	});
+
+
 	ipc.on('add-to-queue', (event, arg) => { 
 		var a=arg.url.split('/'),id=a[a.length-1];
 		if (id.indexOf('playlist') > -1)id=a[a.length-2];
@@ -42,12 +57,13 @@ function beginDownload() {
 	
 	m3u8stream(u, {
 		on_complete: function() {
-			$('.entry:first-child').remove();if ($('.entry').get().length > 0) {
+			$('.entry:first-child').remove();
+			if ($('.entry').get().length > 0) {
 				beginDownload();
 			} else {
 				isDownloading = false;ipc.send('hide-queue');
 			}
 		}
-	}).pipe(fs.createWriteStream(os.homedir()+'/Downloads/'+filename));
+	}).pipe(fs.createWriteStream(settings.downloadpath+'/'+filename));
 	
 }

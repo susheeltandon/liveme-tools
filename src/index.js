@@ -110,7 +110,7 @@ ipcMain.on('show-favorites', () => {
 */
 ipcMain.on('show-settings', () => {
 	settingsWindow = new BrowserWindow({
-		width:280, height:360, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false,
+		width:400, height:240, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false,
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
 		parent: mainwin, webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
