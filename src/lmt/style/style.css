@@ -52,32 +52,22 @@ header {
 	box-shadow: 0px 1px 3px rgba(0,0,0,0.3);
 	-webkit-app-region: drag;
 }
-header .close-icon { 
+header img {
 	display: block;
 	width: 16px;
 	height: 16px;
-	position: absolute; 
+	position: absolute;
 	top: 12px;
-	right: 12px;
 	cursor: pointer;
 	-webkit-app-region: no-drag;
-}
-
-header .settings-icon { 
-	display: block;
-	width: 16px;
-	height: 16px;
-	position: absolute; 
-	top: 12px;
-	right: 48px;
-	cursor: pointer;
-	-webkit-app-region: no-drag;
-}
-
-header .close-icon, header .settings-icon {
 	opacity: 0.4;
 }
-header .close-icon:hover, header .settings-icon:hover {
+
+header img.close-icon { right: 12px; }
+header img.settings-icon { right: 44px; }
+header img.favorites-icon { right: 76px; }
+
+header img:hover {
 	opacity: 0.9;
 }
 
@@ -107,7 +97,7 @@ header .search {
 }
 header .search input, header .search .select { margin-bottom: 5px; }
 header .search .select { width: 120px; }
-header .search input[type=search] { width: 520px; }
+header .search input[type=search] { width: 400px; }
 header .search input[type=text] { width: 65px; text-align: center; }
 
 header.small {
@@ -259,7 +249,20 @@ body:hover > header.small.transparent > * {
 	margin: 0 0 16px;
 }
 
+#userinfo input[type=button].favorite {
+	width: 120px;
+	height: 32px;
+	border-radius: 5px;
+	border: none;
+	text-align: left;
+	padding: 0 8px 0 32px;
+	background: transparent url(../images/ic_favorite_border_white_24px.svg) 4px 4px no-repeat;
+	background-size: 24px 24px;
+}
 
+#userinfo input[type=button].favorite.true {
+	background: rgba(255,255,255,0.2) url(../images/ic_favorite_white_24px.svg) 4px 4px no-repeat;
+}
 
 #videolist, #userlist {
 	z-index: 2;
