@@ -2,7 +2,7 @@ const remote = require('electron').remote, app = remote.app, fs = require('fs');
 var favorites_list = [];
 
 $(function(){
-	var fn = app.getPath('appData') + '/' + app.getName() +'/favoriates.json';
+	var fn = app.getPath('appData') + '/' + app.getName() +'/favorites.json';
 	
 	fs.readFile(fn, 'utf8', function (err,data) {
 		if (err) {
