@@ -40,8 +40,3 @@ requests to us.
 This project is licensed under the GPL3 License - see the [LICENSE](LICENSE) 
 file for details
 
-## Acknowledgments
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
