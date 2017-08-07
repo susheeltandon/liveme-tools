@@ -258,7 +258,7 @@ body:hover > header.small.transparent > * {
 	color: rgba(255,255,255,0.5);
 }
 
-#userinfo h4 { font-size: 12pt; font-weight: 300; color: rgba(255,255,255,0.5); padding: 12px 0 48px; }
+#userinfo h4 { font-size: 12pt; font-weight: 300; color: rgba(255,255,255,0.5); padding: 12px 0 16px; }
 #userinfo input[type=text] { width: 140px; text-align: center; }
 #userinfo input[type=button] {
 	display: inline-block;
@@ -267,27 +267,30 @@ body:hover > header.small.transparent > * {
 }
 
 #userinfo input[type=button]#favorites_button {
-	width: 120px;
+	width: 100px;
 	height: 32px;
 	border-radius: 5px;
 	border: none;
 	text-align: left;
-	padding: 0 8px 0 32px;
+	padding: 0 8px 0 40px;
 	background: transparent;
 	background-image: url(../images/ic_favorite_border_white_24px.svg);
 	background-size: 24px 24px;
 	background-repeat: no-repeat;
-	background-position: 4px 4px;
-	color: rgba(255,255,255,0.9);
-	opacity: 0.4;
+	background-position: 8px 4px;
+	color: rgba(255,255,255,0.8);
+	opacity: 0.3;
+	box-shadow: none;
 }
 
+#userinfo input[type=button]#favorites_button:hover { opacity: 0.5; }
 
 #userinfo input[type=button]#favorites_button.active {
 	background-image: url(../images/ic_favorite_white_24px.svg);
-	background-color: rgba(240,240,64,0.3);
-	opacity: 1.0;
+	color: rgba(255,255,0,0.8);
+	opacity: 0.9;
 }
+#userinfo input[type=button]#favorites_button.active:hover { opacity: 1; }
 
 #videolist, #userlist {
 	z-index: 2;
