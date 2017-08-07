@@ -34,6 +34,8 @@ exports.getuservideos = function(u, cb) {
 
 	if (query.length == 18) {
 		_dolookup1();
+	} else if (query.length < 18) {
+		cb(return_data);
 	} else {
 		_dolookup();
 	}
