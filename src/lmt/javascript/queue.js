@@ -41,7 +41,7 @@ function beginDownload() {
 	$('.entry:first-child').addClass('active');
 	
 	m3u8stream(u, {
-		callback: function() {
+		on_complete: function() {
 			$('.entry:first-child').remove();if ($('.entry').get().length > 0) {
 				beginDownload();
 			} else {
