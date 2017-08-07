@@ -79,6 +79,10 @@ $(function(){
 
 });
 
+
+function showSettings() { ipc.send('show-settings'); }
+function showFavorites() { ipc.send('show-favorites'); }
+
 function closeApp() { window.close(); }
 function enterOnSearch(e) { if (e.keyCode == 13) beginSearch(); } 
 
@@ -193,10 +197,6 @@ function playVideo(u) {
 
 function downloadVideo(u) {
 	ipc.send('download-video', { url: u });
-}
-
-function setDownloadFolder(f) {
-	ipc.send('set-dlfolder', { folder: f });
 }
 
 function renderUserLookup(e) {
