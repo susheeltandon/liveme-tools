@@ -15,7 +15,7 @@
 */
 
 const electron = require('electron'), ipc = electron.ipcRenderer, remote = electron.remote, BrowserWindow = remote.BrowserWindow;
-const Menu = remote.Menu, lmt = require('./livemetoolsmodule'), fs = require('fs');
+const Menu = remote.Menu, fs = require('fs');
 
 var isSearching = false, favorites_list = [];
 
@@ -165,8 +165,6 @@ function beginSearch2() {
 	if ($('#type').val() == 'url-lookup') {
 		var q = '', u=$('#query').val(), t=u.split('/');
 
-		console.log(t);
-
 		if (u.indexOf('/live/') > -1) {
 			$('#type').val('video-lookup');
 			$('#query').val(u[3]);
@@ -205,14 +203,14 @@ function beginSearch2() {
 
 
 	if ($('#type').val() == 'search') {
-		lmt.searchkeyword($('#query').val(), function(e) {
+		searchkeyword($('#query').val(), function(e) {
 			isSearching = false;
 			$('#main').html('<div id="results" class="panel"></div>'); 
 			renderSearchResults(e.data);
 			$('#overlay').hide();
 		});
 	} else {
-		lmt.getuservideos($('#query').val(), function(e){
+		getuservideos($('#query').val(), function(e){
 			isSearching = false;
 			if ((typeof(e.userinfo.userid) === undefined) || (e.userinfo.userid == 0)) {
 				$('#main').html('<div class="emptylist">Search returned nothing.</div>');
