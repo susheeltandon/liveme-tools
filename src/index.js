@@ -17,10 +17,10 @@ const 	{app, BrowserWindow, ipcMain, Menu} = require('electron'), os = require('
 		fs = require('fs'), isDev = require('electron-is-dev');
 		
 
-let mainwin, queuewin, playerWindow, menu;
+let mainwin, queuewin, playerWindow, settingsWindow, favoritesWindow, menu;
 
 function createWindow(){
-		mainwin=new BrowserWindow({
+	mainwin=new BrowserWindow({
 		icon: __dirname + '/appicon.ico', width:980, height:600, minWidth:980, minHeight:522, darkTheme:true, autoHideMenuBar:false,
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, vibrancy:'dark', 
 		webPreferences:{ webSecurity:false, textAreasAreResizable:false, plugins:true }
@@ -74,6 +74,58 @@ app.on('window-all-closed', () => {
 	app.quit();
 });
 app.on('activate', () => { if (mainwin === null) { createWindow(); } });
+
+
+
+
+
+
+
+/*
+	Favorites Related
+*/
+ipcMain.on('show-favorites', () => {
+	favoritesWindow = new BrowserWindow({
+		width:320, height:600, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false,
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
+		webPreferences:{ webSecurity:false, plugins:true, devTools:true }
+	});
+	favoritesWindow.loadURL(`file://${__dirname}/lmt/favorites-list.html`);
+	favoritesWindow.on('closed', () => { 
+		favoritesWindow = null; 
+	});
+	favoritesWindow.show();
+
+});
+
+
+
+
+
+
+
+
+/*
+	Settings Related
+*/
+ipcMain.on('show-settings', () => {
+	settingsWindow = new BrowserWindow({
+		width:280, height:360, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false,
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
+		parent: mainwin, webPreferences:{ webSecurity:false, plugins:true, devTools:true }
+	});
+	settingsWindow.loadURL(`file://${__dirname}/lmt/settings.html`);
+	settingsWindow.on('closed', () => { 
+		settingsWindow = null; 
+	});
+	settingsWindow.show();
+
+
+});
+
+
+
+
 
 
 
