@@ -16,7 +16,7 @@
 */
 const request = require('then-request');
 
-var	callback_holder = null, query = '', page_index = 0, return_data = [], index = 0, max_count = 0;
+var	callback_holder = null, query = '', query_orig = '', page_index = 0, return_data = [], index = 0, max_count = 0;
 var build_table = [], build_table2 = [];
 
 
@@ -32,11 +32,12 @@ exports.getuservideos = function(u, cb) {
 		videos: []
 	};
 
-	if (query.length == 18) {
+	if (query.length == 18) {		
 		_dolookup1();
 	} else if (query.length < 18) {
 		cb(return_data);
 	} else {
+		query_orig = u;
 		_dolookup();
 	}
 
@@ -78,6 +79,7 @@ function _dolookup() {
 }
 
 function _dolookup1() {
+
 	request('GET', 'http://live.ksmobile.net/user/getinfo?userid='+query).done( function(res){
 		var json = JSON.parse(res.getBody());
 
@@ -92,7 +94,6 @@ function _dolookup1() {
 				fans: parseInt(json.data.user.count_info.follower_count)
 			}
 		}
-
 		_dolookup2();
 
 	});	
@@ -104,9 +105,8 @@ function _dolookup2() {
 	request('GET', 'http://live.ksmobile.net/live/getreplayvideos?userid='+query+'&page_size=20&page_index='+page_index).done(function(res){
 		var json = JSON.parse(res.getBody());
 
-
 		if (json.data.length == 0) {
-			callback_holder(return_data);
+			_dolookup3();
 			return;
 		}
 
@@ -122,27 +122,65 @@ function _dolookup2() {
 					plays : json.data.video_info[i].watchnumber,
 					shares : json.data.video_info[i].sharenum,
 					likes : json.data.video_info[i].likenum,
-					location : { country: json.data.video_info[i].countryCode }
+					location : { country: json.data.video_info[i].countryCode },
+					private: false
 				});
 			}
 		}
 
 		if (json.data.video_info !== undefined) {
-			callback_holder(return_data);
+			_dolookup3();
 		} else if (page_index < 20) {
 			if (data.json.video_info.length < 20) {
-				_dolookup2();			
+				_dolookup3();			
 			} else {
 				page_index++;
-				_dolookup();
+				_dolookup2();
 			}
 		} else {
-			callback_holder(return_data);
+			_dolookup3();
 		}
 	});	
 }
 
+function _dolookup3() {
 
+	if (query_orig.length < 1) return;
+
+	request('GET', 'http://live.ksmobile.net/live/queryinfo?userid=0&videoid='+query_orig).done(function(res){
+		var json = JSON.parse(res.getBody());
+
+		if (json.data.length == 0) {
+			callback_holder(return_data);
+			return;
+		}
+
+		var add = true;
+
+		for (i = 0; i < return_data.videos.length; i++) {
+			if (return_data.videos[i].videoid == json.data.video_info.vdoid) add = false;
+		}
+		
+		if (add == true) {
+			return_data.videos.push({
+				url : json.data.video_info.hlsvideosource,
+				dt :  parseInt(json.data.video_info.vtime),
+				deleted : false,
+				title : json.data.video_info.title,
+				length : parseInt(json.data.video_info.videolength),
+				videoid : json.data.video_info.vdoid,
+				plays : json.data.video_info.watchnumber,
+				shares : json.data.video_info.sharenum,
+				likes : json.data.video_info.likenum,
+				location : { country: json.data.video_info.countryCode },
+				private: true
+			});
+		}
+
+		callback_holder(return_data);
+	});		
+
+}
 
 
 

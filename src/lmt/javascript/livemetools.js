@@ -165,14 +165,28 @@ function beginSearch2() {
 	if ($('#type').val() == 'url-lookup') {
 		var q = '', u=$('#query').val(), t=u.split('/');
 
-		if (t[t.length-1].indexOf('yolo') > -1) {
+		console.log(t);
+
+		if (u.indexOf('/live/') > -1) {
+			$('#type').val('video-lookup');
+			$('#query').val(u[3]);
+			setTimeout(function(){
+				beginSearch2();
+			}, 100);
+		} else if (t[t.length-1].indexOf('yolo') > -1) {
 			var a=t[t.length - 1].split('-');
-			q = a[1];
+			$('#type').val('video-lookup');
+			$('#query').val(a[1]);
+			setTimeout(function(){
+				beginSearch2();
+			}, 100);
+			
 		} else if (t[t.length-1].indexOf('/liveme/') > -1) {
 			var a=t[t.length - 1].split('.');
 			q = a[0];
 		} else if (t[t.length - 1].indexOf('videoid') > -1) {
 			var a=t[t.length - 1].split('?'),b=a[1].split('&');
+			console.log(a);
 			for (i = 0; i < b.length; i++) {
 				if (b[i].indexOf('videoid') > -1) {
 					var c=b[i].split('=');
@@ -180,9 +194,15 @@ function beginSearch2() {
 				}
 			}
 		} else {
-			q = 'Unsupported URL';
+			$('#main').html('<div class="emptylist">Unsupported URL detected.</div>');
 		}
+
+		isSearching = false;
+		$('#overlay').hide();
+		
 	}
+
+
 
 	if ($('#type').val() == 'search') {
 		lmt.searchkeyword($('#query').val(), function(e) {
