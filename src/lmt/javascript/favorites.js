@@ -1,4 +1,4 @@
-const remote = require('electron').remote, app = remote.app, fs = require('fs');
+const remote = require('electron').remote, ipcRenderer = require('electron').ipcRenderer, app = remote.app, fs = require('fs');
 var favorites_list = [];
 
 $(function(){
@@ -10,15 +10,22 @@ $(function(){
 		} else {
 			favorites_list = JSON.parse(data);
 		}
-		
+
 		$('#small_user_list').html('');
-		for (i = 0; i < favorites_list.length; i++) {
-			var t = '<div title="Click to view user\'s videos." class="user_entry small clickable ' + (0 == favorites_list[i].sex ? "female" : "male") + '" onClick="getVideos(\'' + favorites_list[i].uid + '\')"><img class="avatar" src="' + favorites_list[i].face + '" onerror="this.src=\'images/blank.png\'"><h4>' + favorites_list[i].nickname + '</h4></div>';
-			if ($("#small_user_list").append(t), ct + i > max) break
+		if (favorites_list.length < 1) {
+			$('#small_user_list').html('<p style="padding-top: 260px; text-align: center; font-style: italic; color: rgba(255,255,255,0.3)">Your list is empty.</p>');
+		} else {
+			for (i = 0; i < favorites_list.length; i++) {
+				var t = '<div title="Click to view user\'s videos." class="user_entry small clickable ' + favorites_list[i].sex + '" onClick="getVideos(\'' + favorites_list[i].uid + '\')"><img class="avatar" src="' + favorites_list[i].face + '" onerror="this.src=\'images/blank.png\'"><h4>' + favorites_list[i].nickname + '</h4></div>';
+				$("#small_user_list").append(t);
+
+			}
 		}
 	});
 	
 });
-
-
-
+function closeWindow() { window.close(); }
+function getVideos(e) {
+	var {ipcRenderer} = require('electron')
+	ipcRenderer.send('submit-search', { userid: e });
+}

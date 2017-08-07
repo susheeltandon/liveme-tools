@@ -82,8 +82,6 @@ header h1, header h4 {
 	margin: 0 24px 0 12px;
 	padding: 2px 0 0;
 	vertical-align: top;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 header h1 small {
 	font-size: 10pt;
@@ -117,7 +115,8 @@ header.small h1, header.small h4 {
 	font-weight: 400;
 	letter-spacing: 0.04em;
 	width: calc(100% - 48px);
-	
+	overflow: hidden;
+	text-overflow: ellipsis;	
 }
 header.small .close-icon {
 	top: 4px;
@@ -267,19 +266,27 @@ body:hover > header.small.transparent > * {
 	margin: 0 0 16px;
 }
 
-#userinfo input[type=button].favorite {
+#userinfo input[type=button]#favorites_button {
 	width: 120px;
 	height: 32px;
 	border-radius: 5px;
 	border: none;
 	text-align: left;
 	padding: 0 8px 0 32px;
-	background: transparent url(../images/ic_favorite_border_white_24px.svg) 4px 4px no-repeat;
+	background: transparent;
+	background-image: url(../images/ic_favorite_border_white_24px.svg);
 	background-size: 24px 24px;
+	background-repeat: no-repeat;
+	background-position: 4px 4px;
+	color: rgba(255,255,255,0.9);
+	opacity: 0.4;
 }
 
-#userinfo input[type=button].favorite.true {
-	background: rgba(255,255,255,0.2) url(../images/ic_favorite_white_24px.svg) 4px 4px no-repeat;
+
+#userinfo input[type=button]#favorites_button.active {
+	background-image: url(../images/ic_favorite_white_24px.svg);
+	background-color: rgba(240,240,64,0.3);
+	opacity: 1.0;
 }
 
 #videolist, #userlist {

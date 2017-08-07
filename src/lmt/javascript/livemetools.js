@@ -15,9 +15,9 @@
 */
 
 const electron = require('electron'), ipc = electron.ipcRenderer, remote = electron.remote, BrowserWindow = remote.BrowserWindow;
-const Menu = remote.Menu, lmt = require('./livemetoolsmodule');
- 
-var isSearching = false;
+const Menu = remote.Menu, lmt = require('./livemetoolsmodule'), fs = require('fs');
+
+var isSearching = false, favorites_list = [];
 
 $(function(){
 
@@ -93,6 +93,36 @@ function onTypeChange() {
 		case 'video-lookup': $('#query').attr('placeholder', 'Enter VideoID'); $('#maxlevel').hide(); break;
 		case 'url-lookup': $('#query').attr('placeholder', 'Enter URL'); $('#maxlevel').hide(); break;
 		case 'search': $('#query').attr('placeholder', 'Enter Partial or Full Username'); $('#maxlevel').show(); break;
+	}
+}
+
+
+
+function toggleFavorite() {
+	if ($('#favorites_button').hasClass('active')) {
+		// Removing from favorites list
+		var t = [];
+		for (i = 0; i < favorites_list.length; i++) {
+			if (favorites_list[i].uid != $('#uid').val()) {
+				t.push(favorites_list[i]);
+			}
+		}
+		favorites_list = t;
+		fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/favorites.json', JSON.stringify(favorites_list), 'utf8', function(){
+			$('#favorites_button').removeClass('active');
+		});
+	} else {
+		// Adding to Favorites List
+		favorites_list.push({
+			uid: $('#uid').val(),
+			sex: $('#sex').val(),
+			face: $('img.avatar').attr('src'),
+			nickname: $('h3.name').html()
+		})
+		fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/favorites.json', JSON.stringify(favorites_list), 'utf8', function(){
+			$('#favorites_button').addClass('active');
+		});
+
 	}
 }
 
@@ -216,9 +246,10 @@ function renderUserLookup(e) {
 	if (e.userinfo.userid > 0) {
 		var u = e.userinfo;
 		userID = u.userid;
-		var h=	'<img src="'+u.usericon+'" class="avatar" onerror="this.src=\'images/blank.png\'"><br><h3 class="name">'+u.username+'</h3><label>User ID:</label><input type="text" value="'+u.userid+'">'+
-				'<h4>Level: ' + u.level+'</h4><input type="button" value="Following '+u.following+'" onClick="showFollowing(\''+u.userid+'\', '+u.following+', \''+u.username+'\')">'+
-				'<input type="button" value="'+u.fans+' Fans" onClick="showFans(\''+u.userid+'\', '+u.following+', \''+u.username+'\')">';
+		var h=	'<img src="'+u.usericon+'" class="avatar" onerror="this.src=\'images/blank.png\'"><br><h3 class="name">'+u.username+'</h3><label>User ID:</label><input type="text" id="uid" value="'+u.userid+'" disabled="disabled">'+
+				'<h4>Level: ' + u.level+'</h4><input type="button" value="Favorite" onClick="toggleFavorite()" id="favorites_button">'+
+				'<input type="button" value="Following '+u.following+'" onClick="showFollowing(\''+u.userid+'\', '+u.following+', \''+u.username+'\')">'+
+				'<input type="button" value="'+u.fans+' Fans" onClick="showFans(\''+u.userid+'\', '+u.following+', \''+u.username+'\')"><input type="hidden" id="sex" value="'+u.sex+'">';
 		$('#userinfo').html(h);
 	}
 
@@ -245,7 +276,6 @@ function renderUserLookup(e) {
 
 			var h = '<div class="video_entry '+(hi1 ? 'highlight ' : '')+(hi2 ? 'highlight ' : '')+'">';
 			h += '<input class="url" type="text" value="'+e.videos[i].url+'"><h4 class="date">'+ds+'</h4><h4 class="title">'+(e.videos[i].private==true ? '[DELETED] ':'')+e.videos[i].title+'</h4>';
-
 			h += '<div class="counts"><label>Length:</label><span>'+length+'</span><label>Views:</label><span>' + e.videos[i].plays + '</span><label>Likes:</label><span>' + e.videos[i].likes + '</span><label>Shares:</label><span>' + e.videos[i].shares + '</span><label>Country:</label><span>'+e.videos[i].location.country+'</span></div>';
 			h += '<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo(\''+e.videos[i].url+'\')">';
 			h += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+e.videos[i].url+'\')">';
@@ -253,6 +283,25 @@ function renderUserLookup(e) {
 			$('#videolist').append(h);
 		}
 	}
+
+	var fn = remote.app.getPath('appData') + '/' + remote.app.getName() +'/favorites.json', skip = false;
+	fs.readFile(fn, 'utf8', function (err,data) {
+		if (err) {
+			skip = true;
+		} else {
+			favorites_list = JSON.parse(data);
+		}
+
+		for (i = 0; i < favorites_list.length; i++) {
+			if (favorites_list[i].uid == $('#uid').val()) {
+				$('#favorites_button').addClass('active');
+			} else {
+				$('#favorites_button').removeClass('active');
+			}
+		}
+
+	});
+
 }
 
 function renderSearchResults(e) {
