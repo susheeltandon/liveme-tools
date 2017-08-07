@@ -129,7 +129,12 @@ function _dolookup2() {
 		}
 
 		if (json.data.video_info !== undefined) {
-			_dolookup3();
+			if (query_orig.length < 1) {
+				callback_holder(return_data);
+			} else {
+				_dolookup3();
+			}
+			return;
 		} else if (page_index < 20) {
 			if (data.json.video_info.length < 20) {
 				_dolookup3();			
@@ -145,7 +150,10 @@ function _dolookup2() {
 
 function _dolookup3() {
 
-	if (query_orig.length < 1) return;
+	if (query_orig.length < 1) {
+		callback_holder(return_data);
+		return;
+	}
 
 	request('GET', 'http://live.ksmobile.net/live/queryinfo?userid=0&videoid='+query_orig).done(function(res){
 		var json = JSON.parse(res.getBody());
@@ -198,7 +206,7 @@ function _dosearch() {
 			});
 		}
 
-		if (page_index < 3) {
+		if (page_index < 2) {
 			if (json.data.data_info.length < 10) {
 				index = 0;
 				max_count = return_data.length - 1;
