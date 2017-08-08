@@ -14,8 +14,7 @@
 
 */
 
-const { remote, BrowserWindow } = require('electron');
-const ipc = require('electron').ipcRenderer;
+const { remote, BrowserWindow, ipcRenderer } = require('electron');
 const m3u8stream = require('m3u8stream');
 const fs = require('fs');
 const os = require('os');
@@ -38,7 +37,7 @@ $(function(){
 	});
 
 
-	ipc.on('add-to-queue', (event, arg) => { 
+	ipcRenderer.on('add-to-queue', (event, arg) => { 
 		var a=arg.url.split('/'),id=a[a.length-1];
 		if (id.indexOf('playlist') > -1)id=a[a.length-2];
 		$('#queuelist').append('<div class="entry" id="'+id+'">'+arg.url+'</div>');
