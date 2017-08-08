@@ -100,6 +100,10 @@ function _dolookup1() {
 			callback_holder(return_data);
 		},
 		success: function(e) {
+			if (typeof e.data.user == "undefined") {
+				callback_holder(return_data);
+				return;
+			}
 			if (e.status != 500) {
 				return_data.userinfo = {
 					userid: e.data.user.user_info.uid,
