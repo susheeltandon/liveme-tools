@@ -108,11 +108,9 @@ function showUpload() {
 		}
 	);
 
-	if (typeof(d) == undefined) return;
-
-	// Get contents of file...
-
+	if (typeof d == "undefined") return;
 	
+	// Get contents of file...
 	fs.readFile(d[0], 'utf8', function (err,data) {
 		if (err) {
 			remote.dialog.showErrorBox(
@@ -255,7 +253,7 @@ function beginSearch2() {
 	} else {
 		getuservideos($('#query').val(), function(e){
 			isSearching = false;
-			if ((typeof(e.userinfo.userid) === undefined) || (e.userinfo.userid == 0)) {
+			if ((typeof e.userinfo.userid === "undefined") || (e.userinfo.userid == 0)) {
 				$('#main').html('<div class="emptylist">Search returned nothing.</div>');
 			} else {
 				$('#main').html('<div id="userinfo" class="panel"></div><div id="videolist" class="panel"></div>'); 
@@ -294,7 +292,7 @@ function renderUserLookup(e) {
 
 	$('#videolist').html('');
 
-	if (e === undefined) {
+	if (typeof e === "undefined") {
 		$('#videolist').html('<div class="emptylist">Search returned no data, account may be closed.</div>');
 		return;
 	}
@@ -314,7 +312,7 @@ function renderUserLookup(e) {
 		$('#userinfo').html(h);
 	}
 
-	if (e.videos === undefined) {
+	if (typeof e.videos === undefined) {
 		$('#videolist').html('<div class="emptylist">No videos entries for this user account found.</div>');
 		return;
 	}
@@ -368,10 +366,7 @@ function renderUserLookup(e) {
 function renderSearchResults(e) {
 	$('#main').html('<div id="userlist"></div>');
 
-	if (typeof(e) == undefined) {
-		return;
-	}
-	if (typeof(e) == undefined) {
+	if (typeof(e) == "undefined") {
 		return;
 	}
 
