@@ -225,13 +225,13 @@ body:hover > header.small.transparent > * {
 	height: 24px;
 	width: 100%;
 	z-index: 5;
-	line-height: 32px;
+	line-height: 24px;
 	font-size: 9pt;
 	font-weight: 400;
 	padding: 0 8px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	color: rgba(255,255,255,0.3);
+	color: rgba(255,255,255,0.4);
 }
 
 #queuelist .entry.active {
