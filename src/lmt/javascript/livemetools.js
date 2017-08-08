@@ -206,7 +206,7 @@ function beginSearch2() {
 		searchkeyword($('#query').val(), function(e) {
 			isSearching = false;
 			$('#main').html('<div id="results" class="panel"></div>'); 
-			renderSearchResults(e.data);
+			renderSearchResults(e);
 			$('#overlay').hide();
 		});
 	} else {
@@ -325,7 +325,12 @@ function renderUserLookup(e) {
 function renderSearchResults(e) {
 	$('#main').html('<div id="userlist"></div>');
 
-	console.log('Got ' + e.length + ' results');
+	if (typeof(e) == undefined) {
+		return;
+	}
+	if (typeof(e) == undefined) {
+		return;
+	}
 
 	if (e.length < 1) {
 		$('#main').html('<div class="emptylist">No users were found on LiveMe.</div>');

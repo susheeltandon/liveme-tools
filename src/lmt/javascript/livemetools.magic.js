@@ -66,7 +66,6 @@ function _dolookup() {
 			callback_holder(return_data);
 		},
 		success: function(e) {
-			console.log(e);
 			if (e.data.length == 0) {
 				callback_holder(return_data);
 				return;
@@ -316,6 +315,7 @@ function _dosearch2() {
 					videos : [],
 					videosplus : false
 			};
+			
 
 			if (index < max_count) {
 				index++;
@@ -370,7 +370,7 @@ function _dosearch3() {
 				index++;
 				_dosearch3();
 			} else {
-				callback_holder({ data: return_data });
+				callback_holder(return_data);
 			}	
 
 		}
