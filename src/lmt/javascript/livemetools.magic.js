@@ -186,7 +186,7 @@ function _dolookup2() {
 
 function _dolookup3() {
 
-	if (query_orig.length < 1) {
+	if (query_orig == null) {
 		callback_holder(return_data);
 		return;
 	}
