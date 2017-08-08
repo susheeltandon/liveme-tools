@@ -69,6 +69,7 @@ header img {
 header img.close-icon { right: 12px; }
 header img.settings-icon { right: 44px; }
 header img.favorites-icon { right: 76px; }
+header img.upload-icon { right: 108px; }
 
 header img:hover {
 	opacity: 0.9;
