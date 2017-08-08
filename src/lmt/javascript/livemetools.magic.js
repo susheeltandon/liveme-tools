@@ -73,7 +73,7 @@ function _dolookup() {
 				return;
 			}
 
-			if (e.data.user_info !== undefined) {
+			if (typeof e.data.user_info !== undefined) {
 				query = e.data.user_info.userid;
 				_dolookup1();
 			} else {
@@ -142,7 +142,7 @@ function _dolookup2() {
 				return;
 			}
 
-			if (e.data.video_info !== undefined) {
+			if (typeof e.data.video_info !== undefined) {
 				for (i = 0; i < e.data.video_info.length; i++) {
 					return_data.videos.push({
 						url : e.data.video_info[i].hlsvideosource,
@@ -160,7 +160,7 @@ function _dolookup2() {
 				}
 			}
 
-			if (e.data.video_info !== undefined) {
+			if (typeof e.data.video_info !== undefined) {
 				if (query_orig == null) {
 					callback_holder(return_data);
 				} else {
