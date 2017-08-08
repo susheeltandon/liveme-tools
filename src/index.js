@@ -166,7 +166,7 @@ ipcMain.on('hide-queue', () => { queuewin.hide(); });
 */
 ipcMain.on('open-window', (event, arg) => {
 	var win = new BrowserWindow({
-		width: 320, height: 720, resizable:false, darkTheme:true, autoHideMenuBar:false, skipTaskbar: false,
+		width: 320, height: 640, resizable:false, darkTheme:true, autoHideMenuBar:false, skipTaskbar: false,
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
 	});
 	win.setMenu(null);
@@ -189,7 +189,7 @@ ipcMain.on('open-window', (event, arg) => {
 ipcMain.on('play-video', (event, arg) => {
 	if (playerWindow == null) {
 		playerWindow = new BrowserWindow({
-			width: 360, height: 640, resizable: true, darkTheme:true, autoHideMenuBar:false, show:true, skipTaskbar: false,
+			width: 368, height: 640, resizable: true, darkTheme:true, autoHideMenuBar:false, show:true, skipTaskbar: false,
 			disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
 		});
 		playerWindow.on('closed', () => { 
