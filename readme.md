@@ -7,7 +7,6 @@ feedback from users and any feature requests made.
 
 
 ## Getting Started
-
 After you clone this project to your computer, run:
 ```
      npm install
@@ -19,27 +18,25 @@ You will also need to manually install the node-m3u8stream module in my GitHub r
 custom code used in this project.  
 
 ### Installing
-
 You can download the [latest release](https://github.com/thecoder75/liveme-tools/releases/latest)
 if you wish to not compile it yourself.
 
 ## Built With
-
 * [Electron](http://electron.atom.io)
 * [NodeJS](http://nodejs.org)
 
 ## Contributing
-
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) 
 for details on our code of conduct, and the process for submitting pull 
 requests to us.
 
-## Authors
+## Developers
+* [thecoder75](https://github.com/thecoder75)
 
-* TheCoder
+## Bug Hunters and Beta Testers
+* [slyfox99](https://github.com/slyfox99)
 
 ## License
-
 This project is licensed under the GPL3 License - see the [LICENSE](LICENSE) 
 file for details
 
