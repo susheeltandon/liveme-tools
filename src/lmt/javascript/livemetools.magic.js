@@ -161,7 +161,7 @@ function _dolookup2() {
 			}
 
 			if (e.data.video_info !== undefined) {
-				if (query_orig.length < 1) {
+				if (query_orig == null) {
 					callback_holder(return_data);
 				} else {
 					_dolookup3();
