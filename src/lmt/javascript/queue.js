@@ -40,7 +40,7 @@ $(function(){
 	ipcRenderer.on('add-to-queue', (event, arg) => { 
 		var a=arg.url.split('/'),id=a[a.length-1];
 		if (id.indexOf('playlist') > -1)id=a[a.length-2];
-		$('#queuelist').append('<div class="entry" id="'+id+'">'+arg.url+'</div>');
+		$('#queuelist').append('<div class="entry" id="'+id+'"><div class="title">'+arg.url+'</div><div class="progress"></div></div>');
 		setTimeout(function(){
 			if (isDownloading == false) beginDownload();	
 		}, 250);
@@ -60,9 +60,13 @@ function beginDownload() {
 			if ($('.entry').get().length > 0) {
 				beginDownload();
 			} else {
-				isDownloading = false;ipc.send('hide-queue');
+				isDownloading = false;
+				ipcRenderer.send('hide-queue');
 			}
+		},
+		on_progress: function(e) {
+			var p = Math.round((e.current / e.total) * 100);
+			$('.entry.active .progress').css({ width: p+'%' });
 		}
 	}).pipe(fs.createWriteStream(settings.downloadpath+'/'+filename));
-	
 }
