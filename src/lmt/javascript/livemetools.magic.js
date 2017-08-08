@@ -20,6 +20,7 @@ var build_table = [], build_table2 = [];
 
 function getuservideos (u, cb) {
 
+	query_orig = null;
 	query = u;
 	callback_holder = cb;
 	return_data = {
@@ -47,6 +48,7 @@ function searchkeyword(k, cb) {
 	page_index = 1;
 	return_data = [];
 	_dosearch();
+
 }
 
 
