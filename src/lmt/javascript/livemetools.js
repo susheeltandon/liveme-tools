@@ -14,8 +14,8 @@
 
 */
 
-const electron = require('electron'), ipc = electron.ipcRenderer, remote = electron.remote, BrowserWindow = remote.BrowserWindow;
-const Menu = remote.Menu, fs = require('fs');
+const { electron, BrowserWindow, remote, ipcRenderer } = require('electron');
+const fs = require('fs');
 
 var isSearching = false, favorites_list = [];
 
@@ -26,7 +26,7 @@ $(function(){
 	onTypeChange();
 
 	// Custom popup menu for text fields
-	const InputMenu = Menu.buildFromTemplate([{
+	const InputMenu = remote.Menu.buildFromTemplate([{
 	        label: 'Cut Text',
 	        role: 'cut',
 	    }, {
@@ -43,7 +43,7 @@ $(function(){
 	    },
 	]);
 
-	const InputMenu2 = Menu.buildFromTemplate([{
+	const InputMenu2 = remote.Menu.buildFromTemplate([{
 	        label: 'Copy Link',
 	        role: 'copy',
 	    }
@@ -69,7 +69,7 @@ $(function(){
 	});	
 
 	// Remote search calls
-	ipc.on('do-search' , function(event , data) { 
+	ipcRenderer.on('do-search' , function(event , data) { 
 		if (isSearching) return;
 
 		$('#query').val(data.userid);
@@ -80,8 +80,8 @@ $(function(){
 });
 
 
-function showSettings() { ipc.send('show-settings'); }
-function showFavorites() { ipc.send('show-favorites'); }
+function showSettings() { ipcRenderer.send('show-settings'); }
+function showFavorites() { ipcRenderer.send('show-favorites'); }
 
 function closeApp() { window.close(); }
 function enterOnSearch(e) { if (e.keyCode == 13) beginSearch(); } 
@@ -97,6 +97,49 @@ function onTypeChange() {
 }
 
 
+
+function showUpload() {
+	var d = remote.dialog.showOpenDialog(
+		remote.getCurrentWindow(),
+		{
+			properties: [
+				'openFile'
+			]
+		}
+	);
+
+	if (typeof(d) == undefined) return;
+
+	// Get contents of file...
+
+	
+	fs.readFile(d[0], 'utf8', function (err,data) {
+		if (err) {
+			remote.dialog.showErrorBox(
+				'Import Error',
+				'There was an error while attempting to import the selected file.'
+			);
+			return;
+		} else {
+			var filelist = data.split('\n');
+			
+			for (i = 0; i < filelist.length; i++)  {
+				if (filelist[i].indexOf('http') > -1) {
+					ipcRenderer.send('download-video', { url: filelist[i] });
+				}
+			}
+
+		}
+		
+		$('#download_folder').val(settings.downloadpath);
+
+		return;
+	});
+
+
+
+
+}
 
 function toggleFavorite() {
 	if ($('#favorites_button').hasClass('active')) {
@@ -231,20 +274,20 @@ function showUser(u) {
 }
 
 function showFollowing(u,m,n) {
-	ipc.send('open-window', { url: 'following.html?'+u+'#'+m+'#'+n });
+	ipcRenderer.send('open-window', { url: 'following.html?'+u+'#'+m+'#'+n });
 }
 
 function showFans(u,m,n) {
-	ipc.send('open-window', { url: 'fans.html?'+u+'#'+m+'#'+n });
+	ipcRenderer.send('open-window', { url: 'fans.html?'+u+'#'+m+'#'+n });
 }
 
 
 function playVideo(u) {
-	ipc.send('play-video', { url: u });
+	ipcRenderer.send('play-video', { url: u });
 }
 
 function downloadVideo(u) {
-	ipc.send('download-video', { url: u });
+	ipcRenderer.send('download-video', { url: u });
 }
 
 function renderUserLookup(e) {
