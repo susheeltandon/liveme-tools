@@ -29,7 +29,7 @@ $(function(){
 	fs.readFile(fn, 'utf8', function (err,data) {
 		if (err) {
 			settings = {
-				downloadpath : app.getPath('home') + '/Downloads'
+				downloadpath : remote.app.getPath('home') + '/Downloads'
 			};
 		} else {
 			settings = JSON.parse(data);
