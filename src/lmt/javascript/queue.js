@@ -15,11 +15,11 @@
 */
 
 const { remote, BrowserWindow, ipcRenderer } = require('electron');
-const m3u8stream = require('m3u8stream');
 const fs = require('fs');
 const os = require('os');
-
+const m3u8stream = require('./m3u8stream/index');
 var isDownloading = false, settings;
+
 
 $(function(){
 
@@ -36,19 +36,19 @@ $(function(){
 		return;
 	});
 
-
 	ipcRenderer.on('add-to-queue', (event, arg) => { 
 		var a=arg.url.split('/'),id=a[a.length-1];
 		if (id.indexOf('playlist') > -1)id=a[a.length-2];
 		$('#queuelist').append('<div class="entry" id="'+id+'"><div class="title">'+arg.url+'</div><div class="progress"></div></div>');
 		setTimeout(function(){
 			if (isDownloading == false) beginDownload();	
-		}, 250);
+		}, 100);
 	});	
 });
 
 function beginDownload() {
 	isDownloading = true;
+
 	var u = $('.entry:first-child').text(), s = u.split('/'), f = s[s.length - 1];
 	if (f.indexOf('playlist') > -1) f = s[s.length - 2];
 	var ff = f.split('.'), filename = ff[0] + '.ts';
@@ -69,4 +69,5 @@ function beginDownload() {
 			$('.entry.active .progress').css({ width: p+'%' });
 		}
 	}).pipe(fs.createWriteStream(settings.downloadpath+'/'+filename));
+	
 }
