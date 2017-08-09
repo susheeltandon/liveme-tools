@@ -343,23 +343,25 @@ function renderUserLookup(e) {
 		}
 	}
 
-	var fn = remote.app.getPath('appData') + '/' + remote.app.getName() +'/favorites.json', skip = false;
-	fs.readFile(fn, 'utf8', function (err,data) {
-		if (err) {
-			skip = true;
-		} else {
-			favorites_list = JSON.parse(data);
-		}
-
-		for (i = 0; i < favorites_list.length; i++) {
-			if (favorites_list[i].uid == $('#uid').val()) {
-				$('#favorites_button').addClass('active');
+	setTimeout(function(){
+		var fn = remote.app.getPath('appData') + '/' + remote.app.getName() +'/favorites.json', skip = false;
+		fs.readFile(fn, 'utf8', function (err,data) {
+			if (err) {
+				console.log('File error getting favorites list.');
+				return;
 			} else {
-				$('#favorites_button').removeClass('active');
+				favorites_list = JSON.parse(data);
 			}
-		}
 
-	});
+			for (i = 0; i < favorites_list.length; i++) {
+				if (favorites_list[i].uid == $('#uid').val()) {
+					$('#favorites_button').addClass('active');
+				} else {
+					$('#favorites_button').removeClass('active');
+				}
+			}
+		});
+	}, 500);
 
 }
 
