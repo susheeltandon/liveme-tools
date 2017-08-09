@@ -50,7 +50,10 @@ module.exports = function(playlistURL, options) {
                 current: currentSegment,
                 total: totalSegments
             });
-
+            stream.emit('progress', {
+                current: currentSegment,
+                total: totalSegments
+            }); 
         }
 
     }, {
@@ -62,7 +65,7 @@ module.exports = function(playlistURL, options) {
 
     function onError(err) {
         options.on_error(err);
-        stream.emit('error', err);
+        stream.emit('error', err); 
         stream.end();
     }
 
@@ -73,7 +76,8 @@ module.exports = function(playlistURL, options) {
             requestQueue.tasks.length + requestQueue.active === refreshThreshold) {
             refreshPlaylist();
         } else if (ended && !requestQueue.tasks.length && !requestQueue.active) {
-            options.on_complete({ url: playlistURL, total_parts: totalSegments });
+            options.on_complete({ url: playlistURL, totalSegments: totalSegments });
+            stream.emit('complete', { url: playlistURL, totalSegments: totalSegments });
             stream.end();
         }
     }
@@ -119,4 +123,3 @@ module.exports = function(playlistURL, options) {
 
     return stream;
 };
-
