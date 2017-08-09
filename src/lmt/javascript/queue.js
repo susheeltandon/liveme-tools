@@ -23,6 +23,7 @@ var isDownloading = false, settings, queue_index = 0, queue = [], download_histo
 
 $(function(){
 
+	// Fetch Settings
 	fs.readFile(remote.app.getPath('appData') + '/' + remote.app.getName() +'/settings.json', 'utf8', function (err,data) {
 		if (err) {
 
@@ -34,6 +35,21 @@ $(function(){
 		}
 	});
 
+	// Fetch last queue
+	fs.readFile(remote.app.getPath('appData') + '/' + remote.app.getName() +'/download_queue.json', 'utf8', function (err,data) {
+		if (err) {
+			queue = [];
+		} else {
+			queue = JSON.parse(data);
+			if (queue.length > 0) {
+				for (i = 0; i< queue.length; i++)
+					$('#queuelist').append('<div class="entry" id="'+queue[i].id+'"><div class="title">'+queue[i].url+'</div><div class="progress"></div></div>');
+
+			}
+		}
+	});
+
+	// Fetch History
 	fs.readFile(remote.app.getPath('appData') + '/' + remote.app.getName() +'/download_history.json', 'utf8', function (err,data) {
 		if (err) {
 			download_history = [ '-' ];
@@ -54,10 +70,15 @@ $(function(){
 				}
 			}
 
+		if (queue.length > 0)
+			for (i = 0; i < queue.length; i++)
+				if (queue[i].url == arg.url) add=false;
+
 		if (add) {
 			queue.push({
 				url: arg.url,
-				file: id+'.ts'
+				file: id+'.ts',
+				id : id
 			});
 			$('#queuelist').append('<div class="entry" id="'+id+'"><div class="title">'+arg.url+'</div><div class="progress"></div></div>');
 		}
@@ -75,6 +96,29 @@ function beginDownload() {
 	if (queue.length < 1) return;
 
 	isDownloading = true;
+
+	if (download_history.length > 0) {
+		var tlist = [];
+
+		for (j = 0; j < queue.length; j++) {
+			var add = true;
+			for (i = 0; i < download_history.length; i++) {
+				if (download_history[i] == queue[j].url) { 
+					console.log(download_history[i] + ' matches ' + queue[j].url);
+					add = false;
+				}
+			}
+			if (add) tlist.push(queue[j]);
+		}
+
+		queue = tlist;
+	}
+
+	$('#queuelist').html('');
+	for (i = 0; i < queue.length; i++) {
+		$('#queuelist').append('<div class="entry" id="'+queue[i].id+'"><div class="title">'+queue[i].url+'</div><div class="progress"></div></div>');		
+	}
+	$('#'+queue[0].id).addClass('active');
 
 	m3u8stream(queue[0].url, {
 		on_complete: function(e) {
@@ -102,7 +146,7 @@ function beginDownload() {
 			$('.entry.active .progress').css({ width: p+'%' });
 		}
 	}).pipe(fs.createWriteStream(settings.downloadpath+'/'+queue[0].file));
-	queue.pop();
+	queue.shift();
 
 	
 }
