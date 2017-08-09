@@ -63,7 +63,6 @@ module.exports = function(playlistURL, options) {
 
     function onError(err) {
         stream.emit('error', err);
-        // Stop on any error.
         stream.end();
     }
 
