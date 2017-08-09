@@ -144,7 +144,7 @@ function toggleFavorite() {
 		// Removing from favorites list
 		var t = [];
 		for (i = 0; i < favorites_list.length; i++) {
-			if (favorites_list[i].uid != $('#uid').val()) {
+			if (favorites_list[i].uid != $('#useridtf').val()) {
 				t.push(favorites_list[i]);
 			}
 		}
@@ -155,7 +155,7 @@ function toggleFavorite() {
 	} else {
 		// Adding to Favorites List
 		favorites_list.push({
-			uid: $('#uid').val(),
+			uid: $('#useridtf').val(),
 			sex: $('#sex').val(),
 			face: $('img.avatar').attr('src'),
 			nickname: $('h3.name').html()
