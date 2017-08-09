@@ -157,6 +157,7 @@ ipcMain.on('download-video', (event, arg) => {
 	if (queuewin.isVisible() == false) { queuewin.showInactive(); }
 	queuewin.webContents.send('add-to-queue', { url: arg.url });
 });
+ipcMain.on('show-queue', () => { queuewin.show(); });
 ipcMain.on('hide-queue', () => { queuewin.hide(); });
 
 
