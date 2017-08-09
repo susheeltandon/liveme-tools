@@ -45,8 +45,14 @@ $(function(){
 				for (i = 0; i< queue.length; i++)
 					$('#queuelist').append('<div class="entry" id="'+queue[i].id+'"><div class="title">'+queue[i].url+'</div><div class="progress"></div></div>');
 
+				ipcRenderer.send('show-queue');
+				setTimeout(function(){
+					beginDownload();
+				}, 1000);
 			}
 		}
+
+
 	});
 
 	// Fetch History
@@ -104,7 +110,6 @@ function beginDownload() {
 			var add = true;
 			for (i = 0; i < download_history.length; i++) {
 				if (download_history[i] == queue[j].url) { 
-					console.log(download_history[i] + ' matches ' + queue[j].url);
 					add = false;
 				}
 			}
@@ -113,6 +118,8 @@ function beginDownload() {
 
 		queue = tlist;
 	}
+
+	if (queue.length < 1) return;
 
 	$('#queuelist').html('');
 	for (i = 0; i < queue.length; i++) {
@@ -130,7 +137,7 @@ function beginDownload() {
 				beginDownload();
 			} else {
 				isDownloading = false;
-				//ipcRenderer.send('hide-queue');
+				ipcRenderer.send('hide-queue');
 			}
 		},
 		on_error: function(e) {
@@ -138,7 +145,7 @@ function beginDownload() {
 				beginDownload();
 			} else {
 				isDownloading = false;
-				//ipcRenderer.send('hide-queue');
+				ipcRenderer.send('hide-queue');
 			}
 		},
 		on_progress: function(e) {
@@ -146,6 +153,7 @@ function beginDownload() {
 			$('.entry.active .progress').css({ width: p+'%' });
 		}
 	}).pipe(fs.createWriteStream(settings.downloadpath+'/'+queue[0].file));
+
 	queue.shift();
 
 	
