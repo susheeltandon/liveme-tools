@@ -3,8 +3,6 @@ const urlResolve = require('url').resolve;
 const miniget = require('miniget');
 const m3u8 = require('./m3u8-parser');
 const Queue = require('./queue');
-const util = require('util');
-const EventEmitter = require('events').EventEmitter;
 
 /**
  * @param {String} playlistURL
@@ -15,7 +13,8 @@ module.exports = function(playlistURL, options) {
     var stream = new PassThrough();
 
     options = options || { 
-        on_complete: function() {},
+        on_complete: function(e) {},
+        on_error: function(e) {},
         on_progress: function(e) { return { current: 0, total: 0 }}
     };
     var chunkReadahead = options.chunkReadahead || 3;
@@ -38,18 +37,18 @@ module.exports = function(playlistURL, options) {
     var fetchingPlaylist = false;
     var destroyed = false;
     var ended = false;
-    var totalItems = 0, _currentItemCount = 0;
+    var totalSegments = 0, currentSegment = 0;
 
     var requestQueue = new Queue(function(segmentURL, callback) {
         var segment = miniget(urlResolve(playlistURL, segmentURL), requestOptions);
         segment.on('error', callback);
         streamQueue.push(segment, callback);
         
-        _currentItemCount++;
-        if (totalItems > _currentItemCount) {
+        currentSegment++;
+        if (totalSegments > currentSegment) {
             options.on_progress({
-                current: _currentItemCount,
-                total: totalItems
+                current: currentSegment,
+                total: totalSegments
             });
 
         }
@@ -62,6 +61,7 @@ module.exports = function(playlistURL, options) {
     });
 
     function onError(err) {
+        options.on_error(err);
         stream.emit('error', err);
         stream.end();
     }
@@ -73,7 +73,7 @@ module.exports = function(playlistURL, options) {
             requestQueue.tasks.length + requestQueue.active === refreshThreshold) {
             refreshPlaylist();
         } else if (ended && !requestQueue.tasks.length && !requestQueue.active) {
-            options.on_complete();
+            options.on_complete({ url: playlistURL, total_parts: totalSegments });
             stream.end();
         }
     }
@@ -94,7 +94,7 @@ module.exports = function(playlistURL, options) {
             }
         });
         parser.on('item', function(item) {
-            totalItems++;
+            totalSegments++;
             requestQueue.push(item, onQueuedEnd);
         });
         parser.on('end', function() {
@@ -119,4 +119,4 @@ module.exports = function(playlistURL, options) {
 
     return stream;
 };
-util.inherits(module.exports , EventEmitter);
+

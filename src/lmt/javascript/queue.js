@@ -18,28 +18,52 @@ const { remote, BrowserWindow, ipcRenderer } = require('electron');
 const fs = require('fs');
 const os = require('os');
 const m3u8stream = require('./m3u8stream/index');
-var isDownloading = false, settings;
+var isDownloading = false, settings, queue_index = 0, queue = [], download_history = [];
 
 
 $(function(){
 
-	var fn = remote.app.getPath('appData') + '/' + remote.app.getName() +'/settings.json';
-	
-	fs.readFile(fn, 'utf8', function (err,data) {
+	fs.readFile(remote.app.getPath('appData') + '/' + remote.app.getName() +'/settings.json', 'utf8', function (err,data) {
 		if (err) {
+
 			settings = {
 				downloadpath : remote.app.getPath('home') + '/Downloads'
 			};
 		} else {
 			settings = JSON.parse(data);
 		}
-		return;
+	});
+
+	fs.readFile(remote.app.getPath('appData') + '/' + remote.app.getName() +'/download_history.json', 'utf8', function (err,data) {
+		if (err) {
+			download_history = [ '-' ];
+		} else {
+			download_history = JSON.parse(data);
+		}
 	});
 
 	ipcRenderer.on('add-to-queue', (event, arg) => { 
-		var a=arg.url.split('/'),id=a[a.length-1];
+		var a=arg.url.split('/'),b=a[a.length-1].split('.'),id=b[0],add=true;
 		if (id.indexOf('playlist') > -1)id=a[a.length-2];
-		$('#queuelist').append('<div class="entry" id="'+id+'"><div class="title">'+arg.url+'</div><div class="progress"></div></div>');
+
+		if (download_history.length > 0)
+			for (i = 0; i < download_history.length; i++) {
+				if (download_history[i] == arg.url) { 
+					add = false;
+					break;
+				}
+			}
+
+		if (add) {
+			queue.push({
+				url: arg.url,
+				file: id+'.ts'
+			});
+			$('#queuelist').append('<div class="entry" id="'+id+'"><div class="title">'+arg.url+'</div><div class="progress"></div></div>');
+		}
+	
+		fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/download_queue.json', JSON.stringify(queue), 'utf8', function() {} );
+
 		setTimeout(function(){
 			if (isDownloading == false) beginDownload();	
 		}, 100);
@@ -47,27 +71,38 @@ $(function(){
 });
 
 function beginDownload() {
+
+	if (queue.length < 1) return;
+
 	isDownloading = true;
 
-	var u = $('.entry:first-child').text(), s = u.split('/'), f = s[s.length - 1];
-	if (f.indexOf('playlist') > -1) f = s[s.length - 2];
-	var ff = f.split('.'), filename = ff[0] + '.ts';
-	$('.entry:first-child').addClass('active');
-	
-	m3u8stream(u, {
-		on_complete: function() {
-			$('.entry:first-child').remove();
-			if ($('.entry').get().length > 0) {
+	m3u8stream(queue[0].url, {
+		on_complete: function(e) {
+			download_history.push(e.url);
+			$('.entry.active').remove();
+			fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/download_history.json', JSON.stringify(download_history), 'utf8', function(){});
+
+			if (queue.length > 0) {
 				beginDownload();
 			} else {
 				isDownloading = false;
-				ipcRenderer.send('hide-queue');
+				//ipcRenderer.send('hide-queue');
+			}
+		},
+		on_error: function(e) {
+			if (queue.length > 0) {
+				beginDownload();
+			} else {
+				isDownloading = false;
+				//ipcRenderer.send('hide-queue');
 			}
 		},
 		on_progress: function(e) {
 			var p = Math.round((e.current / e.total) * 100);
 			$('.entry.active .progress').css({ width: p+'%' });
 		}
-	}).pipe(fs.createWriteStream(settings.downloadpath+'/'+filename));
+	}).pipe(fs.createWriteStream(settings.downloadpath+'/'+queue[0].file));
+	queue.pop();
+
 	
 }
