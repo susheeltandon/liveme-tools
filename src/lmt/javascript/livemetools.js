@@ -167,6 +167,25 @@ function toggleFavorite() {
 	}
 }
 
+function checkIfFavorite() {
+	setTimeout(function(){
+		fs.readFile(remote.app.getPath('appData') + '/' + remote.app.getName() +'/favorites.json', 'utf8', function (err,data) {
+			if (err) {
+				console.log('File error getting favorites list.');
+			} else {
+				favorites_list = JSON.parse(data);
+			}
+
+			var onList = false;
+			for (i = 0; i < favorites_list.length; i++) {
+				if (favorites_list[i].uid == $('#useridtf').val()) onList = true;
+			}
+			if (onList) $('#favorites_button').addClass('active');
+
+		});
+	}, 100);
+}
+
 function beginSearch() {
 	if (isSearching) { return; }
 
@@ -265,6 +284,8 @@ function beginSearch2() {
 
 }
 
+
+
 function showUser(u) {
 	$('#type').val('user-lookup');
 	$('#query').val(u);
@@ -305,7 +326,7 @@ function renderUserLookup(e) {
 	if (e.userinfo.userid > 0) {
 		var u = e.userinfo;
 		userID = u.userid;
-		var h=	'<img src="'+u.usericon+'" class="avatar" onerror="this.src=\'images/blank.png\'"><br><h3 class="name">'+u.username+'</h3><label>User ID:</label><input type="text" id="uid" value="'+u.userid+'" disabled="disabled">'+
+		var h=	'<img src="'+u.usericon+'" class="avatar" onerror="this.src=\'images/blank.png\'"><br><h3 class="name">'+u.username+'</h3><label>User ID:</label><input type="text" id="useridtf" value="'+u.userid+'" disabled="disabled">'+
 				'<h4>Level: ' + u.level+'</h4><input type="button" value="Favorite" onClick="toggleFavorite()" id="favorites_button"><br><br><br>'+
 				'<input type="button" value="Following '+u.following+'" onClick="showFollowing(\''+u.userid+'\', '+u.following+', \''+u.username+'\')">'+
 				'<input type="button" value="'+u.fans+' Fans" onClick="showFans(\''+u.userid+'\', '+u.following+', \''+u.username+'\')"><input type="hidden" id="sex" value="'+u.sex+'">';
@@ -343,25 +364,7 @@ function renderUserLookup(e) {
 		}
 	}
 
-	setTimeout(function(){
-		var fn = remote.app.getPath('appData') + '/' + remote.app.getName() +'/favorites.json', skip = false;
-		fs.readFile(fn, 'utf8', function (err,data) {
-			if (err) {
-				console.log('File error getting favorites list.');
-				return;
-			} else {
-				favorites_list = JSON.parse(data);
-			}
-
-			for (i = 0; i < favorites_list.length; i++) {
-				if (favorites_list[i].uid == $('#uid').val()) {
-					$('#favorites_button').addClass('active');
-				} else {
-					$('#favorites_button').removeClass('active');
-				}
-			}
-		});
-	}, 500);
+	checkIfFavorite();
 
 }
 
@@ -379,7 +382,7 @@ function renderSearchResults(e) {
 
 	for(i = 0; i < e.length; i++) {
 		if (e[i].userid > 0) {
-			var h = '<div class="user_entry '+e[i].sex+'"><img class="avatar" src="'+e[i].thumb+'"><h4>'+e[i].nickname+'</h4><div class="userid">UserID:</div><div class="level">Level: <span>'+e[i].level+'</span></div>';
+			var h = '<div class="user_entry '+e[i].sex+'"><img class="avatar" src="'+e[i].thumb+'" onerror="this.src=\'images/blank.png\'"><h4>'+e[i].nickname+'</h4><div class="userid">UserID:</div><div class="level">Level: <span>'+e[i].level+'</span></div>';
 			h += '<input type="button" class="fans" value="'+e[i].fans+' Fans" onClick="showFans(\''+e[i].userid+'\', '+e[i].fans+', \''+e[i].nickname+'\')">';
 			h += '<input type="button" class="followings" value="Following '+e[i].followings+'" onClick="showFollowing(\''+e[i].userid+'\', '+e[i].followings+', \''+e[i].nickname+'\')">';
 			h += '<input type="button" class="user" value="'+e[i].userid+'" onClick="showUser(\''+e[i].userid+'\')">';
