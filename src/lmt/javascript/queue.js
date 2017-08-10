@@ -51,8 +51,6 @@ $(function(){
 				}, 2000);
 			}
 		}
-
-
 	});
 
 	// Fetch History
@@ -63,6 +61,7 @@ $(function(){
 			download_history = JSON.parse(data);
 		}
 	});
+
 
 	ipcRenderer.on('add-to-queue', (event, arg) => { 
 		var a=arg.url.split('/'),b=a[a.length-1].split('.'),id=b[0],add=true;
@@ -93,7 +92,7 @@ $(function(){
 
 		setTimeout(function(){
 			if (isDownloading == false) beginDownload();	
-		}, 100);
+		}, 500);
 	});	
 });
 
@@ -101,42 +100,41 @@ function beginDownload() {
 
 	if (queue.length < 1) return;
 
+
 	isDownloading = true;
 
-	if (download_history.length > 0) {
-		var tlist = [];
+	var tlist = [];
 
-		for (j = 0; j < queue.length; j++) {
-			var add = true;
-			for (i = 0; i < download_history.length; i++) {
-				if (download_history[i] == queue[j].url) { 
-					add = false;
-				}
+	for (j = 0; j < queue.length; j++) {
+		var add = true;
+		for (i = 0; i < download_history.length; i++) {
+			if (download_history[i] == queue[j].url) { 
+				add = false;
 			}
-			if (add) tlist.push(queue[j]);
 		}
-
-		queue = tlist;
-
-		$('#queuelist').html('');
-		for (i = 0; i < queue.length; i++) {
-			$('#queuelist').append('<div class="entry" id="'+queue[i].id+'"><div class="title">'+queue[i].url+'</div><div class="progress"></div></div>');		
-		}
-		fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/download_history.json', JSON.stringify(download_history), 'utf8', function(){});
-		
-		setTimeout(function(){
-			beginDownload();
-		}, 250);
-		return;
+		if (add) tlist.push(queue[j]);
 	}
 
-	if (queue.length < 1) return;
+	queue = tlist;
+
+	$('#queuelist').html('');
+	for (i = 0; i < queue.length; i++) {
+		$('#queuelist').append('<div class="entry" id="'+queue[i].id+'"><div class="title">'+queue[i].url+'</div><div class="progress"></div></div>');		
+	}
+	fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/download_history.json', JSON.stringify(download_history), 'utf8', function(){});
+	
 
 	$('#queuelist').html('');
 	for (i = 0; i < queue.length; i++) {
 		$('#queuelist').append('<div class="entry" id="'+queue[i].id+'"><div class="title">'+queue[i].url+'</div><div class="progress"></div></div>');		
 	}
 	$('#'+queue[0].id).addClass('active');
+
+
+	if (queue.length < 1) {
+		isDownloading = false;
+		return;
+	}
 
 	m3u8stream(queue[0].url, {
 		on_complete: function(e) {
