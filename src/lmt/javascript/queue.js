@@ -116,11 +116,7 @@ function beginDownload() {
 	}
 
 	queue = tlist;
-
-	$('#queuelist').html('');
-	for (i = 0; i < queue.length; i++) {
-		$('#queuelist').append('<div class="entry" id="'+queue[i].id+'"><div class="title">'+queue[i].url+'</div><div class="progress"></div></div>');		
-	}
+	fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/download_queue.json', JSON.stringify(queue), 'utf8', function() {} );
 	fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/download_history.json', JSON.stringify(download_history), 'utf8', function(){});
 	
 
@@ -164,6 +160,6 @@ function beginDownload() {
 	}).pipe(fs.createWriteStream(settings.downloadpath+'/'+queue[0].file));
 
 	queue.shift();
-
+	fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/download_queue.json', JSON.stringify(queue), 'utf8', function() {} );
 	
 }
