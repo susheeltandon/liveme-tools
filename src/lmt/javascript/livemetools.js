@@ -17,7 +17,7 @@
 const { electron, BrowserWindow, remote, ipcRenderer } = require('electron');
 const fs = require('fs');
 
-var isSearching = false, favorites_list = [];
+var isSearching = false, favorites_list = [], debounced = false;
 
 $(function(){
 
@@ -312,19 +312,35 @@ function showUser(u) {
 }
 
 function showFollowing(u,m,n) {
+	if (debounced) return;
+	debounced = true;
+	setTimeout(function(){ debounced = false; }, 500);
+
 	ipcRenderer.send('open-window', { url: 'following.html?'+u+'#'+m+'#'+n });
 }
 
 function showFans(u,m,n) {
+	if (debounced) return;
+	debounced = true;
+	setTimeout(function(){ debounced = false; }, 500);
+
 	ipcRenderer.send('open-window', { url: 'fans.html?'+u+'#'+m+'#'+n });
 }
 
 
 function playVideo(u) {
+	if (debounced) return;
+	debounced = true;
+	setTimeout(function(){ debounced = false; }, 500);
+
 	ipcRenderer.send('play-video', { url: u });
 }
 
 function downloadVideo(u) {
+	if (debounced) return;
+	debounced = true;
+	setTimeout(function(){ debounced = false; }, 500);
+
 	ipcRenderer.send('download-video', { url: u });
 }
 
