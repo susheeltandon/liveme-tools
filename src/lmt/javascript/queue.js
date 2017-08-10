@@ -48,7 +48,7 @@ $(function(){
 				ipcRenderer.send('show-queue');
 				setTimeout(function(){
 					beginDownload();
-				}, 1000);
+				}, 2000);
 			}
 		}
 
@@ -117,6 +117,17 @@ function beginDownload() {
 		}
 
 		queue = tlist;
+
+		$('#queuelist').html('');
+		for (i = 0; i < queue.length; i++) {
+			$('#queuelist').append('<div class="entry" id="'+queue[i].id+'"><div class="title">'+queue[i].url+'</div><div class="progress"></div></div>');		
+		}
+		fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/download_history.json', JSON.stringify(download_history), 'utf8', function(){});
+		
+		setTimeout(function(){
+			beginDownload();
+		}, 250);
+		return;
 	}
 
 	if (queue.length < 1) return;
