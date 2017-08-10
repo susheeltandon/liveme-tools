@@ -38,10 +38,10 @@
 
 			                    if ($("#small_user_list").append(t), ct + i > max) break
 			                }
-			                ct += e.data.length;
-			                ct < max && setTimeout(function() {
-			                    cp++, doFetch()
-			                }, 500)
+			                setTimeout(function() {
+			                    cp++;
+			                    doFetch();
+			                }, 200);
 			            }
 			        }
 			    })
@@ -57,11 +57,10 @@
 			    max = 0,
 			    userID = "";
 			$(function() {
-				$("img").error(function () { $(this).hide(); });
 				$('#small_user_list').html('');
 			    setTimeout(function() {
 			        doFetch()
-			    }, 250)
+			    }, 250);
 			});
 		</script>
 		
