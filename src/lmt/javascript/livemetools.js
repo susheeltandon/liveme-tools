@@ -82,6 +82,7 @@ $(function(){
 
 function showSettings() { ipcRenderer.send('show-settings'); }
 function showFavorites() { ipcRenderer.send('show-favorites'); }
+function showQueue() { ipcRenderer.send('show-queue'); }
 
 function closeApp() { window.close(); }
 function enterOnSearch(e) { if (e.keyCode == 13) beginSearch(); } 

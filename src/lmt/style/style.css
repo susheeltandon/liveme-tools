@@ -67,9 +67,10 @@ header img {
 }
 
 header img.close-icon { right: 12px; }
-header img.settings-icon { right: 44px; }
-header img.favorites-icon { right: 76px; }
-header img.upload-icon { right: 108px; }
+header img.settings-icon { right: 60px; }
+header img.favorites-icon { right: 92px; }
+header img.upload-icon { right: 124px; }
+header img.download-icon { right: 156px; }
 
 header img:hover {
 	opacity: 0.9;
@@ -101,7 +102,7 @@ header .search {
 }
 header .search input, header .search .select { margin-bottom: 5px; }
 header .search .select { width: 120px; }
-header .search input[type=search] { width: 400px; }
+header .search input[type=search] { width: 320px; }
 header .search input[type=text] { width: 65px; text-align: center; }
 
 header.small {
