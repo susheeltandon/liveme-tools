@@ -15,24 +15,12 @@
 */
 
 const { remote, BrowserWindow, ipcRenderer } = require('electron');
-const fs = require('fs'), path = require('path');
-const os = require('os');
+const fs = require('fs'), path = require('path'), os = require('os'), appSettings = remote.require('electron-settings');
 const m3u8stream = require('./m3u8stream/index');
-var isDownloading = false, settings, queue_index = 0, queue = [], download_history = [];
+var isDownloading = false, queue_index = 0, queue = [], download_history = [];
 
 
 $(function(){
-
-	// Fetch Settings
-	fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'settings.json'), 'utf8', function (err,data) {
-		if (err) {
-			settings = {
-				downloadpath : path.join(remote.app.getPath('home'), 'Downloads')
-			};
-		} else {
-			settings = JSON.parse(data);
-		}
-	});
 
 	// Fetch last queue
 	fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_queue.json'), 'utf8', function (err,data) {
@@ -156,7 +144,7 @@ function beginDownload() {
 			var p = Math.round((e.current / e.total) * 100);
 			$('.entry.active .progress').css({ width: p+'%' });
 		}
-	}).pipe(fs.createWriteStream(path.join(settings.downloadpath, queue[0].file)));
+	}).pipe(fs.createWriteStream(path.join(appSettings.get('downloader.directory'), queue[0].file)));
 
 	queue.shift();
 	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_queue.json'), JSON.stringify(queue), 'utf8', function() {} );

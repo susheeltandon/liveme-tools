@@ -15,7 +15,7 @@
 */
 
 const { electron, BrowserWindow, remote, ipcRenderer } = require('electron');
-const fs = require('fs'), path = require('path');
+const fs = require('fs'), path = require('path'), appSettings = remote.require('electron-settings');
 
 var isSearching = false, favorites_list = [], debounced = false;
 
@@ -130,7 +130,7 @@ function showUpload() {
 
 		}
 		
-		$('#download_folder').val(settings.downloadpath);
+		$('#download_folder').val(appSettings.get('downloader.directory'));
 
 		return;
 	});

@@ -18,12 +18,27 @@
 
 */
 const 	{app, BrowserWindow, ipcMain, Menu} = require('electron'), os = require('os'), 
-		fs = require('fs'), isDev = require('electron-is-dev');
+		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path');
 		
 
-let mainwin, queuewin, playerWindow, settingsWindow, favoritesWindow, chatWindow, menu;
+let mainwin, queuewin, playerWindow, settingsWindow, favoritesWindow, chatWindow, menu, appSettings = require('electron-settings');
 
 function createWindow(){
+	/*
+		Load Settings
+	*/
+	if (!appSettings.get('downloader.directory')) {
+		/*
+			Couldn't find any settings - Load the defaults
+		*/
+		appSettings.set('downloader', {
+			directory: path.join(app.getPath('home'), 'Downloads', 'liveme-tools')
+		});
+	}
+
+	/*
+		Create Windows
+	*/
 	mainwin=new BrowserWindow({
 		icon: __dirname + '/appicon.ico', width:980, height:600, minWidth:980, minHeight:522, darkTheme:true, autoHideMenuBar:false,
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, vibrancy:'dark', 
@@ -44,7 +59,6 @@ function createWindow(){
 	});
 
 	queuewin.loadURL(`file://${__dirname}/lmt/queue.html`);
-	//queuewin.openDevTools();
 	queuewin.on('closed', () => { 
 		queuewin = null; 
 	});
