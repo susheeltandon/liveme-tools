@@ -143,30 +143,11 @@ function showUpload() {
 }
 
 function toggleFavorite() {
-	if ($('#favorites_button').hasClass('active')) {
-		// Removing from favorites list
-		var t = [];
-		for (i = 0; i < favorites_list.length; i++) {
-			if (favorites_list[i].uid != $('#useridtf').val()) {
-				t.push(favorites_list[i]);
-			}
-		}
-		favorites_list = t;
-		fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), JSON.stringify(favorites_list), 'utf8', function(){
-			$('#favorites_button').removeClass('active');
-		});
-	} else {
-		// Adding to Favorites List
-		favorites_list.push({
-			uid: $('#useridtf').val(),
-			sex: $('#sex').val(),
-			face: $('img.avatar').attr('src'),
-			nickname: $('h3.name').html()
-		})
-		fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), JSON.stringify(favorites_list), 'utf8', function(){
-			$('#favorites_button').addClass('active');
-		});
 
+	if (Favorites.isOnList($('#useridtf').val()) == true) {
+		Favorites.remove($('#useridtf').val());
+	} else {
+		Favorites.add($('#useridtf').val());
 	}
 }
 

@@ -8,6 +8,7 @@ var fav_list = [], last_change = 0, is_saved = false;
 module.exports = {
 	add : function(e) {
 		fav_list.push(e);
+		write_to_file();
 	},
 
 	remove: function(e) {
@@ -17,6 +18,7 @@ module.exports = {
 				fav_list.splice(i, 1);
 			}
 		}
+		write_to_file();
 	},
 
 	save: function() {
