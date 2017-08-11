@@ -98,6 +98,7 @@ if (shouldQuit) {
 
 app.on('ready', createWindow)
 app.on('window-all-closed', () => { 
+	mainwin.webContents.send('do-shutdown');
 	app.quit();
 });
 app.on('activate', () => { if (mainwin === null) { createWindow(); } });
