@@ -337,12 +337,12 @@ function playVideo(u) {
 	ipcRenderer.send('play-video', { url: u });
 }
 
-function downloadVideo(u) {
+function downloadVideo(u, i) {
 	if (debounced) return;
 	debounced = true;
 	setTimeout(function(){ debounced = false; }, 500);
 
-	ipcRenderer.send('download-video', { url: u });
+	ipcRenderer.send('download-video', { url: u, videoid: i, user: current_user });
 }
 
 function openChat(u, t) {
@@ -403,7 +403,7 @@ function renderUserLookup(e) {
 			h += '<div class="counts"><label>Length:</label><span>'+length+'</span><label>Views:</label><span>' + e.videos[i].plays + '</span><label>Likes:</label><span>' + e.videos[i].likes + '</span><label>Shares:</label><span>' + e.videos[i].shares + '</span><label>Country:</label><span>'+e.videos[i].location.country+'</span></div>';
 			h += '<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat(\''+e.videos[i].msgfile+'\', \'' + e.videos[i].dt + '\')" title="View Message History">';
 			h += '<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo(\''+e.videos[i].url+'\')" title="Play Video">';
-			h += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+e.videos[i].url+'\')" title="Download Video">';
+			h += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+e.videos[i].url+'\', \''+e.videos[i].videoid+'\')" title="Download Video">';
 			h += '</div>';
 			$('#videolist').append(h);
 		}
