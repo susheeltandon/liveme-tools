@@ -452,7 +452,7 @@ function renderSearchResults(e) {
 
 						hh += '<div class="counts"><label>Length:</label><span>'+length+'</span><label>Views:</label><span>' + e[i].videos[j].plays + '</span><label>Likes:</label><span>' + e[i].videos[j].likes + '</span><label>Shares:</label><span>' + e[i].videos[j].shares + '</span><label>Country:</label><span>'+e[i].videos[j].location.country+'</span></div>';
 						hh += '<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo(\''+e[i].videos[j].url+'\')">';
-						hh += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+e[i].videos[j].url+'\')">';
+						//hh += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+e[i].videos[j].url+'\')">';
 						hh += '</div>';
 						
 						h += hh;
