@@ -1,6 +1,6 @@
 {
   "name": "LiveMeTools",
-  "version": "3.5.6",
+  "version": "3.6.0",
   "description": "A tool designed to help in searching and viewing of LiveMe broadcasts.",
   "main": "index.js",
   "author": "TheCoder",
@@ -22,7 +22,8 @@
     "liveme"
   ],
   "contributors": [
-    "TheCoder75"
+    "thecoder75",
+    "polydragon"
   ],
   "license": "GPL3"
 }
