@@ -15,7 +15,7 @@
 */
 
 const { remote, BrowserWindow, ipcRenderer } = require('electron');
-const fs = require('fs');
+const fs = require('fs'), path = require('path');
 const os = require('os');
 const m3u8stream = require('./m3u8stream/index');
 var isDownloading = false, settings, queue_index = 0, queue = [], download_history = [];
@@ -24,11 +24,10 @@ var isDownloading = false, settings, queue_index = 0, queue = [], download_histo
 $(function(){
 
 	// Fetch Settings
-	fs.readFile(remote.app.getPath('appData') + '/' + remote.app.getName() +'/settings.json', 'utf8', function (err,data) {
+	fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'settings.json'), 'utf8', function (err,data) {
 		if (err) {
-
 			settings = {
-				downloadpath : remote.app.getPath('home') + '/Downloads'
+				downloadpath : path.join(remote.app.getPath('home'), 'Downloads')
 			};
 		} else {
 			settings = JSON.parse(data);
@@ -36,7 +35,7 @@ $(function(){
 	});
 
 	// Fetch last queue
-	fs.readFile(remote.app.getPath('appData') + '/' + remote.app.getName() +'/download_queue.json', 'utf8', function (err,data) {
+	fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_queue.json'), 'utf8', function (err,data) {
 		if (err) {
 			queue = [];
 		} else {
@@ -54,7 +53,7 @@ $(function(){
 	});
 
 	// Fetch History
-	fs.readFile(remote.app.getPath('appData') + '/' + remote.app.getName() +'/download_history.json', 'utf8', function (err,data) {
+	fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_history.json'), 'utf8', function (err,data) {
 		if (err) {
 			download_history = [ '-' ];
 		} else {
@@ -88,7 +87,7 @@ $(function(){
 			$('#queuelist').append('<div class="entry" id="'+id+'"><div class="title">'+arg.url+'</div><div class="progress"></div></div>');
 		}
 	
-		fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/download_queue.json', JSON.stringify(queue), 'utf8', function() {} );
+		fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_queue.json'), JSON.stringify(queue), 'utf8', function() {} );
 
 		setTimeout(function(){
 			if (isDownloading == false) beginDownload();	
@@ -116,8 +115,8 @@ function beginDownload() {
 	}
 
 	queue = tlist;
-	fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/download_queue.json', JSON.stringify(queue), 'utf8', function() {} );
-	fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/download_history.json', JSON.stringify(download_history), 'utf8', function(){});
+	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_queue.json'), JSON.stringify(queue), 'utf8', function() {} );
+	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_history.json'), JSON.stringify(download_history), 'utf8', function(){});
 	
 
 	$('#queuelist').html('');
@@ -136,7 +135,7 @@ function beginDownload() {
 		on_complete: function(e) {
 			download_history.push(e.url);
 			$('.entry.active').remove();
-			fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/download_history.json', JSON.stringify(download_history), 'utf8', function(){});
+			fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_history.json'), JSON.stringify(download_history), 'utf8', function(){});
 
 			if (queue.length > 0) {
 				beginDownload();
@@ -157,9 +156,9 @@ function beginDownload() {
 			var p = Math.round((e.current / e.total) * 100);
 			$('.entry.active .progress').css({ width: p+'%' });
 		}
-	}).pipe(fs.createWriteStream(settings.downloadpath+'/'+queue[0].file));
+	}).pipe(fs.createWriteStream(path.join(settings.downloadpath, queue[0].file)));
 
 	queue.shift();
-	fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/download_queue.json', JSON.stringify(queue), 'utf8', function() {} );
+	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_queue.json'), JSON.stringify(queue), 'utf8', function() {} );
 	
 }

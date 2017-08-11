@@ -15,7 +15,7 @@
 */
 
 const { electron, BrowserWindow, remote, ipcRenderer } = require('electron');
-const fs = require('fs');
+const fs = require('fs'), path = require('path');
 
 var isSearching = false, favorites_list = [], debounced = false;
 
@@ -150,7 +150,7 @@ function toggleFavorite() {
 			}
 		}
 		favorites_list = t;
-		fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/favorites.json', JSON.stringify(favorites_list), 'utf8', function(){
+		fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), JSON.stringify(favorites_list), 'utf8', function(){
 			$('#favorites_button').removeClass('active');
 		});
 	} else {
@@ -161,7 +161,7 @@ function toggleFavorite() {
 			face: $('img.avatar').attr('src'),
 			nickname: $('h3.name').html()
 		})
-		fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/favorites.json', JSON.stringify(favorites_list), 'utf8', function(){
+		fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), JSON.stringify(favorites_list), 'utf8', function(){
 			$('#favorites_button').addClass('active');
 		});
 
@@ -170,7 +170,7 @@ function toggleFavorite() {
 
 function checkIfFavorite() {
 	setTimeout(function(){
-		fs.readFile(remote.app.getPath('appData') + '/' + remote.app.getName() +'/favorites.json', 'utf8', function (err,data) {
+		fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), 'utf8', function (err,data) {
 			if (err) {
 				console.log('File error getting favorites list.');
 			} else {

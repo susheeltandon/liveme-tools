@@ -1,8 +1,8 @@
-const remote = require('electron').remote, ipcRenderer = require('electron').ipcRenderer, app = remote.app, fs = require('fs');
+const remote = require('electron').remote, ipcRenderer = require('electron').ipcRenderer, app = remote.app, fs = require('fs'), path = require('path');
 var favorites_list = [], clean_list = [];
 
 $(function(){
-	var fn = app.getPath('appData') + '/' + app.getName() +'/favorites.json';
+	var fn = path.join(app.getPath('appData'), app.getName(), 'favorites.json');
 	
 	fs.readFile(fn, 'utf8', function (err,data) {
 		if (err) {
@@ -22,7 +22,7 @@ $(function(){
 					clean_list.push(favorites_list[i]);
 				} 
 			}
-			fs.writeFile(remote.app.getPath('appData') + '/' + remote.app.getName() + '/favorites.json', JSON.stringify(clean_list), 'utf8', function() {} );
+			fs.writeFile(fn, JSON.stringify(clean_list), 'utf8', function() {} );
 		}
 	});
 	
