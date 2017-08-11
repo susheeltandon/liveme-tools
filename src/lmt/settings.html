@@ -12,9 +12,11 @@
 		<script src="javascript/settings.js"></script>
 
 		<style>
-			#download_folder { width: 100%; }
-			
+			#download_folder { width: 320px; }
 			span.switch { float: right; }
+			ul { list-style: none; margin: 0; padding: 0 0 0 32px; }
+			li { margin: 2px 0; padding: 0; font-size: 8.5pt; font-weight: 300; color: rgba(255,255,255,0.7); }
+			li span { font-weight: 400; display: inline-block; width: 100px; }
 		</style>
 	</head>
 
@@ -25,13 +27,36 @@
 		</header>
 
 		<div class="inset">
-			<h3>Downloads</h3>
-			<p>Select the folder where you want downloads stored:</p>
-			<input type="text" id="download_folder" placeholder="Downloads">
-			<br><br>
+			<div>
+				<h4>Downloads</h4>
+				<p>Select the folder where you want downloads stored:</p>
+				<input type="text" id="download_folder" placeholder=""> <input type="button" value="..." onClick="SetDownloadPath()">
+			</div>
+			<div style="margin-top: 48px;">
+				<h4>Filenames</h4>
+				<div class="select" style="margin-bottom: 4px; width: 160px">
+					<select id="filemode">
+						<option selected value="0">Use playlist filename</option>
+						<option value="1">Use custom</option>
+					</select>
+				</div>
+				<div id="ftblock">
+					<input type="text" id="filetemplate" style="width: 100%;">
+					<ul>
+						<li><span>%%username%%</span> Username</li>
+						<li><span>%%videoid%%</span> Video ID</li>
+						<li><span>%%videotitle%%</span> Video Title</li>
+						<li><span>%%videotime%%</span> Video Time</li>
+					</ul>
+					<p style="font-size: 8pt;">
+						The filename of the playlist will be used if the custom title ends up being empty.
+					</p>
+				</div>
+			</div>
+
 			
-			<div style="text-align: center;">
-				<input type="button" value="Save" onClick="setSettings()">
+			<div style="text-align: center; margin-top: 48px">
+				<input type="button" value="Save" onClick="saveSettings()">
 			</div>
 
 		</div>
