@@ -1,6 +1,7 @@
 /*
 	Favorites Module
 */
+"use strict";
 
 var fav_list = [], last_change = 0, is_saved = false;
 
@@ -30,6 +31,12 @@ module.exports = {
 
 	lastChange: function() { return last_change; }
 
+	isOnList: function(e) {
+		for (var i = 0; i < fav_list.length; i++) {
+			if (fav_list[i].userid == e) return true;
+		}
+		return false;
+	}
 }
 
 function write_to_file() {

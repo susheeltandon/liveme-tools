@@ -1,4 +1,4 @@
-const { remote, ipcRenderer } = require('electron').remote, app = remote.app, Favorites = require('./module/favorites.js');
+const { remote, ipcRenderer } = require('electron').remote, app = remote.app, Favorites = require('./module/favorites');
 
 var last_change = 0;
 

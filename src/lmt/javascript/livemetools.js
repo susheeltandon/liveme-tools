@@ -14,8 +14,10 @@
 
 */
 
-const { electron, BrowserWindow, remote, ipcRenderer } = require('electron');
-const fs = require('fs'), path = require('path'), appSettings = remote.require('electron-settings');
+const 	{ electron, BrowserWindow, remote, ipcRenderer } = require('electron'),
+		fs = require('fs'), path = require('path'), 
+		appSettings = remote.require('electron-settings'),
+		Favorites = require('./module/favorites');
 
 var isSearching = false, favorites_list = [], debounced = false, current_user = { userid: 0, username: '' };
 
@@ -166,25 +168,6 @@ function toggleFavorite() {
 		});
 
 	}
-}
-
-function checkIfFavorite() {
-	setTimeout(function(){
-		fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), 'utf8', function (err,data) {
-			if (err) {
-				console.log('File error getting favorites list.');
-			} else {
-				favorites_list = JSON.parse(data);
-			}
-
-			var onList = false;
-			for (i = 0; i < favorites_list.length; i++) {
-				if (favorites_list[i].uid == $('#useridtf').val()) onList = true;
-			}
-			if (onList) $('#favorites_button').addClass('active');
-
-		});
-	}, 100);
 }
 
 function beginSearch() {
@@ -409,8 +392,11 @@ function renderUserLookup(e) {
 		}
 	}
 
-	checkIfFavorite();
-
+	setTimeout(function(){
+		if (Favorites.isOnList($('#useridtf').val()) == true) {
+			$('#favorites_button').addClass('active');
+		}
+	}, 100);
 }
 
 function renderSearchResults(e) {
