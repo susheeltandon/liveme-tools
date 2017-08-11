@@ -142,6 +142,8 @@ body:hover > header.small.transparent > * {
 }
 
 
+
+
 .inset {
 	position: absolute;
 	top: 40px;
@@ -320,7 +322,15 @@ body:hover > header.small.transparent > * {
 }
 #userinfo input[type=button]#favorites_button.active:hover { opacity: 1; }
 
-#videolist, #userlist {
+
+
+
+
+
+
+
+#videolist, #userlist, #message_history {
+	display: block;
 	z-index: 2;
 	position: absolute;
 	top: 0;
@@ -330,7 +340,9 @@ body:hover > header.small.transparent > * {
 	overflow-x: hidden;
 	overflow-y: auto;
 }
-#userlist { left: 0; }
+#userlist, #message_history { left: 0; }
+#message_history { top: 24px; }
+
 
 
 #video {
@@ -345,6 +357,10 @@ body:hover > header.small.transparent > * {
     z-index: 1;
 }
 
+
+
+
+
 #small_user_list {
 	display: block;
 	position: absolute;
@@ -355,6 +371,54 @@ body:hover > header.small.transparent > * {
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
+
+
+
+
+
+
+
+.message {
+	display: block;
+	padding: 4px;
+	margin: 8px;
+	background-color: rgba(255,255,255,1);
+	border-radius: 8px;
+	position: relative;
+}
+
+.message .author {
+	position: absolute;
+	top: 2px;
+	left: 8px;
+	font-size: 9pt;
+	font-weight: 600;
+	color: rgba(0,0,0,0.6);
+}
+.message .time {
+	position: absolute;
+	top: 2px;
+	right: 8px;
+	z-index: 2;
+	font-size: 9pt;
+	font-weight: 600;
+	line-height: 16px;
+	color: rgba(0,0,0,0.3);
+}
+.message .content {
+	display: block;
+	font-size: 12pt;
+	font-weight: 400;
+	vertical-align: top;
+	color: rgba(0,0,0,0.7);
+	padding: 24px 16px 8px;
+}
+
+
+
+
+
+
 
 .user_entry {
 	display: block;
@@ -443,12 +507,15 @@ body:hover > header.small.transparent > * {
 }
 .user_entry.clickable:hover { border-color: rgba(0,224,224,0.8); }
 
+
+
+
+
 .video_list {
 	display: none;
 	padding: 0 10px 10px 120px;
 	margin-bottom: 0;
 }
-
 
 
 
@@ -496,7 +563,7 @@ body:hover > header.small.transparent > * {
 }
 .video_entry.highlight > .url { color: rgb(255,255,80); }
 
-.video_entry .watch, .video_entry .download {
+.video_entry .watch, .video_entry .download, .video_entry .chat {
 	position: absolute;
 	top: 24px;
 	display: block;
@@ -508,13 +575,14 @@ body:hover > header.small.transparent > * {
 	padding: 4px;
 	opacity: 0.4;
 }
-.video_entry .watch:hover, .video_entry .download:hover {
+.video_entry .watch:hover, .video_entry .download:hover, .video_entry .chat:hover {
 	background-color: rgba(0,0,0,0.3);
 	opacity: 0.8;
 }
 
 .video_entry .watch { right: 58px; }
 .video_entry .download { right: 10px; }
+.video_entry .chat { right: 106px; }
 
 .video_entry .counts {
 	position: absolute;
@@ -537,6 +605,12 @@ body:hover > header.small.transparent > * {
 	margin-right: 24px;
 	padding-left: 4px;
 }
+
+
+
+
+
+
 
 
 

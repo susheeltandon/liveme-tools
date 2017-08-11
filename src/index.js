@@ -7,17 +7,21 @@
 	 | |____| |\ V /  __/ |  | |  __/    | | (_) | (_) | \__ \
 	 |______|_| \_/ \___|_|  |_|\___|    |_|\___/ \___/|_|___/
 
-													v3.0.0
+													v3.x.x
 		
-		(c)2017 by TheCoder - Licensed under GPL3 now
+		 			Licensed under GPL3 now
 
+	Developers:
+
+	thecoder		- https://github.com/thecoder75
+	polydragon		- https://github.com/polydragon
 
 */
 const 	{app, BrowserWindow, ipcMain, Menu} = require('electron'), os = require('os'), 
 		fs = require('fs'), isDev = require('electron-is-dev');
 		
 
-let mainwin, queuewin, playerWindow, settingsWindow, favoritesWindow, menu;
+let mainwin, queuewin, playerWindow, settingsWindow, favoritesWindow, chatWindow, menu;
 
 function createWindow(){
 	mainwin=new BrowserWindow({
@@ -44,6 +48,15 @@ function createWindow(){
 	queuewin.on('closed', () => { 
 		queuewin = null; 
 	});
+
+	chatWindow = new BrowserWindow({
+		width: 368, height: 640, resizable: true, darkTheme:true, autoHideMenuBar:false, show:false, skipTaskbar: false,
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
+	});
+	chatWindow.on('closed', () => { 
+		chatWindow = null; 
+	});
+	chatWindow.loadURL(`file://${__dirname}/lmt/chat.html`);
 
 	/*
 		Only use custom menus if app is compiled, otherwise leave menus alone during development testing.
@@ -149,6 +162,11 @@ ipcMain.on('livemesearch', (event, arg) => {
 
 
 
+
+
+
+
+
 /*
 	Queue Related
 */
@@ -159,6 +177,10 @@ ipcMain.on('download-video', (event, arg) => {
 });
 ipcMain.on('show-queue', () => { queuewin.show(); });
 ipcMain.on('hide-queue', () => { queuewin.hide(); });
+
+
+
+
 
 
 
@@ -175,6 +197,10 @@ ipcMain.on('open-window', (event, arg) => {
 	win.show();
 	//win.once('ready-to-show', () => { win.show(); });
 });
+
+
+
+
 
 
 
@@ -203,6 +229,26 @@ ipcMain.on('play-video', (event, arg) => {
 ipcMain.on('hide-player', (event, arg) => { 
 	playerWindow.close(); 
 });
+
+
+
+
+
+
+/* 
+	Chat Window 
+*/
+ipcMain.on('open-chat', (event, arg) => {
+	if (chatWindow.isVisible() == false) { chatWindow.showInactive(); }
+	chatWindow.webContents.send('set-chat', { url: arg.url, startTime: arg.startTime });
+});
+ipcMain.on('hide-chat', () => { chatWindow.hide(); });
+
+
+
+
+
+
 
 
 
