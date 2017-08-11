@@ -2,6 +2,7 @@
 	Downloads Module
 */
 
+const appSettings = require('electron').remote.require('electron-settings'), path = require('path');
 var download_queue = [], download_history = [], can_run = false, is_running = false;
 
 module.exports = {
@@ -18,8 +19,8 @@ module.exports = {
             url: 'http://xyz.m3u8'
         }
     */
-    add: function(Url, User, Video) {
-        download_queue.push({ url: Url, user: User, video: Video });
+    add: function(User, Video) {
+        download_queue.push({ user: User, video: Video });
     },
     
     /*
@@ -97,5 +98,29 @@ function runDownloader() {
     while (download_queue.length > 0 && can_run) {
         let item = download_queue.unshift();
         processItem(item);
+    }
+}
+
+/*
+    Replaces wildcards in the filename with the variables
+*/
+function parseFilename(user, video) {
+    let setting = appSettings.get('downloads.filemode');
+
+    if (setting == 'playlist-filename') {
+        return path.basename(video.url).replace("m3u8", "ts");
+    } else {
+        let finalname = setting.replace("%username%", user.name)
+                               .replace("%userid%", user.id)
+                               //.replace("%usercountry%", user.country)
+                               .replace("%videoid%", video.id)
+                               .replace("%videotitle%", video.title)
+                               .replace("%videotime%", video.time);
+
+        if (!filename || filename == "") {
+            return path.basename(video.url).replace("m3u8", "ts");
+        } else {
+            return finalname + ".ts";
+        }
     }
 }
