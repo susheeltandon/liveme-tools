@@ -368,12 +368,12 @@ function renderUserLookup(e) {
 	}
 
 	if (e.userinfo.userid > 0) {
-		var u = e.userinfo;
-		userID = u.userid;
-		var h=	'<img src="'+u.usericon+'" class="avatar" onerror="this.src=\'images/blank.png\'"><br><h3 class="name">'+u.username+'</h3><label>User ID:</label><input type="text" id="useridtf" value="'+u.userid+'" disabled="disabled">'+
-				'<h4>Level: ' + u.level+'</h4><input type="button" value="Favorite" onClick="toggleFavorite()" id="favorites_button"><br><br><br>'+
-				'<input type="button" value="Following '+u.following+'" onClick="showFollowing(\''+u.userid+'\', '+u.following+', \''+u.username+'\')">'+
-				'<input type="button" value="'+u.fans+' Fans" onClick="showFans(\''+u.userid+'\', '+u.following+', \''+u.username+'\')"><input type="hidden" id="sex" value="'+u.sex+'">';
+		current_user.userid = e.userinfo.userid;
+		current_user.username = e.userinfo.username;
+		var h=	'<img src="'+e.userinfo.usericon+'" class="avatar" onerror="this.src=\'images/blank.png\'"><br><h3 class="name">'+e.userinfo.username+'</h3><label>User ID:</label><input type="text" id="useridtf" value="'+e.userinfo.userid+'" disabled="disabled">'+
+				'<h4>Level: ' + e.userinfo.level+'</h4><input type="button" value="Favorite" onClick="toggleFavorite()" id="favorites_button"><br><br><br>'+
+				'<input type="button" value="Following '+e.userinfo.following+'" onClick="showFollowing(\''+e.userinfo.userid+'\', '+e.userinfo.following+', \''+e.userinfo.username+'\')">'+
+				'<input type="button" value="'+e.userinfo.fans+' Fans" onClick="showFans(\''+e.userinfo.userid+'\', '+e.userinfo.following+', \''+e.userinfo.username+'\')"><input type="hidden" id="sex" value="'+e.userinfo.sex+'">';
 		$('#userinfo').html(h);
 	}
 
