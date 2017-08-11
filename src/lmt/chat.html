@@ -11,7 +11,11 @@
 		<script>
             const { remote, BrowserWindow, ipcRenderer } = require('electron');
 
-            function closeApp() { ipcRenderer.send('hide-chat'); }
+            function closeApp() {
+                ipcRenderer.send('hide-chat');
+                $('#message_history').empty();
+                $('#overlay').show();
+            }
 
 			$(function(){
                 ipcRenderer.on('set-chat', (event, arg) => {
@@ -19,8 +23,11 @@
                     var startTime = parseInt(arg.startTime) * 1000;
                     var addedEntries = 0;
                     $('#message_history').empty();
+                    $('#overlay').show();
 
                     getChat(arg.url, function(messages) {
+                        $('#overlay').hide();
+
                         if (!messages) {
                             $('#message_history').append('<span class="emptylist">Failed to load chat message history.</span>');
                         } else if (messages.length == 0) {
@@ -57,5 +64,6 @@
 			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="closeApp()">
 		</header>
 		<div id="message_history"></div>
+		<div id="overlay"></div>
 	</body>
 </html>
