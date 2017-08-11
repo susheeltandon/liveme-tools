@@ -17,7 +17,7 @@
 const { electron, BrowserWindow, remote, ipcRenderer } = require('electron');
 const fs = require('fs'), path = require('path'), appSettings = remote.require('electron-settings');
 
-var isSearching = false, favorites_list = [], debounced = false;
+var isSearching = false, favorites_list = [], debounced = false, current_user = { userid: 0, username: '' };
 
 $(function(){
 
@@ -124,7 +124,7 @@ function showUpload() {
 			
 			for (i = 0; i < filelist.length; i++)  {
 				if (filelist[i].indexOf('http') > -1) {
-					ipcRenderer.send('download-video', { url: filelist[i] });
+					ipcRenderer.send('download-video', { url: filelist[i], user: {} });
 				}
 			}
 
