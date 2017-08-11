@@ -8,14 +8,14 @@ module.exports = {
     /*
         Expecting data in this format:
         user: {
-            user_id: 123,
-            user_name: "name"
+            id: 123,
+            name: "name"
         },
         video: {
-            video_id: 123,
-            video_title: "name",
-            video_time: 123,
-            hls_url: 'http://xyz.m3u8'
+            id: 123,
+            title: "name",
+            time: 123,
+            url: 'http://xyz.m3u8'
         }
     */
     add: function(Url, User, Video) {
