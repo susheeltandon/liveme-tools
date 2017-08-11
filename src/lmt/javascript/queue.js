@@ -19,36 +19,9 @@ const fs = require('fs'), path = require('path'), os = require('os'), appSetting
 const m3u8stream = require('./m3u8stream/index');
 var isDownloading = false, queue_index = 0, queue = [], download_history = [];
 
-
 $(function(){
-
-	// Fetch last queue
-	fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_queue.json'), 'utf8', function (err,data) {
-		if (err) {
-			queue = [];
-		} else {
-			queue = JSON.parse(data);
-			if (queue.length > 0) {
-				for (i = 0; i< queue.length; i++)
-					$('#queuelist').append('<div class="entry" id="'+queue[i].id+'"><div class="title">'+queue[i].url+'</div><div class="progress"></div></div>');
-
-				ipcRenderer.send('show-queue');
-				setTimeout(function(){
-					beginDownload();
-				}, 2000);
-			}
-		}
-	});
-
-	// Fetch History
-	fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_history.json'), 'utf8', function (err,data) {
-		if (err) {
-			download_history = [ '-' ];
-		} else {
-			download_history = JSON.parse(data);
-		}
-	});
-
+	loadQueue();
+	loadHistory();
 
 	ipcRenderer.on('add-to-queue', (event, arg) => { 
 		var a=arg.url.split('/'),b=a[a.length-1].split('.'),id=b[0],add=true;
@@ -83,13 +56,39 @@ $(function(){
 	});	
 });
 
-function beginDownload() {
+function loadQueue() {
+	fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_queue.json'), 'utf8', function (err,data) {
+		if (err) {
+			queue = [];
+		} else {
+			queue = JSON.parse(data);
+			if (queue.length > 0) {
+				for (i = 0; i< queue.length; i++)
+					$('#queuelist').append('<div class="entry" id="'+queue[i].id+'"><div class="title">'+queue[i].url+'</div><div class="progress"></div></div>');
 
+				ipcRenderer.send('show-queue');
+				setTimeout(function(){
+					beginDownload();
+				}, 2000);
+			}
+		}
+	});
+}
+
+function loadHistory() {
+	fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_history.json'), 'utf8', function (err,data) {
+		if (err) {
+			download_history = [ '-' ];
+		} else {
+			download_history = JSON.parse(data);
+		}
+	});
+}
+
+function beginDownload() {
 	if (queue.length < 1) return;
 
-
 	isDownloading = true;
-
 	var tlist = [];
 
 	for (j = 0; j < queue.length; j++) {
@@ -105,7 +104,6 @@ function beginDownload() {
 	queue = tlist;
 	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_queue.json'), JSON.stringify(queue), 'utf8', function() {} );
 	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_history.json'), JSON.stringify(download_history), 'utf8', function(){});
-	
 
 	$('#queuelist').html('');
 	for (i = 0; i < queue.length; i++) {
@@ -148,5 +146,4 @@ function beginDownload() {
 
 	queue.shift();
 	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_queue.json'), JSON.stringify(queue), 'utf8', function() {} );
-	
 }
