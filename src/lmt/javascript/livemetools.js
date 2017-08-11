@@ -320,12 +320,12 @@ function playVideo(u) {
 	ipcRenderer.send('play-video', { url: u });
 }
 
-function downloadVideo(u, i) {
+function downloadVideo(j) {
 	if (debounced) return;
 	debounced = true;
 	setTimeout(function(){ debounced = false; }, 500);
 
-	ipcRenderer.send('download-video', { url: u, videoid: i, user: current_user });
+	ipcRenderer.send('download-video', JSON.parse(j));
 }
 
 function openChat(u, t) {
