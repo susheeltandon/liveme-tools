@@ -7,7 +7,6 @@ var download_queue = [], download_history = [], can_run = false, is_running = fa
 module.exports = {
     /*
         Expecting data in this format:
-        url: "http://xyz.m3u8",
         user: {
             user_id: 123,
             user_name: "name"
@@ -15,7 +14,8 @@ module.exports = {
         video: {
             video_id: 123,
             video_title: "name",
-            video_time: 123
+            video_time: 123,
+            hls_url: 'http://xyz.m3u8'
         }
     */
     add: function(Url, User, Video) {
