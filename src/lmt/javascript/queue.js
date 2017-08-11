@@ -144,7 +144,7 @@ function beginDownload() {
 			var p = Math.round((e.current / e.total) * 100);
 			$('.entry.active .progress').css({ width: p+'%' });
 		}
-	}).pipe(fs.createWriteStream(path.join(appSettings.get('downloader.directory'), queue[0].file)));
+	}).pipe(fs.createWriteStream(path.join(appSettings.get('downloads.directory'), queue[0].file)));
 
 	queue.shift();
 	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'download_queue.json'), JSON.stringify(queue), 'utf8', function() {} );
