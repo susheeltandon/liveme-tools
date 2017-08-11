@@ -117,7 +117,7 @@ function parseFilename(user, video) {
                                .replace("%videotitle%", video.title)
                                .replace("%videotime%", video.time);
 
-        if (!filename || filename == "") {
+        if (!finalname || finalname == "") {
             return path.basename(video.url).replace("m3u8", "ts");
         } else {
             return finalname + ".ts";
