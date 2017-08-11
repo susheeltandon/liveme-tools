@@ -3,9 +3,17 @@
 */
 "use strict";
 
+const	fs = require('fs'), {remote} = require('electron'), path = require('path');
+
 var fav_list = [], last_change = 0, is_saved = false;
 
 module.exports = {
+
+	initIfNeeded: function() {
+		if (last_change != 0) return;
+		last_change = new Date().getTime() / 1000;
+	},
+
 	add : function(e) {
 		fav_list.push(e);
 		write_to_file();
@@ -25,11 +33,9 @@ module.exports = {
 		write_to_file();
 	},
 
-	load : function(cb) {
+	recall : function(cb) { 
 		read_from_file(cb);
 	},
-
-	get : function() { return fav_list; },
 
 	lastChange: function() { return last_change; },
 
@@ -44,7 +50,6 @@ module.exports = {
 function write_to_file() {
 	if (is_saved) { return; }
 
-	console.log('Writing favorites...');
 	var ti = new Date().getTime() / 1000;
 	if ((ti - last_change) < 300) { return; }
 	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), JSON.stringify(fav_list), 'utf8', function(){});
@@ -56,12 +61,9 @@ function read_from_file(cb) {
 		if (err) {
 			fav_list = [];
 		} else {
-			console.log('Reading favorites...');
 			fav_list = JSON.parse(data);
 			last_change = new Date().getTime() / 1000;
-			if (typeof cb != 'undefined') {
-				cb(fav_list);
-			}
+			cb(fav_list);
 		}
 	});
 
