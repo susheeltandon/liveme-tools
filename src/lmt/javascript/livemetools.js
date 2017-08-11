@@ -360,7 +360,7 @@ function renderUserLookup(e) {
 					name: e.userinfo.username
 				},
 				video: {
-					id: e.videos[i].videoid, title = e.videos[i].title, time: e.videos[i].dt, url: e.videos[i].url 
+					id: e.videos[i].videoid, title : e.videos[i].title, time: e.videos[i].dt, url: e.videos[i].url 
 				}
 			}, vienc = JSON.stringify(vi);
 
