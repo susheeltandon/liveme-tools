@@ -27,9 +27,9 @@ module.exports = {
 		read_from_file(cb);
 	},
 
-	get : function() { return fav_list; }
+	get : function() { return fav_list; },
 
-	lastChange: function() { return last_change; }
+	lastChange: function() { return last_change; },
 
 	isOnList: function(e) {
 		for (var i = 0; i < fav_list.length; i++) {
