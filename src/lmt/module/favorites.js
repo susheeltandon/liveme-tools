@@ -44,6 +44,7 @@ module.exports = {
 function write_to_file() {
 	if (is_saved) { return; }
 
+	console.log('Writing favorites...');
 	var ti = new Date().getTime() / 1000;
 	if ((ti - last_change) < 300) { return; }
 	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), JSON.stringify(fav_list), 'utf8', function(){});
@@ -55,6 +56,7 @@ function read_from_file(cb) {
 		if (err) {
 			fav_list = [];
 		} else {
+			console.log('Reading favorites...');
 			fav_list = JSON.parse(data);
 			last_change = new Date().getTime() / 1000;
 			if (typeof cb != 'undefined') {
