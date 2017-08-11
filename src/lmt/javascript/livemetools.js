@@ -373,6 +373,16 @@ function renderUserLookup(e) {
 	for(i = 0; i < e.videos.length; i++) {
 		if (e.videos[i].url.length > 8) {
 
+			var vi = { 
+				user: {
+					id: e.userinfo.userid,
+					name: e.userinfo.username
+				},
+				video: {
+					id: e.videos[i].videoid, title = e.videos[i].title, time: e.videos[i].dt, url: e.videos[i].url 
+				}
+			}, vienc = JSON.stringify(vi);
+
 			var dt = new Date(e.videos[i].dt * 1000);
 			var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
 			var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == e.videos[i].url ? true : false) : false;
@@ -386,7 +396,7 @@ function renderUserLookup(e) {
 			h += '<div class="counts"><label>Length:</label><span>'+length+'</span><label>Views:</label><span>' + e.videos[i].plays + '</span><label>Likes:</label><span>' + e.videos[i].likes + '</span><label>Shares:</label><span>' + e.videos[i].shares + '</span><label>Country:</label><span>'+e.videos[i].location.country+'</span></div>';
 			h += '<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat(\''+e.videos[i].msgfile+'\', \'' + e.videos[i].dt + '\')" title="View Message History">';
 			h += '<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo(\''+e.videos[i].url+'\')" title="Play Video">';
-			h += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+e.videos[i].url+'\', \''+e.videos[i].videoid+'\')" title="Download Video">';
+			h += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+vienc+'\')" title="Download Video">';
 			h += '</div>';
 			$('#videolist').append(h);
 		}
