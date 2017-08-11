@@ -183,13 +183,8 @@ ipcMain.on('livemesearch', (event, arg) => {
 	Queue Related
 */
 ipcMain.on('download-video', (event, arg) => {
-
-	/*	
-			NOTES    arg.user = { userid: 0, username: '' }      arg.videoid = 0
-	*/
-
 	if (queuewin.isVisible() == false) { queuewin.showInactive(); }
-	queuewin.webContents.send('add-to-queue', { url: arg.url });
+	queuewin.webContents.send('add-to-queue', arg);
 });
 ipcMain.on('show-queue', () => { queuewin.show(); });
 ipcMain.on('hide-queue', () => { queuewin.hide(); });
