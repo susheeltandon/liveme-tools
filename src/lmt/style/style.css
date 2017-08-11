@@ -146,7 +146,7 @@ body:hover > header.small.transparent > * {
 
 .inset {
 	position: absolute;
-	top: 40px;
+	top: 24px;
 	left: 0;
 	right: 0;
 	bottom: 0;
