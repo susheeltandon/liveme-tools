@@ -16,43 +16,67 @@ module.exports = {
 
 	add : function(e) {
 		fav_list.push(e);
-		write_to_file();
+		write_to_file(false);		
 	},
 
 	remove: function(e) {
 		var idx = 0;
 		for (var i = 0; i < fav_list.length; i++) {
-			if (fav_list[i].userid == e) {
+			if (fav_list[i].uid == e) {
 				fav_list.splice(i, 1);
 			}
 		}
-		write_to_file();
+		write_to_file(false);
 	},
 
 	save: function() {
-		write_to_file();
+		write_to_file(false);
 	},
 
 	recall : function(cb) { 
-		read_from_file(cb);
+		fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), 'utf8', function (err,data) {
+			if (err) {
+				fav_list = [];
+			} else {
+				fav_list = JSON.parse(data);
+				last_change = new Date().getTime() / 1000;
+				cb(fav_list);
+			}
+		});
+	},
+
+	load: function() {
+		fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), 'utf8', function (err,data) {
+			if (err) {
+				fav_list = [];
+			} else {
+				fav_list = JSON.parse(data);
+				last_change = new Date().getTime() / 1000;
+			}
+		});
 	},
 
 	lastChange: function() { return last_change; },
 
 	isOnList: function(e) {
 		for (var i = 0; i < fav_list.length; i++) {
-			if (fav_list[i].userid == e) return true;
+			if (fav_list[i].uid == e) return true;
 		}
 		return false;
-	}
+	},
+
+	tick : function() {	write_to_file(false); },
+	forceSave : function() { write_to_file(true); },
 }
 
-function write_to_file() {
+function write_to_file(f) {
 	if (is_saved) { return; }
 
 	var ti = new Date().getTime() / 1000;
 	if ((ti - last_change) < 300) { return; }
-	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), JSON.stringify(fav_list), 'utf8', function(){});
+	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), JSON.stringify(fav_list), 'utf8', function(){
+		
+	});
 	last_change = ti;
 }
 

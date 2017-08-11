@@ -79,6 +79,16 @@ $(function(){
 		beginSearch2();
 	});
 
+	ipcRenderer.on('do-shutdown' , function(event , data) { 
+		Favorites.forceSave();
+	});
+
+	Favorites.load();
+
+	setInterval(function(){
+		Favorites.tick();
+	}, 5000);
+
 });
 
 
@@ -143,11 +153,12 @@ function showUpload() {
 }
 
 function toggleFavorite() {
-
-	if (Favorites.isOnList($('#useridtf').val()) == true) {
-		Favorites.remove($('#useridtf').val());
+	if (Favorites.isOnList(current_user.uid) == true) {
+		Favorites.remove(current_user.uid);
+		$('#favorites_button').removeClass('active');
 	} else {
-		Favorites.add($('#useridtf').val());
+		Favorites.add(current_user);
+		$('#favorites_button').addClass('active');
 	}
 }
 
@@ -332,8 +343,13 @@ function renderUserLookup(e) {
 	}
 
 	if (e.userinfo.userid > 0) {
-		current_user.userid = e.userinfo.userid;
-		current_user.username = e.userinfo.username;
+		current_user = {
+			uid: e.userinfo.userid,
+			sex: e.userinfo.sex,
+			face: e.userinfo.usericon,
+			nickname: e.userinfo.username
+		};
+
 		var h=	'<img src="'+e.userinfo.usericon+'" class="avatar" onerror="this.src=\'images/blank.png\'"><br><h3 class="name">'+e.userinfo.username+'</h3><label>User ID:</label><input type="text" id="useridtf" value="'+e.userinfo.userid+'" disabled="disabled">'+
 				'<h4>Level: ' + e.userinfo.level+'</h4><input type="button" value="Favorite" onClick="toggleFavorite()" id="favorites_button"><br><br><br>'+
 				'<input type="button" value="Following '+e.userinfo.following+'" onClick="showFollowing(\''+e.userinfo.userid+'\', '+e.userinfo.following+', \''+e.userinfo.username+'\')">'+
@@ -387,7 +403,7 @@ function renderUserLookup(e) {
 		if (Favorites.isOnList($('#useridtf').val()) == true) {
 			$('#favorites_button').addClass('active');
 		}
-	}, 100);
+	}, 50);
 }
 
 function renderSearchResults(e) {
