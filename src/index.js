@@ -21,7 +21,7 @@ const 	{app, BrowserWindow, ipcMain, Menu} = require('electron'), os = require('
 		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path');
 		
 
-let mainwin, queuewin, playerWindow, settingsWindow, favoritesWindow, chatWindow, menu, favorites_list = [], appSettings = require('electron-settings');
+let mainwin, queuewin, playerWindow, settingsWindow, favoritesWindow, chatWindow, menu, appSettings = require('electron-settings');
 
 function createWindow(){
 	/*
@@ -122,19 +122,8 @@ ipcMain.on('show-favorites', () => {
 		favoritesWindow = null; 
 	});
 	favoritesWindow.show();
-
-});
-ipcMain.on('store-favorites', (fl) => {
-
-	favorites_list = fl;
-
 });
 
-ipcMain.on('fetch-favorites', () => {
-
-
-	return favorites_list;
-});
 
 
 
@@ -156,7 +145,6 @@ ipcMain.on('show-settings', () => {
 		settingsWindow = null; 
 	});
 	settingsWindow.show();
-
 
 });
 
@@ -197,7 +185,7 @@ ipcMain.on('livemesearch', (event, arg) => {
 ipcMain.on('download-video', (event, arg) => {
 
 	/*	
-			NOTES    arg.user = { userid: 0, username: '' } 
+			NOTES    arg.user = { userid: 0, username: '' }      arg.videoid = 0
 	*/
 
 	if (queuewin.isVisible() == false) { queuewin.showInactive(); }
