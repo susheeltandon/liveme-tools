@@ -26,6 +26,7 @@ requests to us.
 
 ## Developers
 * [thecoder75](https://github.com/thecoder75)
+* [polydragon](https://github.com/polydragon)
 
 ## Bug Hunters and Beta Testers
 * [slyfox99](https://github.com/slyfox99)
