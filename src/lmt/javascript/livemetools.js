@@ -307,6 +307,7 @@ function playVideo(u) {
 	ipcRenderer.send('play-video', { url: u });
 }
 
+/*
 function downloadVideo(userid, username, videoid, videotitle, videotime, videourl) {
 	if (debounced) return;
 	debounced = true;
@@ -325,6 +326,16 @@ function downloadVideo(userid, username, videoid, videotitle, videotime, videour
 			url: videourl
 		}
 	});
+}
+*/
+
+function downloadVideo(e) {
+	if (debounced) return;
+	debounced = true;
+	setTimeout(function(){ debounced = false; }, 500);
+
+	//ipcRenderer.send('download-video', JSON.parse(j));
+	Downloads.add(e);
 }
 
 function openChat(u, t) {
@@ -410,7 +421,7 @@ function renderUserLookup(e) {
 					</div>
 					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e.videos[i].msgfile}', '${e.videos[i].dt}')" title="View Message History">
 					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e.videos[i].url}')" title="Play Video">
-					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${vi.user.id}', '${vi.user.name}', '${vi.video.id}', '${vi.video.title}', '${vi.video.time}', '${vi.video.url}')" title="Download Video">
+					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(${vi})" title="Download Video">
 				</div>`;
 
 			$('#videolist').append(h);
