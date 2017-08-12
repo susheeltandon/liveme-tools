@@ -169,7 +169,8 @@ function processItem(item) {
         ffmpeg(remoteFilename)
             .outputOptions([
                 '-c copy',
-                '-bsf:a aac_adtstoasc'
+                '-bsf:a aac_adtstoasc',
+                '-vsync 2'
             ])
             .output(localFilename.replace(".ts", ".mp4"))
             .on('end', function(stdout, stderr) {
