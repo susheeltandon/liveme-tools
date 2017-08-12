@@ -167,8 +167,10 @@ function processItem(item) {
         }).pipe(fs.createWriteStream(localFilename));
     } else if (downloadEngine == 'ffmpeg') {
         ffmpeg(remoteFilename)
-            .audioCodec('aac')
-            .videoCodec('libx264')
+            .outputOptions([
+                '-c copy',
+                '-bsf:a aac_adtstoasc'
+            ])
             .output(localFilename.replace(".ts", ".mp4"))
             .on('end', function(stdout, stderr) {
                 download_history.push(item.video.id);
