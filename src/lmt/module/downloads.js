@@ -2,7 +2,8 @@
 	Downloads Module
 */
 
-const appSettings = require('electron').remote.require('electron-settings'), path = require('path'), ffpmeg = require('fluent-ffmpeg'), m3u8stream = require('./m3u8stream/index'), fs = require('fs');
+const { remote } = require('electron');
+const appSettings = remote.require('electron-settings'), path = require('path'), ffpmeg = require('fluent-ffmpeg'), m3u8stream = require('./m3u8stream/index'), fs = require('fs');
 var download_queue = [], download_history = [], can_run = false, is_running = false;
 
 module.exports = {
@@ -34,6 +35,27 @@ module.exports = {
         if (!is_running && can_run) {
             runDownloader();
         }
+    },
+
+    /*
+        Removes an item from the queue
+    */
+    remove: function(vid) {
+        let index = -1;
+
+        for (i = 0; i < download_queue.length; i++) {
+            if (download_queue[i].video.id == vid) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index != -1) {
+            download_queue.splice(index, 1);
+            return true;
+        }
+        
+        return false;
     },
 
     /*
