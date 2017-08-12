@@ -23,19 +23,6 @@ module.exports = {
     add: function(User, Video) {
         download_queue.push({ user: User, video: Video });
     },
-    
-    /*
-        Starts/Resumes downloading
-    */
-    start: function() {
-        if (download_queue.length > 0) {
-            can_run = true;
-        }
-
-        if (!is_running && can_run) {
-            runDownloader();
-        }
-    },
 
     /*
         Removes an item from the queue
@@ -57,6 +44,19 @@ module.exports = {
         
         return false;
     },
+    
+    /*
+        Starts/Resumes downloading
+    */
+    start: function() {
+        if (download_queue.length > 0) {
+            can_run = true;
+        }
+
+        if (!is_running && can_run) {
+            runDownloader();
+        }
+    },
 
     /*
         Stops downloading any new files after the one(s) it's downloading now, until told to start again
@@ -77,6 +77,14 @@ module.exports = {
         }
     },
 
+    /*
+        Called on shutdown
+    */
+    shutdown: function() {
+        saveQueue();
+        saveHistory();
+    },
+
     is_running: function() {
         return is_running;
     },
@@ -85,18 +93,11 @@ module.exports = {
         return !can_run; // If it can't run, it is paused
     },
 
-    /* 
-        TODO: Look up what Electron ships with support for; I don't want to add too many dependencies
-        Observable or something to subscribe to be notified about status of downloads, for the downloads page
+    /*
+        Checks if a video is in the download history
     */
-    subscribe_to_progress: function() {
-
-            /*
-
-                m3u8stream module integrated and the fluent-ffmpeg both provide progress feedbacks.
-
-            */
-
+    has_been_downloaded: function(videoid) {
+        return download_history.indexOf(videoid) != -1;
     }
 };
 
@@ -139,40 +140,51 @@ function saveHistory() {
 /*
     Pop an item from the queue and process it here
 */
-function processItem(item) {
+function processItem(item) { // TODO: Turn into a Promise
     let downloadEngine = appSettings.get('downloads.engine');
     let localFilename = getLocalFilename(item.user, item.video);
     let remoteFilename = item.video.url;
 
     if (downloadEngine == 'internal') {
+        // push event to downloads page: { type: start, id: item.video.id, value: item.video.url }
+        
         m3u8stream(remoteFilename, {
             on_complete: function(e) {
                 console.log('Finished!');
+                download_history.push(item.video.id);
+                // push event to downloads page: { type: finish, id: item.video.id }
             },
             on_error: function(e) {
                 console.log('Errored');
+                // push event to downloads page: { type: error, id: item.video.id }
             },
             on_progress: function(e) {
                 let percent = Math.round((e.current / e.total) * 100);
                 console.log(`Progress: ${percent}%`);
+                // push event to downloads page: { type: progress, id: item.video.id, value: percent }
             }
         }).pipe(fs.createWriteStream(localFilename));
     } else if (downloadEngine == 'ffmpeg') {
         ffmpeg(remoteFilename)
             .audioCodec('aac')
             .videoCodec('libx264')
-            .output(localFilename)
+            .output(localFilename.replace(".ts", ".mp4"))
             .on('end', function(stdout, stderr) {
                 console.log('Finished!');
+                download_history.push(item.video.id);
+                // push event to downloads page: { type: finish, id: item.video.id }
             })
             .on('progress', function(progress) {
                 console.log(`Progress: ${progress.percent}%`);
+                // push event to downloads page: { type: progress, id: item.video.id, value: percent }
             })
             .on('start', function(c) {
                 console.log(`Started using command: ${c}`);
+                // push event to downloads page: { type: start, id: item.video.id, value: item.video.url }
             })
             .on('error', function(err, stdout, etderr) {
                 console.log('Cannot process video', err.message);
+                // push event to downloads page: { type: error, id: item.video.id }
             })
             .run();
     }
@@ -185,7 +197,7 @@ function runDownloader() {
     while (download_queue.length > 0 && can_run) {
         let item = download_queue.unshift();
         is_running = true;
-        processItem(item);
+        processItem(item); // TODO await the promise, otherwise we're processing all of them at the same time.
     }
 
     is_running = false;
