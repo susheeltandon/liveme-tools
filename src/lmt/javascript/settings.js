@@ -9,9 +9,8 @@ $(function() {
 			filemode: 0,
 			filetemplate: '',
 			history: true,
-			engine: "internal"
+			engine: 'internal'
 		});
-		
 	}
 
 	setTimeout(function(){
@@ -20,10 +19,7 @@ $(function() {
 		$('#filetemplate').val(appSettings.get('downloads.filetemplate'));
 		$('#history').prop('checked', appSettings.get('downloads.history'));
 		$('#engine').val(appSettings.get('downloads.engine'));
-
 		checkType();
-
-		console.log(appSettings.get('downloads'));
 	}, 100);
 });
 
