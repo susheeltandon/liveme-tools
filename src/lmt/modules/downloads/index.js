@@ -4,7 +4,7 @@
 
 const { remote } = require('electron');
 const appSettings = remote.require('electron-settings'), path = require('path'), ffpmeg = require('fluent-ffmpeg'), m3u8stream = require('../m3u8stream/index'), fs = require('fs');
-var download_queue = [], download_history = [], can_run = false, is_running = false;
+var download_queue = [], download_history = [], can_run = true, is_running = false;
 
 module.exports = {
     /*
@@ -142,11 +142,10 @@ function saveHistory() {
 /*
     Pop an item from the queue and process it here
 */
-function processItem(item) { // TODO: Turn into a Promise
+function processItem(item) {
     return new Promise((resolve, reject) => {
-
     let downloadEngine = appSettings.get('downloads.engine');
-    let localFilename = getLocalFilename(item.user, item.video);
+    let localFilename = getLocalFilename(item);
     let remoteFilename = item.video.url;
 
     if (downloadEngine == 'internal') {
@@ -205,9 +204,9 @@ function processItem(item) { // TODO: Turn into a Promise
 */
 async function runDownloader() {
     while (download_queue.length > 0 && can_run) {
-        let item = download_queue.unshift();
+        let item = download_queue.shift();
         is_running = true;
-        await processItem(item); // TODO await the promise, otherwise we're processing all of them at the same time.
+        await processItem(item);
     }
 
     is_running = false;
@@ -217,20 +216,20 @@ async function runDownloader() {
     Gets full local filename for the download
     Replaces wildcards in the filename with the variables
 */
-function getLocalFilename(user, video) {
+function getLocalFilename(item) {
     if (appSettings.get('downloads.filemode') == 0) {
-        return path.join(appSettings.get('downloads.directory'), path.basename(video.url).replace("m3u8", "ts"));
+        return path.join(appSettings.get('downloads.directory'), path.basename(item.video.url).replace("m3u8", "ts"));
     } else {
         let finalname = appSettings.get('downloads.filetemplate')
-                                    .replace("%%username%%", user.name)
-                                    .replace("%%userid%%", user.id)
+                                    .replace("%%username%%", item.user.name)
+                                    .replace("%%userid%%", item.user.id)
                                     //.replace("%%usercountry%%", user.country)
-                                    .replace("%%videoid%%", video.id)
-                                    .replace("%%videotitle%%", video.title)
-                                    .replace("%%videotime%%", video.time);
+                                    .replace("%%videoid%%", item.video.id)
+                                    .replace("%%videotitle%%", item.video.title)
+                                    .replace("%%videotime%%", item.video.time);
 
         if (!finalname || finalname == "") {
-            return path.join(appSettings.get('downloads.directory'), path.basename(video.url).replace("m3u8", "ts"));
+            return path.join(appSettings.get('downloads.directory'), path.basename(item.video.url).replace("m3u8", "ts"));
         } else {
             return path.join(appSettings.get('downloads.directory'), finalname + ".ts");
         }
