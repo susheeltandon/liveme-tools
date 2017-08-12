@@ -3,7 +3,7 @@
 */
 
 const { remote, ipcRenderer } = require('electron');
-const appSettings = remote.require('electron-settings'), path = require('path'), ffmpeg = require('fluent-ffmpeg'), m3u8stream = require('../m3u8stream'), fs = require('fs');
+const appSettings = remote.require('electron-settings'), path = require('path'), ffmpeg = require('fluent-ffmpeg'), m3u8stream = require('../m3u8stream'), fs = require('fs-extra');
 var download_queue = [], download_history = [], can_run = true, is_running = false;
 
 module.exports = {
@@ -212,21 +212,26 @@ async function runDownloader() {
     Replaces wildcards in the filename with the variables
 */
 function getLocalFilename(item) {
+    let fullPath = null;
+
     if (appSettings.get('downloads.filemode') == 0) {
-        return path.join(appSettings.get('downloads.directory'), path.basename(item.video.url).replace("m3u8", "ts"));
+        fullPath = path.join(appSettings.get('downloads.directory'), path.basename(item.video.url).replace("m3u8", "ts"));
     } else {
         let finalname = appSettings.get('downloads.filetemplate')
                                     .replace("%%username%%", item.user.name)
                                     .replace("%%userid%%", item.user.id)
                                     //.replace("%%usercountry%%", user.country)
                                     .replace("%%videoid%%", item.video.id)
-                                    .replace("%%videotitle%%", item.video.title)
+                                    .replace("%%videotitle%%", item.video.title ? item.video.title : 'untitled')
                                     .replace("%%videotime%%", item.video.time);
 
         if (!finalname || finalname == "") {
-            return path.join(appSettings.get('downloads.directory'), path.basename(item.video.url).replace("m3u8", "ts"));
+            fullPath = path.join(appSettings.get('downloads.directory'), path.basename(item.video.url).replace("m3u8", "ts"));
         } else {
-            return path.join(appSettings.get('downloads.directory'), finalname + ".ts");
+            fullPath = path.join(appSettings.get('downloads.directory'), finalname + ".ts");
         }
     }
+
+    fs.ensureDirSync(path.dirname(fullPath));
+    return fullPath;
 }
