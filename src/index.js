@@ -21,7 +21,8 @@ const 	{app, BrowserWindow, ipcMain, Menu} = require('electron'), os = require('
 		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path');
 		
 
-let mainwin, queuewin, playerWindow, settingsWindow, favoritesWindow, chatWindow, menu, appSettings = require('electron-settings');
+let 	mainwin, queuewin, playerWindow, settingsWindow, favoritesWindow, chatWindow, 
+		splashWindow, menu, appSettings = require('electron-settings');
 
 function createWindow(){
 	/*
@@ -51,6 +52,12 @@ function createWindow(){
 		webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
 
+	splashWindow=new BrowserWindow({
+		width: 480, height: 208, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false,
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, movable: false,
+		parent: mainwin, child: true, webPreferences:{ webSecurity:false, plugins:false, devTools:false }
+	});
+
 	mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
 	mainwin.on('closed', () => { 
 		mainwin = null; 
@@ -61,6 +68,11 @@ function createWindow(){
 	queuewin.loadURL(`file://${__dirname}/lmt/queue.html`);
 	queuewin.on('closed', () => { 
 		queuewin = null; 
+	});
+
+	splashWindow.loadURL(`file://${__dirname}/lmt/splash.html`);
+	splashWindow.on('closed', () => { 
+		splashWindow = null; 
 	});
 
 	chatWindow = new BrowserWindow({
