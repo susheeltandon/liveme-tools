@@ -182,7 +182,6 @@ function processItem(item) {
                 ipcRenderer.send('download-start', { id: item.video.id, value: item.video.url });
             })
             .on('error', function(err, stdout, etderr) {
-                console.log(err);
                 ipcRenderer.send('download-error', { id: item.video.id });
                 resolve();
             })

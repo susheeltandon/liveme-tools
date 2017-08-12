@@ -13,12 +13,10 @@
 
 			$(function() {
 				ipcRenderer.on('download-add', (event, arg) => {
-					console.log("ipcRenderer", "add", arg);
 					$('#queuelist').append(`<div class="entry" id="${arg.id}"><div class="title">${arg.value}</div><div class="progress"></div></div>`);
 				});
 
 				ipcRenderer.on('download-error', (event, arg) => {
-					console.log("ipcRenderer", "error", arg);
 					$('#' + arg.id).addClass("error")
 
 					setTimeout(() => {
@@ -27,12 +25,14 @@
 				});
 
 				ipcRenderer.on('download-progress', (event, arg) => {
-					console.log("ipcRenderer", "progress", arg);
 					$('#' + arg.id + ' .progress').css({ width: arg.value + '%' });
 				});
 
+				ipcRenderer.on('download-start', (event, arg) => {
+					$('#' + arg.id).addClass('active');
+				});
+
 				ipcRenderer.on('download-finish', (event, arg) => {
-					console.log("ipcRenderer", "finish", arg);
 					$('#' + arg.id).addClass("finished")
 
 					setTimeout(() => {
