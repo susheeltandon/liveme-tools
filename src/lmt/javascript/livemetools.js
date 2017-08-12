@@ -329,14 +329,25 @@ function downloadVideo(userid, username, videoid, videotitle, videotime, videour
 }
 */
 
-function downloadVideo(e) {
+function downloadVideo(userid, username, videoid, videotitle, videotime, videourl) {
 	if (debounced) return;
 	debounced = true;
 	setTimeout(function(){ debounced = false; }, 500);
 
 	//ipcRenderer.send('download-video', JSON.parse(j));
-	console.log(e);
-	Downloads.add(e);
+	Downloads.add({
+		user: {
+			id: userid,
+			name: username
+		},
+		video: {
+			id: videoid,
+			title: videotitle,
+			time: videotime,
+			url: videourl
+		}
+	});
+
 }
 
 function openChat(u, t) {
@@ -422,7 +433,7 @@ function renderUserLookup(e) {
 					</div>
 					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e.videos[i].msgfile}', '${e.videos[i].dt}')" title="View Message History">
 					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e.videos[i].url}')" title="Play Video">
-					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(${vi})" title="Download Video">
+					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${vi.user.id}', '${vi.user.name}', '${vi.video.id}', '${vi.video.title}', '${vi.video.time}', '${vi.video.url}')" title="Download Video">
 				</div>`;
 
 			$('#videolist').append(h);
@@ -486,7 +497,7 @@ function renderSearchResults(e) {
 
 						hh += '<div class="counts"><label>Length:</label><span>'+length+'</span><label>Views:</label><span>' + e[i].videos[j].plays + '</span><label>Likes:</label><span>' + e[i].videos[j].likes + '</span><label>Shares:</label><span>' + e[i].videos[j].shares + '</span><label>Country:</label><span>'+e[i].videos[j].location.country+'</span></div>';
 						hh += '<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo(\''+e[i].videos[j].url+'\')">';
-						hh += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+vi+'\')" title="Download Video">';
+						hh += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('+vi+')" title="Download Video">';
 						hh += '</div>';
 						
 						h += hh;
