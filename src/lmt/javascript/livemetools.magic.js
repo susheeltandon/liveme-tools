@@ -7,12 +7,9 @@
 	 | |____| |\ V /  __/ |  | |  __/    | | (_) | (_) | \__ \
 	 |______|_| \_/ \___|_|  |_|\___|    |_|\___/ \___/|_|___/
 
-													v3.0.0
-		
-		(c)2017 by TheCoder - Licensed under GPL now
 
-
-	This is where the magic is...
+		  See main readme.md for details on this project.
+		  
 */
 var	callback_holder = null, query = '', query_orig = '', page_index = 0, return_data = [], index = 0, max_count = 0;
 var build_table = [], build_table2 = [];
