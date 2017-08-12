@@ -12,6 +12,7 @@
     "electron-is-dev": "^0.3.0",
     "electron-settings": "^3.1.1",
     "fluent-ffmpeg": "^2.1.2",
+    "fs-extra": "^4.0.1",
     "init": "^0.1.2",
     "miniget": "^1.0.0"
   },
