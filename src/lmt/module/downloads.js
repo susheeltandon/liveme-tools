@@ -3,7 +3,7 @@
 */
 
 const { remote } = require('electron');
-const appSettings = remote.require('electron-settings'), path = require('path'), ffpmeg = require('fluent-ffmpeg'), m3u8stream = require('./m3u8stream/index'), fs = require('fs');
+const appSettings = remote.require('electron-settings'), path = require('path'), ffpmeg = require('fluent-ffmpeg'), m3u8stream = require('./module/m3u8stream/index'), fs = require('fs');
 var download_queue = [], download_history = [], can_run = false, is_running = false;
 
 module.exports = {
