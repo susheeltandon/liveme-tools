@@ -271,8 +271,33 @@ ipcMain.on('open-chat', (event, arg) => {
 ipcMain.on('hide-chat', () => { chatWindow.hide(); });
 
 
+/*
+	Relay for downloads
+*/
+ipcMain.on('download-add', (event, arg) => {
+	console.log("ipcMain", "add", arg);
 
+	if (!queuewin.isVisible()) {
+		queuewin.showInactive();
+	}
 
+	queuewin.send('download-add', arg);
+});
+
+ipcMain.on('download-finish', (event, arg) => {
+	console.log("ipcMain", "finish", arg);
+	queuewin.send('download-finish', arg);
+});
+
+ipcMain.on('download-error', (event, arg) => {
+	console.log("ipcMain", "error", arg);
+	queuewin.send('download-error', arg);
+});
+
+ipcMain.on('download-progress', (event, arg) => {
+	console.log("ipcMain", "progress", arg);
+	queuewin.send('download-progress', arg);
+});
 
 
 

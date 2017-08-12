@@ -8,7 +8,39 @@
 		</script>
 		
 		<script src="javascript/jquery-2.2.4.min.js"></script>
-		<script type="text/javascript" src="javascript/queue.js"></script>
+		<script type="text/javascript">
+			const { ipcRenderer } = require('electron');
+
+			$(function() {
+				ipcRenderer.on('download-add', (event, arg) => {
+					console.log("ipcRenderer", "add", arg);
+					$('#queuelist').append(`<div class="entry" id="${arg.id}"><div class="title">${arg.value}</div><div class="progress"></div></div>`);
+				});
+
+				ipcRenderer.on('download-error', (event, arg) => {
+					console.log("ipcRenderer", "error", arg);
+					$('#' + arg.id).addClass("errored")
+
+					setTimeout(() => {
+						$('#' + arg.id).remove();
+					}, 5000);
+				});
+
+				ipcRenderer.on('download-progress', (event, arg) => {
+					console.log("ipcRenderer", "progress", arg);
+					$('#' + arg.id + ' .progress').css({ width: arg.value + '%' });
+				});
+
+				ipcRenderer.on('download-finish', (event, arg) => {
+					console.log("ipcRenderer", "finish", arg);
+					$('#' + arg.id).addClass("finished")
+
+					setTimeout(() => {
+						$('#' + arg.id).remove();
+					}, 5000);
+				});
+			});
+		</script>
 
 	</head>
 	<body onContextMenu="return false;">

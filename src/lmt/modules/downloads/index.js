@@ -2,8 +2,8 @@
 	Downloads Module
 */
 
-const { remote } = require('electron');
-const appSettings = remote.require('electron-settings'), path = require('path'), ffpmeg = require('fluent-ffmpeg'), m3u8stream = require('../m3u8stream/index'), fs = require('fs');
+const { remote, ipcRenderer } = require('electron');
+const appSettings = remote.require('electron-settings'), path = require('path'), ffpmeg = require('fluent-ffmpeg'), m3u8stream = require('../m3u8stream'), fs = require('fs');
 var download_queue = [], download_history = [], can_run = true, is_running = false;
 
 module.exports = {
@@ -26,8 +26,6 @@ module.exports = {
         if (!is_running && can_run) {
             runDownloader();
         }
-
-        console.log(download_queue);
     },
 
     /*
@@ -150,23 +148,27 @@ function processItem(item) {
 
     if (downloadEngine == 'internal') {
         // push event to downloads page: { type: start, id: item.video.id, value: item.video.url }
+        ipcRenderer.send('download-add', { id: item.video.id, value: item.video.url });
         
         m3u8stream(remoteFilename, {
             on_complete: function(e) {
                 console.log('Finished!');
                 download_history.push(item.video.id);
                 // push event to downloads page: { type: finish, id: item.video.id }
+                ipcRenderer.send('download-finish', { id: item.video.id });
                 resolve();
             },
             on_error: function(e) {
                 console.log('Errored');
                 // push event to downloads page: { type: error, id: item.video.id }
+                ipcRenderer.send('download-error', { id: item.video.id });
                 resolve();
             },
             on_progress: function(e) {
                 let percent = Math.round((e.current / e.total) * 100);
                 console.log(`Progress: ${percent}%`);
                 // push event to downloads page: { type: progress, id: item.video.id, value: percent }
+                ipcRenderer.send('download-progress', { id: item.video.id, value: percent });
             }
         }).pipe(fs.createWriteStream(localFilename));
     } else if (downloadEngine == 'ffmpeg') {
@@ -178,19 +180,23 @@ function processItem(item) {
                 console.log('Finished!');
                 download_history.push(item.video.id);
                 // push event to downloads page: { type: finish, id: item.video.id }
+                ipcRenderer.send('download-finish', { id: item.video.id });
                 resolve();
             })
             .on('progress', function(progress) {
                 console.log(`Progress: ${progress.percent}%`);
                 // push event to downloads page: { type: progress, id: item.video.id, value: percent }
+                ipcRenderer.send('download-progress', { id: item.video.id, value: progress.percent });
             })
             .on('start', function(c) {
                 console.log(`Started using command: ${c}`);
                 // push event to downloads page: { type: start, id: item.video.id, value: item.video.url }
+                ipcRenderer.send('download-add', { id: item.video.id, value: item.video.url });
             })
             .on('error', function(err, stdout, etderr) {
                 console.log('Cannot process video', err.message);
                 // push event to downloads page: { type: error, id: item.video.id }
+                ipcRenderer.send('download-error', { id: item.video.id });
                 resolve();
             })
             .run();
