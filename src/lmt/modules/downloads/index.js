@@ -3,7 +3,7 @@
 */
 
 const { remote } = require('electron');
-const appSettings = remote.require('electron-settings'), path = require('path'), ffpmeg = require('fluent-ffmpeg'), m3u8stream = require('./module/m3u8stream/index'), fs = require('fs');
+const appSettings = remote.require('electron-settings'), path = require('path'), ffpmeg = require('fluent-ffmpeg'), m3u8stream = require('../m3u8stream/index'), fs = require('fs');
 var download_queue = [], download_history = [], can_run = false, is_running = false;
 
 module.exports = {
@@ -20,8 +20,14 @@ module.exports = {
             url: 'http://xyz.m3u8'
         }
     */
-    add: function(User, Video) {
-        download_queue.push({ user: User, video: Video });
+    add: function(obj) {
+        download_queue.push(obj);
+        
+        if (!is_running && can_run) {
+            runDownloader();
+        }
+
+        console.log(download_queue);
     },
 
     /*
@@ -49,10 +55,6 @@ module.exports = {
         Starts/Resumes downloading
     */
     start: function() {
-        if (download_queue.length > 0) {
-            can_run = true;
-        }
-
         if (!is_running && can_run) {
             runDownloader();
         }
@@ -68,7 +70,7 @@ module.exports = {
     /*
         Called on startup
     */
-    init: function() {
+    load: function() {
         loadQueue();
         loadHistory();
 
@@ -80,7 +82,7 @@ module.exports = {
     /*
         Called on shutdown
     */
-    shutdown: function() {
+    forceSave: function() {
         saveQueue();
         saveHistory();
     },
@@ -141,6 +143,8 @@ function saveHistory() {
     Pop an item from the queue and process it here
 */
 function processItem(item) { // TODO: Turn into a Promise
+    return new Promise((resolve, reject) => {
+
     let downloadEngine = appSettings.get('downloads.engine');
     let localFilename = getLocalFilename(item.user, item.video);
     let remoteFilename = item.video.url;
@@ -153,10 +157,12 @@ function processItem(item) { // TODO: Turn into a Promise
                 console.log('Finished!');
                 download_history.push(item.video.id);
                 // push event to downloads page: { type: finish, id: item.video.id }
+                resolve();
             },
             on_error: function(e) {
                 console.log('Errored');
                 // push event to downloads page: { type: error, id: item.video.id }
+                resolve();
             },
             on_progress: function(e) {
                 let percent = Math.round((e.current / e.total) * 100);
@@ -173,6 +179,7 @@ function processItem(item) { // TODO: Turn into a Promise
                 console.log('Finished!');
                 download_history.push(item.video.id);
                 // push event to downloads page: { type: finish, id: item.video.id }
+                resolve();
             })
             .on('progress', function(progress) {
                 console.log(`Progress: ${progress.percent}%`);
@@ -185,19 +192,22 @@ function processItem(item) { // TODO: Turn into a Promise
             .on('error', function(err, stdout, etderr) {
                 console.log('Cannot process video', err.message);
                 // push event to downloads page: { type: error, id: item.video.id }
+                resolve();
             })
             .run();
     }
+
+    });
 }
 
 /*
     Starts processing the download queue until it's paused or empty
 */
-function runDownloader() {
+async function runDownloader() {
     while (download_queue.length > 0 && can_run) {
         let item = download_queue.unshift();
         is_running = true;
-        processItem(item); // TODO await the promise, otherwise we're processing all of them at the same time.
+        await processItem(item); // TODO await the promise, otherwise we're processing all of them at the same time.
     }
 
     is_running = false;

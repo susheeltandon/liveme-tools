@@ -12,7 +12,8 @@
 const 	{ electron, BrowserWindow, remote, ipcRenderer } = require('electron'),
 		fs = require('fs'), path = require('path'), 
 		appSettings = remote.require('electron-settings'),
-		Favorites = require('./modules/favorites');
+		Favorites = require('./modules/favorites'),
+		Downloads = require('./modules/downloads');
 
 var isSearching = false, favorites_list = [], debounced = false, current_user = {};
 
@@ -76,9 +77,11 @@ $(function(){
 
 	ipcRenderer.on('do-shutdown' , function(event , data) { 
 		Favorites.forceSave();
+		Downloads.forceSave();
 	});
 
 	Favorites.load();
+	Downloads.load();
 
 	setInterval(function(){
 		Favorites.tick();
@@ -304,12 +307,24 @@ function playVideo(u) {
 	ipcRenderer.send('play-video', { url: u });
 }
 
-function downloadVideo(j) {
+function downloadVideo(userid, username, videoid, videotitle, videotime, videourl) {
 	if (debounced) return;
 	debounced = true;
 	setTimeout(function(){ debounced = false; }, 500);
 
-	ipcRenderer.send('download-video', JSON.parse(j));
+	//ipcRenderer.send('download-video', JSON.parse(j));
+	Downloads.add({
+		user: {
+			id: userid,
+			name: username
+		},
+		video: {
+			id: videoid,
+			title: videotitle,
+			time: videotime,
+			url: videourl
+		}
+	});
 }
 
 function openChat(u, t) {
@@ -379,14 +394,25 @@ function renderUserLookup(e) {
 
 			var ls = (e.videos[i].length - Math.round(e.videos[i].length / 60)) % 60, lm = Math.round(e.videos[i].length / 60);
 			var length = lm + ':' + (ls < 10 ? '0' : '') + ls;
+			let deleted = e.videos[i].private == true ? '[DELETED] ' : '', highlight = (hi1 ? 'highlight ' : '') + (hi2 ? 'highlight ' : '');
 
-			var h = '<div class="video_entry '+(hi1 ? 'highlight ' : '')+(hi2 ? 'highlight ' : '')+'">';
-			h += '<input class="url" type="text" value="'+e.videos[i].url+'"><h4 class="date">'+ds+'</h4><h4 class="title">'+(e.videos[i].private==true ? '[DELETED] ':'')+e.videos[i].title+'</h4>';
-			h += '<div class="counts"><label>Length:</label><span>'+length+'</span><label>Views:</label><span>' + e.videos[i].plays + '</span><label>Likes:</label><span>' + e.videos[i].likes + '</span><label>Shares:</label><span>' + e.videos[i].shares + '</span><label>Country:</label><span>'+e.videos[i].location.country+'</span></div>';
-			h += '<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat(\''+e.videos[i].msgfile+'\', \'' + e.videos[i].dt + '\')" title="View Message History">';
-			h += '<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo(\''+e.videos[i].url+'\')" title="Play Video">';
-			h += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+vi+'\')" title="Download Video">';
-			h += '</div>';
+			var h = `
+				<div class="video_entry ${highlight}">
+					<input class="url" type="text" value="${e.videos[i].url}">
+					<h4 class="date">${ds}</h4>
+					<h4 class="title">${deleted}${e.videos[i].title}</h4>
+					<div class="counts">
+						<label>Length:</label><span>${length}</span>
+						<label>Views:</label><span>${e.videos[i].plays}</span>
+						<label>Likes:</label><span>${e.videos[i].likes}</span>
+						<label>Shares:</label><span>${e.videos[i].shares}</span>
+						<label>Country:</label><span>${e.videos[i].location.country}</span>
+					</div>
+					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e.videos[i].msgfile}', '${e.videos[i].dt}')" title="View Message History">
+					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e.videos[i].url}')" title="Play Video">
+					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${vi.user.id}', '${vi.user.name}', '${vi.video.id}', '${vi.video.title}', '${vi.video.time}', '${vi.video.url}')" title="Download Video">
+				</div>`;
+
 			$('#videolist').append(h);
 		}
 	}
