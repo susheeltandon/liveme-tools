@@ -136,10 +136,12 @@ ipcMain.on('show-favorites', () => {
 	Settings Related
 */
 ipcMain.on('show-settings', () => {
+	var mw
 	settingsWindow = new BrowserWindow({
-		width:400, height:480, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false,
+
+		width: 900, height: 360, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false, center: true,
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
-		parent: mainwin, webPreferences:{ webSecurity:false, plugins:true, devTools:true }
+		parent: mainwin, modal: false, webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
 	settingsWindow.loadURL(`file://${__dirname}/lmt/settings.html`);
 	settingsWindow.on('closed', () => { 
