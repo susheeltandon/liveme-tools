@@ -7,11 +7,6 @@
 	 | |____| |\ V /  __/ |  | |  __/    | | (_) | (_) | \__ \
 	 |______|_| \_/ \___|_|  |_|\___|    |_|\___/ \___/|_|___/
 
-													v3.0.0
-		
-		(c)2017 by TheCoder - Licensed under GPL3 now
-
-
 */
 
 const 	{ electron, BrowserWindow, remote, ipcRenderer } = require('electron'),
@@ -146,9 +141,6 @@ function showUpload() {
 
 		return;
 	});
-
-
-
 
 }
 
@@ -378,7 +370,7 @@ function renderUserLookup(e) {
 				video: {
 					id: e.videos[i].videoid, title : e.videos[i].title, time: e.videos[i].dt, url: e.videos[i].url 
 				}
-			}, vienc = JSON.stringify(vi);
+			};
 
 			var dt = new Date(e.videos[i].dt * 1000);
 			var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
@@ -393,7 +385,7 @@ function renderUserLookup(e) {
 			h += '<div class="counts"><label>Length:</label><span>'+length+'</span><label>Views:</label><span>' + e.videos[i].plays + '</span><label>Likes:</label><span>' + e.videos[i].likes + '</span><label>Shares:</label><span>' + e.videos[i].shares + '</span><label>Country:</label><span>'+e.videos[i].location.country+'</span></div>';
 			h += '<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat(\''+e.videos[i].msgfile+'\', \'' + e.videos[i].dt + '\')" title="View Message History">';
 			h += '<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo(\''+e.videos[i].url+'\')" title="Play Video">';
-			h += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+vienc+'\')" title="Download Video">';
+			h += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+vi+'\')" title="Download Video">';
 			h += '</div>';
 			$('#videolist').append(h);
 		}
@@ -443,7 +435,7 @@ function renderSearchResults(e) {
 							video: {
 								id: e[i].videos[i].videoid, title : e[i].videos[i].title, time: e[i].videos[i].dt, url: e[i].videos[i].url 
 							}
-						}, vienc = JSON.stringify(vi);
+						};
 
 						var dt = new Date(e[i].videos[j].dt * 1000);
 						var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
@@ -456,7 +448,7 @@ function renderSearchResults(e) {
 
 						hh += '<div class="counts"><label>Length:</label><span>'+length+'</span><label>Views:</label><span>' + e[i].videos[j].plays + '</span><label>Likes:</label><span>' + e[i].videos[j].likes + '</span><label>Shares:</label><span>' + e[i].videos[j].shares + '</span><label>Country:</label><span>'+e[i].videos[j].location.country+'</span></div>';
 						hh += '<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo(\''+e[i].videos[j].url+'\')">';
-						hh += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+vienc+'\')" title="Download Video">';
+						hh += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+vi+'\')" title="Download Video">';
 						hh += '</div>';
 						
 						h += hh;

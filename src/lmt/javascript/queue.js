@@ -16,7 +16,7 @@
 
 const { remote, BrowserWindow, ipcRenderer } = require('electron');
 const fs = require('fs'), path = require('path'), os = require('os'), appSettings = remote.require('electron-settings');
-const m3u8stream = require('./modules/m3u8stream/index');
+const m3u8stream = require('./modules/m3u8stream');
 var isDownloading = false, queue_index = 0, queue = [], download_history = [];
 
 $(function(){
