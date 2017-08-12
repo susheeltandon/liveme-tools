@@ -3,7 +3,7 @@
 */
 
 const { remote, ipcRenderer } = require('electron');
-const appSettings = remote.require('electron-settings'), path = require('path'), ffpmeg = require('fluent-ffmpeg'), m3u8stream = require('../m3u8stream'), fs = require('fs');
+const appSettings = remote.require('electron-settings'), path = require('path'), ffmpeg = require('fluent-ffmpeg'), m3u8stream = require('../m3u8stream'), fs = require('fs');
 var download_queue = [], download_history = [], can_run = true, is_running = false;
 
 module.exports = {
@@ -182,6 +182,7 @@ function processItem(item) {
                 ipcRenderer.send('download-start', { id: item.video.id, value: item.video.url });
             })
             .on('error', function(err, stdout, etderr) {
+                console.log(err);
                 ipcRenderer.send('download-error', { id: item.video.id });
                 resolve();
             })
