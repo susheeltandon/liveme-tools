@@ -19,7 +19,7 @@
 
 				ipcRenderer.on('download-error', (event, arg) => {
 					console.log("ipcRenderer", "error", arg);
-					$('#' + arg.id).addClass("errored")
+					$('#' + arg.id).addClass("error")
 
 					setTimeout(() => {
 						$('#' + arg.id).remove();

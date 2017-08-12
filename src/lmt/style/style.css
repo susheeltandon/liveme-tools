@@ -244,7 +244,8 @@ body:hover > header.small.transparent > * {
 	color: rgba(255,255,255,0.9);
 }
 #queuelist .entry.active > img { opacity: 0; }
-
+#queuelist .entry.error { background-color: rgba(224,0,0,0.5); }
+#queuelist .entry.finished { background-color: rgba(0,224,0,0.5); }
 
 
 
