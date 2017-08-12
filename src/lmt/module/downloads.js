@@ -91,6 +91,12 @@ module.exports = {
     */
     subscribe_to_progress: function() {
 
+            /*
+
+                m3u8stream module integrated and the fluent-ffmpeg both provide progress feedbacks.
+
+            */
+
     }
 };
 
