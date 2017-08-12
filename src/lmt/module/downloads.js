@@ -49,6 +49,10 @@ module.exports = {
     init: function() {
         loadQueue();
         loadHistory();
+
+        if (download_queue.length > 0 && can_run) {
+            runDownloader();
+        }
     },
 
     is_running: function() {
@@ -69,19 +73,39 @@ module.exports = {
 };
 
 function loadQueue() {
-
+    fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'downloadQueue.json'), 'utf8', function(err, data) {
+        if (err) {
+            download_queue = [];
+        } else {
+            try {
+                download_queue = JSON.parse(data);
+            } catch (err) {
+                download_queue = [];
+            }
+        }
+    });
 }
 
 function saveQueue() {
-
+    fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'downloadQueue.json'), JSON.stringify(download_queue), 'utf8', () => {});
 }
 
 function loadHistory() {
-
+    fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'downloadHistory.json'), 'utf8', function(err, data) {
+        if (err) {
+            download_history = [];
+        } else {
+            try {
+                download_history = JSON.parse(data);
+            } catch (err) {
+                download_history = [];
+            }
+        }
+    });
 }
 
 function saveHistory() {
-
+    fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'downloadHistory.json'), JSON.stringify(download_history), 'utf8', () => {});
 }
 
 /*
