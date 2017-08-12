@@ -2,7 +2,7 @@
 	Downloads Module
 */
 
-const appSettings = require('electron').remote.require('electron-settings'), path = require('path'), ffpmeg = require('fluent-ffmpeg');
+const appSettings = require('electron').remote.require('electron-settings'), path = require('path'), ffpmeg = require('fluent-ffmpeg'), m3u8stream = require('./m3u8stream/index'), fs = require('fs');
 var download_queue = [], download_history = [], can_run = false, is_running = false;
 
 module.exports = {
@@ -93,25 +93,36 @@ function processItem(item) {
     let remoteFilename = item.video.url;
 
     if (downloadEngine == 'internal') {
-
+        m3u8stream(remoteFilename, {
+            on_complete: function(e) {
+                console.log('Finished!');
+            },
+            on_error: function(e) {
+                console.log('Errored');
+            },
+            on_progress: function(e) {
+                let percent = Math.round((e.current / e.total) * 100);
+                console.log(`Progress: ${percent}%`);
+            }
+        }).pipe(fs.createWriteStream(localFilename));
     } else if (downloadEngine == 'ffmpeg') {
-        let command = ffmpeg(remoteFilename)
-                        .audioCodec('aac')
-                        .videoCodec('libx264')
-                        .output(localFilename)
-                        .on('end', function(stdout, stderr) {
-                            console.log('Finished!');
-                        })
-                        .on('progress', function(progress) {
-                            console.log(`Progress: ${progress.percent}%`);
-                        })
-                        .on('start', function(c) {
-                            console.log(`Started using command: ${c}`);
-                        })
-                        .on('error', function(err, stdout, etderr) {
-                            console.log('Cannot process video', err.message);
-                        })
-                        .run();
+        ffmpeg(remoteFilename)
+            .audioCodec('aac')
+            .videoCodec('libx264')
+            .output(localFilename)
+            .on('end', function(stdout, stderr) {
+                console.log('Finished!');
+            })
+            .on('progress', function(progress) {
+                console.log(`Progress: ${progress.percent}%`);
+            })
+            .on('start', function(c) {
+                console.log(`Started using command: ${c}`);
+            })
+            .on('error', function(err, stdout, etderr) {
+                console.log('Cannot process video', err.message);
+            })
+            .run();
     }
 }
 
@@ -121,8 +132,11 @@ function processItem(item) {
 function runDownloader() {
     while (download_queue.length > 0 && can_run) {
         let item = download_queue.unshift();
+        is_running = true;
         processItem(item);
     }
+
+    is_running = false;
 }
 
 /*
