@@ -2,7 +2,7 @@
 	Downloads Module
 */
 
-const appSettings = require('electron').remote.require('electron-settings'), path = require('path');
+const appSettings = require('electron').remote.require('electron-settings'), path = require('path'), ffpmeg = require('fluent-ffmpeg');
 var download_queue = [], download_history = [], can_run = false, is_running = false;
 
 module.exports = {
@@ -88,7 +88,31 @@ function saveHistory() {
     Pop an item from the queue and process it here
 */
 function processItem(item) {
+    let downloadEngine = appSettings.get('downloads.engine');
+    let localFilename = getLocalFilename(item.user, item.video);
+    let remoteFilename = item.video.url;
 
+    if (downloadEngine == 'internal') {
+
+    } else if (downloadEngine == 'ffmpeg') {
+        let command = ffmpeg(remoteFilename)
+                        .audioCodec('aac')
+                        .videoCodec('libx264')
+                        .output(localFilename)
+                        .on('end', function(stdout, stderr) {
+                            console.log('Finished!');
+                        })
+                        .on('progress', function(progress) {
+                            console.log(`Progress: ${progress.percent}%`);
+                        })
+                        .on('start', function(c) {
+                            console.log(`Started using command: ${c}`);
+                        })
+                        .on('error', function(err, stdout, etderr) {
+                            console.log('Cannot process video', err.message);
+                        })
+                        .run();
+    }
 }
 
 /*
@@ -102,25 +126,25 @@ function runDownloader() {
 }
 
 /*
+    Gets full local filename for the download
     Replaces wildcards in the filename with the variables
 */
-function parseFilename(user, video) {
-    let setting = appSettings.get('downloads.filemode');
-
-    if (setting == 'playlist-filename') {
-        return path.basename(video.url).replace("m3u8", "ts");
+function getLocalFilename(user, video) {
+    if (appSettings.get('downloads.filemode') == 0) {
+        return path.join(appSettings.get('downloads.directory'), path.basename(video.url).replace("m3u8", "ts"));
     } else {
-        let finalname = setting.replace("%username%", user.name)
-                               .replace("%userid%", user.id)
-                               //.replace("%usercountry%", user.country)
-                               .replace("%videoid%", video.id)
-                               .replace("%videotitle%", video.title)
-                               .replace("%videotime%", video.time);
+        let finalname = appSettings.get('downloads.filetemplate')
+                                    .replace("%%username%%", user.name)
+                                    .replace("%%userid%%", user.id)
+                                    //.replace("%%usercountry%%", user.country)
+                                    .replace("%%videoid%%", video.id)
+                                    .replace("%%videotitle%%", video.title)
+                                    .replace("%%videotime%%", video.time);
 
         if (!finalname || finalname == "") {
-            return path.basename(video.url).replace("m3u8", "ts");
+            return path.join(appSettings.get('downloads.directory'), path.basename(video.url).replace("m3u8", "ts"));
         } else {
-            return finalname + ".ts";
+            return path.join(appSettings.get('downloads.directory'), finalname + ".ts");
         }
     }
 }
