@@ -17,7 +17,7 @@
 const 	{ electron, BrowserWindow, remote, ipcRenderer } = require('electron'),
 		fs = require('fs'), path = require('path'), 
 		appSettings = remote.require('electron-settings'),
-		Favorites = require('./module/favorites');
+		Favorites = require('./modules/favorites');
 
 var isSearching = false, favorites_list = [], debounced = false, current_user = {};
 
