@@ -19,7 +19,7 @@ const 	{ electron, BrowserWindow, remote, ipcRenderer } = require('electron'),
 		appSettings = remote.require('electron-settings'),
 		Favorites = require('./module/favorites');
 
-var isSearching = false, favorites_list = [], debounced = false, current_user = { userid: 0, username: '' };
+var isSearching = false, favorites_list = [], debounced = false, current_user = {};
 
 $(function(){
 
@@ -434,6 +434,17 @@ function renderSearchResults(e) {
 
 				for(j = 0; j < e[i].videos.length; j++) {
 					if (e[i].videos[j].url.length > 8) {
+
+						var vi = { 
+							user: {
+								id: e[i].userid,
+								name: e[i].nickname
+							},
+							video: {
+								id: e[i].videos[i].videoid, title : e[i].videos[i].title, time: e[i].videos[i].dt, url: e[i].videos[i].url 
+							}
+						}, vienc = JSON.stringify(vi);
+
 						var dt = new Date(e[i].videos[j].dt * 1000);
 						var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
 
@@ -445,7 +456,7 @@ function renderSearchResults(e) {
 
 						hh += '<div class="counts"><label>Length:</label><span>'+length+'</span><label>Views:</label><span>' + e[i].videos[j].plays + '</span><label>Likes:</label><span>' + e[i].videos[j].likes + '</span><label>Shares:</label><span>' + e[i].videos[j].shares + '</span><label>Country:</label><span>'+e[i].videos[j].location.country+'</span></div>';
 						hh += '<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo(\''+e[i].videos[j].url+'\')">';
-						//hh += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+e[i].videos[j].url+'\')">';
+						hh += '<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo(\''+vienc+'\')" title="Download Video">';
 						hh += '</div>';
 						
 						h += hh;
