@@ -9,16 +9,22 @@ $(function() {
 			filemode: 0,
 			filetemplate: '',
 			history: true,
-			concurrent: 1
+			engine: "internal"
 		});
 		
 	}
 
 	setTimeout(function(){
 		$('#download_folder').val(appSettings.get('downloads.directory'));
-		$('#filemode').val(appSettings.get('downloads.filemode'));
+		$('#filemode').prop('checked', appSettings.get('downloads.filemode'));
+		$('#filetemplate').val(appSettings.get('downloads.filetemplate'));
+		$('#history').prop('checked', appSettings.get('downloads.history'));
+		$('#engine').val(appSettings.get('downloads.engine'));
 
-	}, 250);
+		checkType();
+
+		console.log(appSettings.get('downloads'));
+	}, 100);
 });
 
 function closeWindow() {
@@ -26,11 +32,25 @@ function closeWindow() {
 }
 
 function saveSettings() {
-	appSettings.set('downloads', { directory: $('#download_folder').val() });
+	appSettings.set('downloads', { 
+		directory: $('#download_folder').val(), 
+		filemode: $('#filemode').is(':checked') ? 1 : 0,
+		filetemplate: $('#filetemplate').val(),
+		history: $('#history').is(':checked') ? 1 : 0,
+		engine: $('#engine').val()
+	});
 	closeWindow();
 }
 
-
+function checkType() {
+	if ($('#filemode').is(':checked') == 0) {
+		$('#ftblock-yes').hide();
+		$('#ftblock-no').show();
+	} else {
+		$('#ftblock-no').hide();
+		$('#ftblock-yes').show();
+	}
+}
 
 function SetDownloadPath() {
 	var dir_path = remote.dialog.showOpenDialog({

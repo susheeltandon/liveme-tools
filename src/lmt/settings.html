@@ -12,51 +12,128 @@
 		<script src="javascript/settings.js"></script>
 
 		<style>
-			#download_folder { width: 320px; }
-			span.switch { float: right; }
+			body { color: rgba(255,255,255,0.7); }
+			h2 { color: rgba(255,255,255,0.3); font-weight: 400; font-size: 21pt; }
+			p { margin: 0; font-weight: 300; font-size: 10pt; }
+			.label { display: block; font-size: 10pt; font-weight: 300; padding: 4px 4px 2px; }
+			h5 { font-weight: 300; margin: 8px 4px; padding: 0; }
 			ul { list-style: none; margin: 0; padding: 0 0 0 32px; }
 			li { margin: 2px 0; padding: 0; font-size: 8.5pt; font-weight: 300; color: rgba(255,255,255,0.7); }
 			li span { font-weight: 400; display: inline-block; width: 100px; }
+			.cell { display: inline-block; width: 192px; vertical-align: middle; }
+
+			div.buttons {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				display: block;
+				text-align: right;
+				height: 64px;
+				line-height: 64px;
+				padding: 0 16px;
+			}
+			div.buttons input {
+				vertical-align: middle;
+				min-width: 80px;
+			}
+			div.buttons input:first-child {
+				margin-right: 16px;
+			}
 		</style>
 	</head>
 
 	<body onContextMenu="return false;">
 		<header class="small">
-			<h4>Settings</h4>
-			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="closeWindow()">
+			<h1>Settings</h1>
 		</header>
 
 		<div class="inset">
-			<div>
-				<h4>Downloads</h4>
-				<p>Select the folder where you want downloads stored:</p>
-				<input type="text" id="download_folder" placeholder=""> <input type="button" value="..." onClick="SetDownloadPath()">
-			</div>
-			<div style="margin-top: 48px;">
-				<h4>Filenames</h4>
-				<div class="select" style="margin-bottom: 4px; width: 160px">
-					<select id="filemode">
-						<option selected value="0">Use playlist filename</option>
-						<option value="1">Use custom</option>
-					</select>
-				</div>
-				<div id="ftblock">
-					<input type="text" id="filetemplate" style="width: 100%;">
-					<ul>
-						<li><span>%%username%%</span> Username</li>
-						<li><span>%%videoid%%</span> Video ID</li>
-						<li><span>%%videotitle%%</span> Video Title</li>
-						<li><span>%%videotime%%</span> Video Time</li>
-					</ul>
-					<p style="font-size: 8pt;">
-						The filename of the playlist will be used if the custom title ends up being empty.
-					</p>
-				</div>
-			</div>
+			<table width="100%">
+				<tbody>
+					<tr valign="top">
+						<td width="50%">
 
-			
-			<div style="text-align: center; margin-top: 48px">
+							<h2>Downloads</h2>
+							<div style="margin: 16px 0;">
+								<div class="cell">
+									<p>Download Engine:</p>
+								</div>
+								<div class="cell" style="text-align: right;">
+									<div class="select" style="width: 140px;">
+										<select id="engine">
+											<option selected value="internal">Internal</option>
+											<option value="ffmpeg">FFMPEG</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div style="margin: 16px 0;">
+								<h5>Folder to store downloads in:</h5>
+								<input type="text" id="download_folder" placeholder="" style="width: 350px"> <input type="button" value="..." onClick="SetDownloadPath()">
+							</div>
+
+							<div style="margin-top: 24px;">
+								<div>
+									<div class="cell">
+										<p style="margin: 8px 0">
+											Use Download History
+										</p>
+									</div>
+									<div class="cell" style="text-align: right;">
+										<span class="switch">
+											<input type="checkbox" id="history" onChange="checkType()">
+											<label for="history" data-on="YES" data-off="NO"></label>
+										</span>
+									</div>
+								</div>
+								<p style="margin: 8px 4px; font-size: 9pt;">
+									When enabled, prevents you from downloading videos again if you previously downloaded them.
+								</p>
+							</div>
+						</td>
+						<td width="50%">
+
+							<h2>Filenames</h2>
+							<div>
+								<div class="cell">
+									<p style="margin: 8px 0">
+										Use Custom Filenames
+									</p>
+								</div>
+								<div class="cell" style="text-align: right;">
+									<span class="switch">
+										<input type="checkbox" id="filemode" onChange="checkType()">
+										<label for="filemode" data-on="YES" data-off="NO"></label>
+									</span>
+								</div>
+							</div>
+							<div id="ftblock-no">
+								<h5>Filenames will be the playlist name in the URL.</h5>
+							</div>
+							<div id="ftblock-yes">
+								<h5>Filenames will be created using template below:</h5>
+								<input type="text" id="filetemplate" style="width: 100%;">
+								<ul>
+									<li><span>%%username%%</span> Username</li>
+									<li><span>%%videoid%%</span> Video ID</li>
+									<li><span>%%videotitle%%</span> Video Title</li>
+									<li><span>%%videotime%%</span> Video Time</li>
+								</ul>
+								<p style="font-size: 8pt;">
+									The filename of the playlist will be used if the custom title ends up being empty.
+								</p>
+							</div>
+
+
+						</td>
+					</tr>
+				</tbody>
+			</table>
+							
+			<div class="buttons">				
 				<input type="button" value="Save" onClick="saveSettings()">
+				<input type="button" value="Cancel" onClick="closeWindow()">
 			</div>
 
 		</div>
