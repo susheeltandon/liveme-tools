@@ -335,6 +335,7 @@ function downloadVideo(e) {
 	setTimeout(function(){ debounced = false; }, 500);
 
 	//ipcRenderer.send('download-video', JSON.parse(j));
+	console.log(e);
 	Downloads.add(e);
 }
 
