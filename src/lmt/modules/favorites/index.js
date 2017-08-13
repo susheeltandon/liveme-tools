@@ -3,19 +3,15 @@
 */
 "use strict";
 
-const	fs = require('fs'), {remote} = require('electron'), path = require('path');
+const	fs = require('fs'), {remote, ipcRenderer} = require('electron'), path = require('path');
 
 var fav_list = [], last_change = 0, is_saved = false;
 
 module.exports = {
 
-	initIfNeeded: function() {
-		if (last_change != 0) return;
-		last_change = new Date().getTime() / 1000;
-	},
-
 	add : function(e) {
 		fav_list.push(e);
+		ipcRenderer.send('favorites-refresh');
 		write_to_file(false);		
 	},
 
@@ -26,10 +22,12 @@ module.exports = {
 				fav_list.splice(i, 1);
 			}
 		}
+		ipcRenderer.send('favorites-refresh');
 		write_to_file(false);
 	},
 
 	save: function() {
+		ipcRenderer.send('favorites-refresh');
 		write_to_file(false);
 	},
 
@@ -51,12 +49,11 @@ module.exports = {
 				fav_list = [];
 			} else {
 				fav_list = JSON.parse(data);
-				last_change = new Date().getTime() / 1000;
+				ipcRenderer.send('favorites-refresh');
 			}
 		});
-	},
 
-	lastChange: function() { return last_change; },
+	},
 
 	isOnList: function(e) {
 		for (var i = 0; i < fav_list.length; i++) {

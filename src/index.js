@@ -138,9 +138,9 @@ ipcMain.on('show-favorites', () => {
 	favoritesWindow.show();
 });
 
-
-
-
+ipcMain.on('favorites-refresh', (event, arg) => {
+	favoritesWindow.send('favorites-refresh', arg);
+});
 
 
 
