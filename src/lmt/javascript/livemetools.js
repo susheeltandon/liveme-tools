@@ -454,7 +454,7 @@ function renderSearchResults(e) {
 					<div class="level">Level: <span>${e[i].level}</span></div>
 					
 					<input type="button" class="fans" value="${e[i].fans} Fans" onClick="showFans('${e[i].userid}', '${e[i].fans}', '${e[i].nickname}')">
-					<input type="button" class="followings" value="Following ${e[i].followings}" onClick="showFollowing('${e[i].userid}', ${e[i].followings}, '${e[i].nickname}')">';
+					<input type="button" class="followings" value="Following ${e[i].followings}" onClick="showFollowing('${e[i].userid}', ${e[i].followings}, '${e[i].nickname}')">
 					<input type="button" class="user" value="${e[i].userid}" onClick="showUser('${e[i].userid}')">
 				</div>
 			`);

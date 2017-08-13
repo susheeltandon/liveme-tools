@@ -272,6 +272,7 @@ function _dosearch() {
 				});
 			}
 
+			index = 0;
 			_dosearch2();			
 
 		}
@@ -296,6 +297,8 @@ function _dosearch2() {
 		},
 		success: function(e) {
 			
+			console.log(index);
+
 			return_data[index] = {
 					userid: e.data.user.user_info.uid,
 					nickname: e.data.user.user_info.nickname,
@@ -309,8 +312,8 @@ function _dosearch2() {
 			};
 			
 
-			if (index < max_count) {
-				index++;
+			index++;
+			if (index < return_data.length) {
 				_dosearch2();
 			} else {
 				index = 0;
