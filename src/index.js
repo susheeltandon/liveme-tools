@@ -139,8 +139,13 @@ ipcMain.on('show-favorites', () => {
 });
 
 ipcMain.on('favorites-refresh', (event, arg) => {
-	favoritesWindow.send('favorites-refresh', arg);
+	if (typeof(favoritesWindow) == 'undefined') return;
+	favoritesWindow.send('favorites-refresh');
 });
+
+
+
+
 
 
 
