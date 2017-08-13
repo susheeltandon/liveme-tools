@@ -478,10 +478,9 @@ body:hover > header.small.transparent > * {
 	color: #eaebed;
 }
 .user_entry input[type=button].user { position: absolute; top: 35px; left: 260px; width: 140px; }
-
-.user_entry input[type=button].videos { position: absolute; top: 35px; right: 40px; width: 100px; }
-.user_entry input[type=button].fans { position: absolute; top: 35px; right: 160px; width: 100px; }
-.user_entry input[type=button].followings { position: absolute; top: 35px; right: 280px; width: 100px; }
+/* .user_entry input[type=button].videos { position: absolute; top: 35px; right: 40px; width: 100px; } */
+.user_entry input[type=button].fans { position: absolute; top: 35px; right: 24px; width: 100px; }
+.user_entry input[type=button].followings { position: absolute; top: 35px; right: 160px; width: 100px; }
 
 .user_entry.small {
 	height: 60px;
