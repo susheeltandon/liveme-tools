@@ -28,11 +28,11 @@
 				ipcRenderer.on('download-progress', (event, arg) => {
 					//$('#' + arg.id + ' .progress').css({ width: arg.value + '%' });
 					$('#queueheader .progress').css({ width: arg.value + '%' });
+					$('.active_url').html('<h5>Downloading:</h5>'+arg.url)
 				});
 
 				ipcRenderer.on('download-start', (event, arg) => {
 					$('#' + arg.id).addClass('active');
-					$('.active_url').html(arg.url);
 				});
 
 				ipcRenderer.on('download-finish', (event, arg) => {

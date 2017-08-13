@@ -207,7 +207,7 @@ function processItem(item) {
                 },
                 on_progress: function(e) {
                     let percent = Math.round((e.current / e.total) * 100);
-                    ipcRenderer.send('download-progress', { id: item.video.id, value: percent });
+                    ipcRenderer.send('download-progress', { id: item.video.id, url: item.video.url, value: percent });
                 }
             }).pipe(fs.createWriteStream(localFilename));
         } else if (downloadEngine == 'ffmpeg') {
@@ -227,7 +227,7 @@ function processItem(item) {
                     resolve();
                 })
                 .on('progress', function(progress) {
-                    ipcRenderer.send('download-progress', { id: item.video.id, value: progress.percent });
+                    ipcRenderer.send('download-progress', { id: item.video.id, url: item.video.url, value: progress.percent });
                 })
                 .on('start', function(c) {
                     ipcRenderer.send('download-start', { id: item.video.id, value: item.video.url });

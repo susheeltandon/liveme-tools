@@ -216,15 +216,20 @@ body:hover > header.small.transparent > * {
 
 #queueheader .active_url {
 	position: absolute;
-	top: 12px;
+	top: 8px;
 	left: 48px;
-	right: 8px;
-	line-height: 24px;
-	font-size: 10pt;
+	right: 8px;	
+	font-size: 9pt;
 	display: block;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	color: rgba(255,255,255,0.7);
+}
+#queueheader .active_url h5 {
+	display: block;
+	font-size: 8pt;
+	font-weight: 400;
+	color: rgba(255,255,255,0.4);
 }
 #queueheader .progress {
 	position: absolute;
