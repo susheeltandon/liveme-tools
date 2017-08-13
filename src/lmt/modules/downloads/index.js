@@ -69,6 +69,18 @@ module.exports = {
     },
 
     /*
+        Resumes downloading
+    */
+
+    resume: function() {
+        can_run = true;
+
+        if (!is_running && can_run) {
+            runDownloader();
+        }
+    },
+
+    /*
         Called on startup
     */
     load: function() {

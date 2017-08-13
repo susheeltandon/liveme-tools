@@ -91,6 +91,15 @@ $(function(){
 		Downloads.purge_history();
 	});
 
+	ipcRenderer.on('download-pause-request', function(event, data) {
+		Downloads.stop();
+		ipcRenderer.send('download-pause', {});
+	});
+
+	ipcRenderer.on('download-resume-request', function(event, data) {
+		Downloads.resume();
+		ipcRenderer.send('download-resume', {});
+	});
 });
 
 

@@ -790,3 +790,7 @@ input[type=button].small {
 	left: 0
 }
 
+#pauseButton {
+	top: 3px;
+	right: 12px;
+}

@@ -299,6 +299,22 @@ ipcMain.on('download-start', (event, arg) => {
 	queuewin.send('download-start', arg);
 });
 
+ipcMain.on('download-pause', (event, arg) => {
+	queuewin.send('download-pause', arg);
+});
+
+ipcMain.on('download-resume', (event, arg) => {
+	queuewin.send('download-resume', arg);
+});
+
+ipcMain.on('download-pause-request', (event, arg) => {
+	mainwin.send('download-pause-request', arg);
+});
+
+ipcMain.on('download-resume-request', (event, arg) => {
+	mainwin.send('download-resume-request', arg);
+});
+
 /*
 	History relay
 */

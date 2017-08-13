@@ -10,6 +10,7 @@
 		<script src="javascript/jquery-2.2.4.min.js"></script>
 		<script type="text/javascript">
 			const { ipcRenderer } = require('electron');
+			var isPaused = false;
 
 			$(function() {
 				ipcRenderer.on('download-add', (event, arg) => {
@@ -39,7 +40,25 @@
 						$('#' + arg.id).fadeOut(800).remove();
 					}, 3000);
 				});
+
+				ipcRenderer.on('download-resume', (event, arg) => {
+					isPaused = false;
+					$('#pauseButton').attr('src', 'images/ic_pause_circle_outline_white_24px.svg');
+				});
+
+				ipcRenderer.on('download-pause', (event, arg) => {
+					isPaused = true;
+					$('#pauseButton').attr('src', 'images/ic_play_circle_outline_white_24px.svg');
+				});
 			});
+
+			function pauseResume() {
+				if (isPaused) {
+					ipcRenderer.send('download-resume-request', {});
+				} else {
+					ipcRenderer.send('download-pause-request', {});
+				}
+			}
 		</script>
 
 	</head>
@@ -47,6 +66,7 @@
 
 		<header class="small">
 			<h4>Download Queue</h4>
+			<img id="pauseButton" src="images/ic_pause_circle_outline_white_24px.svg" onClick="pauseResume()">
 		</header>
 		
 		<div id="queuelist"></div>
