@@ -132,8 +132,12 @@ function loadQueue() {
             }
         }
         
-        for (i = 0; i < download_queue.length; i++) {
-            ipcRenderer.send('download-add', { id: download_queue[i].video.id, value: download_queue[i].video.url });
+        if (download_queue.length > 0) {
+            for (i = 0; i < download_queue.length; i++) {
+                ipcRenderer.send('download-add', { id: download_queue[i].video.id, value: download_queue[i].video.url });
+            }
+
+            runDownloader();
         }
     });
 }
