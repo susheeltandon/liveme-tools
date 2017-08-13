@@ -28,7 +28,7 @@
 				ipcRenderer.on('download-progress', (event, arg) => {
 					//$('#' + arg.id + ' .progress').css({ width: arg.value + '%' });
 					$('#queueheader .progress').css({ width: arg.value + '%' });
-					$('.active_url').html('<h5>Downloading:</h5>'+arg.url)
+					$('.active_url').html('<h5>Downloading:</h5>'+arg.url);
 				});
 
 				ipcRenderer.on('download-start', (event, arg) => {
@@ -38,6 +38,7 @@
 				ipcRenderer.on('download-finish', (event, arg) => {
 					$('#' + arg.id).addClass("finished");
 					$('#queueheader .progress').css({ width: '0%' });
+					$('.active_url').empty();
 
 					setTimeout(() => {
 						$('#' + arg.id).fadeOut(800).remove();
