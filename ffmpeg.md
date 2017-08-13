@@ -1,32 +1,24 @@
 # ffmpeg Download Engine
 
-## 1. Download ffmpeg
+When set to use the FFMPEG engine for downloading, LiveMe Tools will download playlists
+and convert them from TS to MP4 format on the fly while downloading.  This will save
+most people an additional step of performing video conversion.
 
+## Downloading
+Official downloads can be obtained from [here](https://www.ffmpeg.org/download.html).
+
+## Installing
 ### Windows
-1. Get ffmpeg from [here](http://ffmpeg.zeranoe.com/builds/).
-2. Extract the zip to your C:\ drive.
+Extract the downloaded archive.  You should see 3 executable files in the bin folder.
+Copy just the FFMPEG.EXE file to the directory where you have LiveMe Tools installed.
 
 ### Linux
-/// todo
+#### Ubuntu/Debian/Mint
+```sudo apt install ffmpeg -y```
 
-### Mac
-/// todo
+#### RedHat/Fedora/CentOS
+```sudo yum ffmpeg```
 
-## 2. Update Environment Variables
-### Windows
-1. Right-click on 'This PC' or 'My Computer', and go to Properties.
-2. Click on 'Advanced System Settings'.
-3. Make sure you're on the 'Advanced' tab.
-4. Click on 'Environment Variables' at the bottom.
-5. Click on 'New' and enter the following:  
-Variable Name: `FFMPEG_PATH`  
-Variable Path: `C:\ffmpeg\bin\ffmpeg.exe`
-6. Click 'OK' then click on 'New' again, this time enter the following:  
-Variable Name: `FFPROBE_PATH`  
-Variable Path: `C:\ffmpeg\bin\ffprobe.exe`
-7. Click 'OK' on everything to save your changes.
-8. If LiveMe-Tools was open, close and re-open it.
+### macOS
+** Need to write **
 
-## 3. Update settings
-1. Click on the settings icon inside LiveMe-Tools.
-2. Make sure the 'Download Engine' is set to 'ffmpeg'.
