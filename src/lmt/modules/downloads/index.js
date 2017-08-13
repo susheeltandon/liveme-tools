@@ -286,7 +286,6 @@ function getLocalFilename(item) {
 
     if (basename == 'playlist.ts' || basename == 'playlist_eof.ts') {
         let parentName = path.basename(path.dirname(item.video.url));
-        console.log(parentName);
         fullPath = fullPath.replace(basename, parentName + '.ts');
     }
 
