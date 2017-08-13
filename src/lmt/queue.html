@@ -20,8 +20,8 @@
 					$('#' + arg.id).addClass("error")
 
 					setTimeout(() => {
-						$('#' + arg.id).remove();
-					}, 5000);
+						$('#' + arg.id).fadeOut(800).remove();
+					}, 3000);
 				});
 
 				ipcRenderer.on('download-progress', (event, arg) => {
@@ -36,8 +36,8 @@
 					$('#' + arg.id).addClass("finished")
 
 					setTimeout(() => {
-						$('#' + arg.id).remove();
-					}, 5000);
+						$('#' + arg.id).fadeOut(800).remove();
+					}, 3000);
 				});
 			});
 		</script>
