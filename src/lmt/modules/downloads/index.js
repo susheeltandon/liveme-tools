@@ -261,10 +261,11 @@ async function runDownloader() {
     Replaces wildcards in the filename with the variables
 */
 function getLocalFilename(item) {
+    let defaultPath = path.join(appSettings.get('downloads.directory'), path.basename(item.video.url).replace("m3u8", "ts"));
     let fullPath = null;
 
     if (appSettings.get('downloads.filemode') == 0) {
-        fullPath = path.join(appSettings.get('downloads.directory'), path.basename(item.video.url).replace("m3u8", "ts"));
+        fullPath = defaultPath;
     } else {
         let finalname = appSettings.get('downloads.filetemplate')
                                     .replace("%%username%%", item.user.name)
@@ -275,10 +276,18 @@ function getLocalFilename(item) {
                                     .replace("%%videotime%%", item.video.time);
 
         if (!finalname || finalname == "") {
-            fullPath = path.join(appSettings.get('downloads.directory'), path.basename(item.video.url).replace("m3u8", "ts"));
+            fullPath = defaultPath;
         } else {
             fullPath = path.join(appSettings.get('downloads.directory'), finalname + ".ts");
         }
+    }
+
+    let basename = path.basename(fullPath);
+
+    if (basename == 'playlist.ts' || basename == 'playlist_eof.ts') {
+        let parentName = path.basename(path.dirname(item.video.url));
+        console.log(parentName);
+        fullPath = fullPath.replace(basename, parentName + '.ts');
     }
 
     fs.ensureDirSync(path.dirname(fullPath));
