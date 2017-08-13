@@ -70,14 +70,12 @@ module.exports = {
 }
 
 function write_to_file(f) {
-	if (is_saved) { return; }
-
 	var ti = new Date().getTime() / 1000;
-	if ((ti - last_change) < 300) { return; }
+	last_change = ti;
+
 	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), JSON.stringify(fav_list), 'utf8', function(){
 		
 	});
-	last_change = ti;
 }
 
 function read_from_file(cb) {

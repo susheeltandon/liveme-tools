@@ -6,7 +6,8 @@ $(function(){
 	Favorites.initIfNeeded();
 
 	setInterval(function(){
-		if ((Favorites.lastChange() - last_change) > 300) {
+		console.log(Favorites.lastChange() + ' -- ' + last_change);
+		if ((Favorites.lastChange() - last_change) > 30) {
 			Favorites.recall(function(e){
 				$('#small_user_list').html('');
 				for (i = 0; i < e.length; i++) {
@@ -20,7 +21,7 @@ $(function(){
 			});
 			last_change = Favorites.lastChange();
 		}
-	}, 500);
+	}, 1000);
 });
 
 function closeWindow() { window.close(); }
