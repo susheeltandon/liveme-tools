@@ -46,12 +46,12 @@
 
 				ipcRenderer.on('download-resume', (event, arg) => {
 					isPaused = false;
-					$('#pauseButton').prop('src', 'images/ic_pause_circle_outline_white_24px.svg');
+					$('#queueheader img.pause').prop('src', 'images/ic_pause_circle_outline_white_24px.svg');
 				});
 
 				ipcRenderer.on('download-pause', (event, arg) => {
 					isPaused = true;
-					$('#pauseButton').prop('src', 'images/ic_play_circle_outline_white_24px.svg');
+					$('#queueheader img.pause').prop('src', 'images/ic_play_circle_outline_white_24px.svg');
 				});
 
 				
