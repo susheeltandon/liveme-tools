@@ -131,6 +131,10 @@ function loadQueue() {
                 download_queue = [];
             }
         }
+        
+        for (i = 0; i < download_queue.length; i++) {
+            ipcRenderer.send('download-add', { id: download_queue[i].video.id, value: download_queue[i].video.url });
+        }
     });
 }
 
