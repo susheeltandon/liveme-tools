@@ -43,12 +43,12 @@
 
 				ipcRenderer.on('download-resume', (event, arg) => {
 					isPaused = false;
-					$('#pauseButton').attr('src', 'images/ic_pause_circle_outline_white_24px.svg');
+					$('#pauseButton').prop('src', 'images/ic_pause_circle_outline_white_24px.svg');
 				});
 
 				ipcRenderer.on('download-pause', (event, arg) => {
 					isPaused = true;
-					$('#pauseButton').attr('src', 'images/ic_play_circle_outline_white_24px.svg');
+					$('#pauseButton').prop('src', 'images/ic_play_circle_outline_white_24px.svg');
 				});
 			});
 
@@ -66,8 +66,10 @@
 
 		<header class="small">
 			<h4>Download Queue</h4>
-			<img id="pauseButton" src="images/ic_pause_circle_outline_white_24px.svg" onClick="pauseResume()">
 		</header>
+		<div id="queueheader">
+		<img class="pause" src="images/ic_pause_circle_outline_white_24px.svg" onClick="pauseResume()">
+		</div>
 		
 		<div id="queuelist"></div>
 
