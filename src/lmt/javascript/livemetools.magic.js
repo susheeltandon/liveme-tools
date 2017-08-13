@@ -272,20 +272,7 @@ function _dosearch() {
 				});
 			}
 
-			if (page_index < 5) {
-				if (e.data.data_info.length < 10) {
-					index = 0;
-					max_count = return_data.length - 1;
-					_dosearch2();			
-				} else {
-					page_index++;
-					_dosearch();
-				}
-			} else {
-				index = 0;
-				max_count = return_data.length - 1;
-				_dosearch2();			
-			}		
+			_dosearch2();			
 
 		}
 	});
