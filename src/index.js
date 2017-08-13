@@ -7,7 +7,6 @@
 	 | |____| |\ V /  __/ |  | |  __/    | | (_) | (_) | \__ \
 	 |______|_| \_/ \___|_|  |_|\___|    |_|\___/ \___/|_|___/
 
-													v4.x.x
 		
 		 			Licensed under GPL3 now
 
@@ -28,32 +27,34 @@ function createWindow(){
 	/*
 		Load Settings
 	*/
-	if (!appSettings.get('downloader.directory')) {
-		/*
-			Couldn't find any settings - Load the defaults
-		*/
-		appSettings.set('downloader', {
-			directory: path.join(app.getPath('home'), 'Downloads', 'liveme-tools')
+	if (!appSettings.get('downloads.directory')) {
+		appSettings.set('downloads', {
+			directory : path.join(remote.app.getPath('home'), 'Downloads'),
+			filemode: 0,
+			filetemplate: '',
+			history: true,
+			engine: 'internal'
 		});
+
 	}
 
 	/*
 		Create Windows
 	*/
 	mainwin=new BrowserWindow({
-		icon: __dirname + '/appicon.ico', width:980, height:600, minWidth:980, minHeight:522, darkTheme:true, autoHideMenuBar:false,
+		icon: __dirname + '/appicon.ico', width:980, height:600, minWidth:980, minHeight:600, darkTheme:true, autoHideMenuBar:false,
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, vibrancy:'dark', 
 		webPreferences:{ webSecurity:false, textAreasAreResizable:false, plugins:true }
 	});
 
 	queuewin=new BrowserWindow({
-		width:600, height:320, resizable:false, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false,
+		width: 640, height: 280, resizable:false, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false,
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
 		webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
 
 	splashWindow=new BrowserWindow({
-		width: 480, height: 208, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false,
+		width: 480, height: 212, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false,
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, movable: false,
 		parent: mainwin, child: true, webPreferences:{ webSecurity:false, plugins:false, devTools:false }
 	});
@@ -76,7 +77,7 @@ function createWindow(){
 	});
 
 	chatWindow = new BrowserWindow({
-		width: 368, height: 640, resizable: true, darkTheme:true, autoHideMenuBar:false, show:false, skipTaskbar: false,
+		width: 320, height: 760, resizable: true, darkTheme:true, autoHideMenuBar:false, show:false, skipTaskbar: false,
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
 	});
 	chatWindow.on('closed', () => { 
@@ -126,7 +127,7 @@ app.on('activate', () => { if (mainwin === null) { createWindow(); } });
 */
 ipcMain.on('show-favorites', () => {
 	favoritesWindow = new BrowserWindow({
-		width:320, height:600, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false,
+		width:320, height:720, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false,
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
 		webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
@@ -215,7 +216,7 @@ ipcMain.on('hide-queue', () => { queuewin.hide(); });
 */
 ipcMain.on('open-window', (event, arg) => {
 	var win = new BrowserWindow({
-		width: 320, height: 640, resizable:false, darkTheme:true, autoHideMenuBar:false, skipTaskbar: false,
+		width: 320, height: 720, resizable:false, darkTheme:true, autoHideMenuBar:false, skipTaskbar: false,
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
 	});
 	win.setMenu(null);
