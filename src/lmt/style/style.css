@@ -204,22 +204,37 @@ body:hover > header.small.transparent > * {
 
 #queueheader .pause {
 	position: absolute;
-	right: 8px;
+	left: 8px;
 	top: 8px;
 	display: block;
 	width: 32px;
 	height: 32px;
 	cursor: pointer;
+	opacity: 0.4;
 }
+#queueheader .pause:hover { opacity: 0.8; }
 
-#queueheader .name {
-
+#queueheader .active_url {
+	position: absolute;
+	top: 12px;
+	left: 48px;
+	right: 8px;
+	line-height: 24px;
+	font-size: 10pt;
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	color: rgba(255,255,255,0.7);
 }
 #queueheader .progress {
-
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	display: block;
+	width: 0;
+	height: 4px;
+	background-color: #00B8D4;
 }
-
-
 
 #queuelist {
 	position: absolute;
@@ -230,7 +245,6 @@ body:hover > header.small.transparent > * {
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
-
 #queuelist .entry {
 	display: block;
 	height: 24px;
@@ -239,17 +253,6 @@ body:hover > header.small.transparent > * {
 	margin: 4px;
 	padding: 0;
 	position: relative;
-}
-#queuelist .entry .progress {
-	display: block;
-	position: absolute;
-	z-index: 1;
-	left: 0;
-	top: 0;
-	height: 24px;
-	width: 0%;
-	background-color: rgba(0,240,0,0.3);
-	border-radius: 5px;
 }
 #queuelist .entry .title {
 	display: block;
@@ -269,10 +272,10 @@ body:hover > header.small.transparent > * {
 }
 
 #queuelist .entry.active {
-	background-color: rgba(0,0,0,0.2);
+	background-color: #01579B;
 }
 #queuelist .entry.active .title {
-	color: rgba(255,255,255,0.9);
+	color: rgba(255,255,255,0.8);
 }
 #queuelist .entry.active > img { opacity: 0; }
 #queuelist .entry.error { background-color: rgba(224,0,0,0.5); }

@@ -14,11 +14,11 @@
 
 			$(function() {
 				ipcRenderer.on('download-add', (event, arg) => {
-					$('#queuelist').append(`<div class="entry" id="${arg.id}"><div class="title">${arg.value}</div><div class="progress"></div></div>`);
+					$('#queuelist').append(`<div class="entry" id="${arg.id}"><div class="title">${arg.value}</div></div>`);
 				});
 
 				ipcRenderer.on('download-error', (event, arg) => {
-					$('#' + arg.id).addClass("error")
+					$('#' + arg.id).addClass("error");
 
 					setTimeout(() => {
 						$('#' + arg.id).fadeOut(800).remove();
@@ -26,15 +26,22 @@
 				});
 
 				ipcRenderer.on('download-progress', (event, arg) => {
-					$('#' + arg.id + ' .progress').css({ width: arg.value + '%' });
+					//$('#' + arg.id + ' .progress').css({ width: arg.value + '%' });
+					$('#queueheader .progress').css({ width: arg.value + '%' });
 				});
 
 				ipcRenderer.on('download-start', (event, arg) => {
+					console.log('start: ');
+					console.log(arg);
 					$('#' + arg.id).addClass('active');
+					$('.active_url').html(arg.url);
 				});
 
 				ipcRenderer.on('download-finish', (event, arg) => {
-					$('#' + arg.id).addClass("finished")
+					console.log('finish: ');
+					console.log(arg);
+					$('#' + arg.id).addClass("finished");
+					$('#queueheader .progress').css({ width: '0%' });
 
 					setTimeout(() => {
 						$('#' + arg.id).fadeOut(800).remove();
@@ -68,7 +75,9 @@
 			<h4>Download Queue</h4>
 		</header>
 		<div id="queueheader">
-		<img class="pause" src="images/ic_pause_circle_outline_white_24px.svg" onClick="pauseResume()">
+			<img class="pause" src="images/ic_pause_circle_outline_white_24px.svg" onClick="pauseResume()">
+			<div class="active_url"></div>
+			<div class="progress"></div>
 		</div>
 		
 		<div id="queuelist"></div>
