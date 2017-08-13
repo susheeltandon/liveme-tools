@@ -531,6 +531,10 @@ body:hover > header.small.transparent > * {
 	position: relative;
 }
 
+.video_entry.downloaded {
+	background-color: rgba(0, 200, 0, 0.1);
+}
+
 .video_entry .date {
 	position: absolute;
 	top: 5px;

@@ -390,9 +390,10 @@ function renderUserLookup(e) {
 			var ls = (e.videos[i].length - Math.round(e.videos[i].length / 60)) % 60, lm = Math.round(e.videos[i].length / 60);
 			var length = lm + ':' + (ls < 10 ? '0' : '') + ls;
 			let deleted = e.videos[i].private == true ? '[DELETED] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
-			
+			let downloaded = Downloads.has_been_downloaded(e.videos[i].videoid) ? 'downloaded' : '';
+
 			$('#videolist').append(`
-				<div class="video_entry ${highlight}">
+				<div class="video_entry ${highlight} ${downloaded}">
 					<input class="url" type="text" value="${e.videos[i].url}">
 					<h4 class="date">${ds}</h4>
 					<h4 class="title">${deleted}${e.videos[i].title}</h4>
