@@ -272,7 +272,7 @@ function _dosearch() {
 				});
 			}
 
-			if (page_index < 3) {
+			if (page_index < 5) {
 				if (e.data.data_info.length < 10) {
 					index = 0;
 					max_count = return_data.length - 1;
@@ -327,12 +327,21 @@ function _dosearch2() {
 				_dosearch2();
 			} else {
 				index = 0;
-				_dosearch3();
+				// We return data instead of getting videos
+				callback_holder(return_data);
 			}
 
 		}
 	});
 }
+
+
+/*
+
+		NO LONGER CALL GET REPLAYVIDEOS AS IT WAS ADDING TOO MUCH
+		TIME TO SEARCHES AND CAUSED TIMEOUTS AT TIMES.
+
+*/
 
 function _dosearch3() {
 
