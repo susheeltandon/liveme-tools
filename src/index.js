@@ -299,6 +299,14 @@ ipcMain.on('download-start', (event, arg) => {
 	queuewin.send('download-start', arg);
 });
 
+/*
+	History relay
+*/
+
+ipcMain.on('history-delete', (event, arg) => {
+	mainwin.send('history-delete', {});
+});
+
 
 
 

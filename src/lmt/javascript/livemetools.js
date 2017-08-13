@@ -87,6 +87,10 @@ $(function(){
 		Favorites.tick();
 	}, 5000);
 
+	ipcRenderer.on('history-delete', function(event, data) {
+		Downloads.purge_history();
+	});
+
 });
 
 

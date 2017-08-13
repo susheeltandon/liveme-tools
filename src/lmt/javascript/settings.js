@@ -1,4 +1,4 @@
-const {electron, remote} = require('electron'), appSettings = remote.require('electron-settings');
+const {electron, remote, ipcRenderer} = require('electron'), appSettings = remote.require('electron-settings');
 const path = require('path');
 
 $(function() {
@@ -28,6 +28,8 @@ function closeWindow() {
 }
 
 function saveSettings() {
+	let oldHistory = appSettings.get('downloads.history');
+
 	appSettings.set('downloads', { 
 		directory: $('#download_folder').val(), 
 		filemode: $('#filemode').is(':checked') ? 1 : 0,
@@ -35,6 +37,11 @@ function saveSettings() {
 		history: $('#history').is(':checked') ? 1 : 0,
 		engine: $('#engine').val()
 	});
+
+	if (oldHistory && !appSettings.get('downloads.history')) {
+		ipcRenderer.send('history-delete');
+	}
+
 	closeWindow();
 }
 

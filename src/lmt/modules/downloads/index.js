@@ -101,6 +101,10 @@ module.exports = {
     */
     has_been_downloaded: function(videoid) {
         return download_history.indexOf(videoid) != -1;
+    },
+
+    purge_history: function() {
+        purgeHistory();
     }
 };
 
@@ -146,6 +150,14 @@ function saveHistory() {
     }
 
     fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'downloadHistory.json'), JSON.stringify(download_history), 'utf8', () => {});
+}
+
+/*
+    Delete all history
+*/
+function purgeHistory() {
+    fs.removeSync(path.join(remote.app.getPath('appData'), remote.app.getName(), 'downloadHistory.json'));
+    download_history = [];
 }
 
 /*
