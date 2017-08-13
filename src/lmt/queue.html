@@ -31,15 +31,11 @@
 				});
 
 				ipcRenderer.on('download-start', (event, arg) => {
-					console.log('start: ');
-					console.log(arg);
 					$('#' + arg.id).addClass('active');
 					$('.active_url').html(arg.url);
 				});
 
 				ipcRenderer.on('download-finish', (event, arg) => {
-					console.log('finish: ');
-					console.log(arg);
 					$('#' + arg.id).addClass("finished");
 					$('#queueheader .progress').css({ width: '0%' });
 
@@ -57,6 +53,8 @@
 					isPaused = true;
 					$('#pauseButton').prop('src', 'images/ic_play_circle_outline_white_24px.svg');
 				});
+
+				
 			});
 
 			function pauseResume() {
