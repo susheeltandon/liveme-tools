@@ -43,21 +43,16 @@ function createWindow(){
 	*/
 	mainwin=new BrowserWindow({
 		icon: __dirname + '/appicon.ico', width:980, height:600, minWidth:980, minHeight:600, darkTheme:true, autoHideMenuBar:false,
-		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, vibrancy:'dark', 
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, vibrancy:'dark', backgroundColor: '#4a4d4e',
 		webPreferences:{ webSecurity:false, textAreasAreResizable:false, plugins:true }
 	});
 
 	queuewin=new BrowserWindow({
 		width: 640, height: 280, resizable:false, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false,
-		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, backgroundColor: '#4a4d4e',
 		webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
 
-	splashWindow=new BrowserWindow({
-		width: 480, height: 212, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false,
-		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, movable: false,
-		parent: mainwin, child: true, webPreferences:{ webSecurity:false, plugins:false, devTools:false }
-	});
 
 	mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
 	mainwin.on('closed', () => { 
@@ -71,27 +66,15 @@ function createWindow(){
 		queuewin = null; 
 	});
 
-	splashWindow.loadURL(`file://${__dirname}/lmt/splash.html`);
-	splashWindow.on('closed', () => { 
-		splashWindow = null; 
-	});
-
-	chatWindow = new BrowserWindow({
-		width: 320, height: 760, resizable: true, darkTheme:true, autoHideMenuBar:false, show:false, skipTaskbar: false,
-		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
-	});
-	chatWindow.on('closed', () => { 
-		chatWindow = null; 
-	});
-	chatWindow.loadURL(`file://${__dirname}/lmt/chat.html`);
+	showSplashWindow();
 
 	/*
 		Only use custom menus if app is compiled, otherwise leave menus alone during development testing.
 	*/
-	if (isDev == false) {
+	//if (isDev == false) {
 		menu = Menu.buildFromTemplate(getMenuTemplate())
 		Menu.setApplicationMenu(menu)
-	}
+	//}
 
 }
 
@@ -120,6 +103,22 @@ app.on('activate', () => { if (mainwin === null) { createWindow(); } });
 
 
 
+/*
+	Splash/About Window
+*/
+function showSplashWindow() {
+	splashWindow=new BrowserWindow({
+		width: 480, height: 212, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false, backgroundColor: '#4a4d4e',
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, movable: false,
+		parent: mainwin, child: true, webPreferences:{ webSecurity:false, plugins:false, devTools:false }
+	});
+	splashWindow.loadURL(`file://${__dirname}/lmt/splash.html`);
+	splashWindow.on('closed', () => { 
+		splashWindow = null; 
+	});	
+}
+
+
 
 
 /*
@@ -127,7 +126,7 @@ app.on('activate', () => { if (mainwin === null) { createWindow(); } });
 */
 ipcMain.on('show-favorites', () => {
 	favoritesWindow = new BrowserWindow({
-		width:320, height:720, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false,
+		width:320, height:720, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false, backgroundColor: '#4a4d4e',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
 		webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
@@ -154,8 +153,12 @@ ipcMain.on('favorites-refresh', (event, arg) => {
 	Settings Related
 */
 ipcMain.on('show-settings', () => {
+	showSettings();
+});
+
+function showSettings() {
 	var settingsWindow = new BrowserWindow({
-		width: 900, height: 360, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false, center: true,
+		width: 900, height: 360, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false, center: true, backgroundColor: '#4a4d4e',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
 		parent: mainwin, modal: false, webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
@@ -164,9 +167,7 @@ ipcMain.on('show-settings', () => {
 		settingsWindow = null; 
 	});
 	settingsWindow.show();
-
-});
-
+}
 
 
 
@@ -221,7 +222,7 @@ ipcMain.on('hide-queue', () => { queuewin.hide(); });
 */
 ipcMain.on('open-window', (event, arg) => {
 	var win = new BrowserWindow({
-		width: 320, height: 720, resizable:false, darkTheme:true, autoHideMenuBar:false, skipTaskbar: false,
+		width: 320, height: 720, resizable:false, darkTheme:true, autoHideMenuBar:false, skipTaskbar: false, backgroundColor: '#4a4d4e',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
 	});
 	win.setMenu(null);
@@ -248,7 +249,7 @@ ipcMain.on('open-window', (event, arg) => {
 ipcMain.on('play-video', (event, arg) => {
 	if (playerWindow == null) {
 		playerWindow = new BrowserWindow({
-			width: 368, height: 640, resizable: true, darkTheme:true, autoHideMenuBar:false, show:true, skipTaskbar: false,
+			width: 368, height: 640, resizable: true, darkTheme:true, autoHideMenuBar:false, show:true, skipTaskbar: false, backgroundColor: '#4a4d4e',
 			disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
 		});
 		playerWindow.on('closed', () => { 
@@ -271,10 +272,24 @@ ipcMain.on('hide-player', (event, arg) => {
 	Chat Window 
 */
 ipcMain.on('open-chat', (event, arg) => {
-	if (chatWindow.isVisible() == false) { chatWindow.showInactive(); }
+	chatWindow = new BrowserWindow({
+		width: 320, height: 760, resizable: true, darkTheme:true, autoHideMenuBar:false, show:false, skipTaskbar: false, backgroundColor: '#4a4d4e',
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
+	});
+	chatWindow.on('closed', () => { 
+		chatWindow = null; 
+	});
+	chatWindow.loadURL(`file://${__dirname}/lmt/chat.html`);
+	chatWindow.showInactive();
+
 	chatWindow.webContents.send('set-chat', { url: arg.url, startTime: arg.startTime });
 });
 ipcMain.on('hide-chat', () => { chatWindow.hide(); });
+
+
+
+
+
 
 
 /*
@@ -320,6 +335,9 @@ ipcMain.on('download-resume-request', (event, arg) => {
 	mainwin.send('download-resume-request', arg);
 });
 
+
+
+
 /*
 	History relay
 */
@@ -337,61 +355,53 @@ function getMenuTemplate () {
 	{
 		label: 'Edit',
 		submenu: [
-			{
-				label: 'Cut',
-				accelerator: 'CmdOrCtrl+X',
-				role: 'cut'
-			},
-			{
-				label: 'Copy',
-				accelerator: 'CmdOrCtrl+C',
-				role: 'copy'
-			},
-			{
-				label: 'Paste',
-				accelerator: 'CmdOrCtrl+V',
-				role: 'paste'
-			},
-			{
-				label: 'Select All',
-				accelerator: 'CmdOrCtrl+A',
-				role: 'selectall'
-			},
-			/*
-			{
-				type: 'separator'
-			},
-			{
-				label: 'Preferences',
-				accelerator: 'CmdOrCtrl+,',
-				click: () => windows.main.dispatch('preferences')
-			}
-			*/
+				{
+					label: 'Cut',
+					accelerator: 'CmdOrCtrl+X',
+					role: 'cut'
+				},
+				{
+					label: 'Copy',
+					accelerator: 'CmdOrCtrl+C',
+					role: 'copy'
+				},
+				{
+					label: 'Paste',
+					accelerator: 'CmdOrCtrl+V',
+					role: 'paste'
+				},
+				{
+					label: 'Select All',
+					accelerator: 'CmdOrCtrl+A',
+					role: 'selectall'
+				},
+				{
+					type: 'separator'
+				},
+				{
+					label: 'Preferences',
+					accelerator: 'CmdOrCtrl+,',
+					click: () => showSettings()
+				}
 			]
 		},
-		/*
 		{
 			label: 'Help',
 			role: 'help',
 			submenu: [
-			{
-				label: 'Learn more about ' + config.APP_NAME,
-				click: () => shell.openExternal(config.HOME_PAGE_URL)
-			},
-			{
-				label: 'Contribute on GitHub',
-				click: () => shell.openExternal(config.GITHUB_URL)
-			},
-			{
-				type: 'separator'
-			},
-			{
-				label: 'Report an Issue...',
-				click: () => shell.openExternal(config.GITHUB_URL_ISSUES)
-			}
+				{
+					label: 'Contribute on GitHub',
+					click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/')
+				},
+				{
+					type: 'separator'
+				},
+				{
+					label: 'Report an Issue...',
+					click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/issues')
+				}
 			]
 		}
-		*/
 	]
 
 	if (process.platform === 'darwin') {
@@ -432,55 +442,65 @@ function getMenuTemplate () {
 			]
 		});
 
-		/*
 		// Add Window menu (OS X)
-		template.splice(5, 0, {
-		label: 'Window',
-		role: 'window',
-		submenu: [
-		{
-		label: 'Minimize',
-		accelerator: 'CmdOrCtrl+M',
-		role: 'minimize'
-		},
-		{
-		type: 'separator'
-		},
-		{
-		label: 'Bring All to Front',
-		role: 'front'
-		}
-		]
-		})
-		*/
+		template.splice(2, 0, {
+			label: 'Window',
+			role: 'window',
+			submenu: [
+				{
+					label: 'Minimize',
+					accelerator: 'CmdOrCtrl+M',
+					role: 'minimize'
+				},
+				{
+					type: 'separator'
+				},
+				{
+					label: 'Bring All to Front',
+					role: 'front'
+				}
+			]
+			})
+			
 		}
 
-	/*
+	
 	// On Windows and Linux, open dialogs do not support selecting both files and
 	// folders and files, so add an extra menu item so there is one for each type.
 	if (process.platform === 'linux' || process.platform === 'win32') {
+		// Help menu (Windows, Linux)
+		template[2].submenu.push(
+			{
+				type: 'separator'
+			},
+			{
+				label: 'About LiveMe Tools',
+				click: () => showSplashWindow()
+			}
+		)
+	} else {
+		template[0].submenu.unshift(
+			{
+				label: 'About LiveMe Tools',
+				click: () => showSplashWindow()
+			},
+			{
+				type: 'separator'
+			}
+		)
+	}
 
-	// Help menu (Windows, Linux)
-	template[4].submenu.push(
-	{
-	type: 'separator'
-	},
-	{
-	label: 'About ' + config.APP_NAME,
-	click: () => windows.about.init()
-	}
-	)
-	}
 	// Add "File > Quit" menu item so Linux distros where the system tray icon is
 	// missing will have a way to quit the app.
 	if (process.platform === 'linux') {
-	// File menu (Linux)
-	template[0].submenu.push({
-	label: 'Quit',
-	click: () => app.quit()
-	})
+		// File menu (Linux)
+		template[0].submenu.push({
+			label: 'Quit',
+			click: () => app.quit()
+		})
 	}
-	*/
+
+	
 
 	return template
 }
