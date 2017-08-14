@@ -53,7 +53,11 @@ function createWindow(){
 		webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
 
-
+	chatWindow = new BrowserWindow({
+		width: 320, height: 760, resizable: true, darkTheme:true, autoHideMenuBar:false, show:false, skipTaskbar: false, backgroundColor: '#4a4d4e',
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
+	});
+	
 	mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
 	mainwin.on('closed', () => { 
 		mainwin = null; 
@@ -64,6 +68,11 @@ function createWindow(){
 	queuewin.loadURL(`file://${__dirname}/lmt/queue.html`);
 	queuewin.on('closed', () => { 
 		queuewin = null; 
+	});
+
+	chatWindow.loadURL(`file://${__dirname}/lmt/chat.html`);
+	chatWindow.on('closed', () => { 
+		chatWindow = null; 
 	});
 
 	showSplashWindow();
@@ -272,16 +281,7 @@ ipcMain.on('hide-player', (event, arg) => {
 	Chat Window 
 */
 ipcMain.on('open-chat', (event, arg) => {
-	chatWindow = new BrowserWindow({
-		width: 320, height: 760, resizable: true, darkTheme:true, autoHideMenuBar:false, show:false, skipTaskbar: false, backgroundColor: '#4a4d4e',
-		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
-	});
-	chatWindow.on('closed', () => { 
-		chatWindow = null; 
-	});
-	chatWindow.loadURL(`file://${__dirname}/lmt/chat.html`);
 	chatWindow.showInactive();
-
 	chatWindow.webContents.send('set-chat', { url: arg.url, startTime: arg.startTime });
 });
 ipcMain.on('hide-chat', () => { chatWindow.hide(); });

@@ -12,14 +12,13 @@
             const { remote, BrowserWindow, ipcRenderer } = require('electron');
 
             function closeApp() {
-                ipcRenderer.send('hide-chat');
                 $('#message_history').empty();
                 $('#overlay').show();
+                ipcRenderer.send('hide-chat');
             }
 
 			$(function(){
                 ipcRenderer.on('set-chat', (event, arg) => {
-
                     var startTime = parseInt(arg.startTime) * 1000;
                     var addedEntries = 0;
                     $('#message_history').empty();
