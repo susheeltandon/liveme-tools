@@ -67,10 +67,7 @@ header img {
 }
 
 header img.close-icon { right: 12px; }
-header img.settings-icon { right: 60px; }
-header img.favorites-icon { right: 92px; }
-header img.upload-icon { right: 124px; }
-header img.download-icon { right: 156px; }
+header img.menu-icon { left: 12px; }
 
 header img:hover {
 	opacity: 0.9;
@@ -85,6 +82,7 @@ header h1, header h4 {
 	padding: 2px 0 0;
 	vertical-align: top;
 }
+header h1.logo { margin-left: 40px; }
 header h1 small {
 	font-size: 10pt;
 	font-weight: 400;
@@ -95,15 +93,19 @@ header h1 small {
 }
 
 header .search {
-	display: inline-block;
+	position: absolute;
+	top: 0;
+	right: 64px;
+	display: block;
 	height: 40px;
 	vertical-align: top;
 	-webkit-app-region: no-drag;
 }
 header .search input, header .search .select { margin-bottom: 5px; }
 header .search .select { width: 120px; }
-header .search input[type=search] { width: 320px; }
+header .search input[type=search] { width: 460px; }
 header .search input[type=text] { width: 65px; text-align: center; }
+
 
 header.small {
 	line-height: 24px;
