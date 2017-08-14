@@ -29,7 +29,7 @@ function createWindow(){
 	*/
 	if (!appSettings.get('downloads.directory')) {
 		appSettings.set('downloads', {
-			directory : path.join(remote.app.getPath('home'), 'Downloads'),
+			directory : path.join(app.getPath('home'), 'Downloads'),
 			filemode: 0,
 			filetemplate: '',
 			history: true,
@@ -71,10 +71,10 @@ function createWindow(){
 	/*
 		Only use custom menus if app is compiled, otherwise leave menus alone during development testing.
 	*/
-	//if (isDev == false) {
+	if (isDev == false) {
 		menu = Menu.buildFromTemplate(getMenuTemplate())
 		Menu.setApplicationMenu(menu)
-	//}
+	}
 
 }
 
@@ -108,7 +108,7 @@ app.on('activate', () => { if (mainwin === null) { createWindow(); } });
 */
 function showSplashWindow() {
 	splashWindow=new BrowserWindow({
-		width: 480, height: 212, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false, backgroundColor: '#4a4d4e',
+		width: 480, height: 212, resizable:false, darkTheme:true, autoHideMenuBar:true, show: true, skipTaskbar: true, backgroundColor: '#4a4d4e',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, movable: false,
 		parent: mainwin, child: true, webPreferences:{ webSecurity:false, plugins:false, devTools:false }
 	});
@@ -351,143 +351,40 @@ ipcMain.on('history-delete', (event, arg) => {
 
 
 function getMenuTemplate () {
+
+
 	var template = [
-	{
-		label: 'Edit',
-		submenu: [
-				{
-					label: 'Cut',
-					accelerator: 'CmdOrCtrl+X',
-					role: 'cut'
-				},
-				{
-					label: 'Copy',
-					accelerator: 'CmdOrCtrl+C',
-					role: 'copy'
-				},
-				{
-					label: 'Paste',
-					accelerator: 'CmdOrCtrl+V',
-					role: 'paste'
-				},
-				{
-					label: 'Select All',
-					accelerator: 'CmdOrCtrl+A',
-					role: 'selectall'
-				},
-				{
-					type: 'separator'
-				},
-				{
-					label: 'Preferences',
-					accelerator: 'CmdOrCtrl+,',
-					click: () => showSettings()
-				}
-			]
-		},
 		{
-			label: 'Help',
-			role: 'help',
+			label: 'Edit',
 			submenu: [
-				{
-					label: 'Contribute on GitHub',
-					click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/')
-				},
-				{
-					type: 'separator'
-				},
-				{
-					label: 'Report an Issue...',
-					click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/issues')
-				}
+				{role: 'undo'},
+				{role: 'redo'},
+				{type: 'separator'},
+				{role: 'cut'},
+				{role: 'copy'},
+				{role: 'paste'},
+				{role: 'delete'},
+				{role: 'selectall'}
 			]
 		}
-	]
+	];
+
 
 	if (process.platform === 'darwin') {
-		// Add WebTorrent app menu (OS X)
 		template.unshift({
-			label: 'LiveMe Tools',
+			label: app.getName(),
 			submenu: [
-				{
-					label: 'Services',
-					role: 'services',
-					submenu: []
-				},
-				{
-					type: 'separator'
-				},
-				{
-					label: 'Hide LiveMe Tools',
-					accelerator: 'Command+H',
-					role: 'hide'
-				},
-				{
-					label: 'Hide Others',
-					accelerator: 'Command+Alt+H',
-					role: 'hideothers'
-				},
-				{
-					label: 'Show All',
-					role: 'unhide'
-				},
-				{
-					type: 'separator'
-				},
-				{
-					label: 'Quit',
-					accelerator: 'Command+Q',
-					click: () => app.quit()
-				}
+				{role: 'about'},
+				{type: 'separator'},
+				{role: 'services', submenu: []},
+				{type: 'separator'},
+				{role: 'hide'},
+				{role: 'hideothers'},
+				{role: 'unhide'},
+				{type: 'separator'},
+				{role: 'quit'}
 			]
 		});
-
-		// Add Window menu (OS X)
-		template.splice(2, 0, {
-			label: 'Window',
-			role: 'window',
-			submenu: [
-				{
-					label: 'Minimize',
-					accelerator: 'CmdOrCtrl+M',
-					role: 'minimize'
-				},
-				{
-					type: 'separator'
-				},
-				{
-					label: 'Bring All to Front',
-					role: 'front'
-				}
-			]
-			})
-			
-		}
-
-	
-	// On Windows and Linux, open dialogs do not support selecting both files and
-	// folders and files, so add an extra menu item so there is one for each type.
-	if (process.platform === 'linux' || process.platform === 'win32') {
-		// Help menu (Windows, Linux)
-		template[2].submenu.push(
-			{
-				type: 'separator'
-			},
-			{
-				label: 'About LiveMe Tools',
-				click: () => showSplashWindow()
-			}
-		)
-	} else {
-		template[0].submenu.unshift(
-			{
-				label: 'About LiveMe Tools',
-				click: () => showSplashWindow()
-			},
-			{
-				type: 'separator'
-			}
-		)
 	}
 
 	// Add "File > Quit" menu item so Linux distros where the system tray icon is
