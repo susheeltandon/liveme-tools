@@ -101,6 +101,11 @@ $(function(){
 		Downloads.resume();
 		ipcRenderer.send('download-resume', {});
 	});
+
+	ipcRenderer.on('download-remove-request', function(event, data) {
+		Downloads.remove(data.id);
+		ipcRenderer.send('download-remove', data);
+	});
 });
 
 function showMainMenu() {

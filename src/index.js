@@ -335,6 +335,14 @@ ipcMain.on('download-resume-request', (event, arg) => {
 	mainwin.send('download-resume-request', arg);
 });
 
+ipcMain.on('download-remove-request', (event, arg) => {
+	mainwin.send('download-remove-request', arg);
+});
+
+ipcMain.on('download-remove', (event, arg) => {
+	queuewin.send('download-remove', arg);
+});
+
 
 
 

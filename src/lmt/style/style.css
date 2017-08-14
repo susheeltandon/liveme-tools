@@ -288,6 +288,12 @@ body:hover > header.small.transparent > * {
 #queuelist .entry.error { background-color: rgba(224,0,0,0.5); }
 #queuelist .entry.finished { background-color: rgba(0,224,0,0.5); }
 
+#queuelist .entry .remove {
+	position: absolute;
+	right: 0;
+	z-index: 1000;
+}
+
 
 
 #userinfo {
