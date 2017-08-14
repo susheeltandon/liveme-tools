@@ -9,7 +9,7 @@
 
 */
 
-const 	{ electron, BrowserWindow, remote, ipcRenderer } = require('electron'),
+const 	{ electron, BrowserWindow, remote, ipcRenderer, shell } = require('electron'),
 		fs = require('fs'), path = require('path'), 
 		appSettings = remote.require('electron-settings'),
 		Favorites = require('./modules/favorites'),
@@ -46,6 +46,7 @@ $(function(){
 	        role: 'copy',
 	    }
 	]);
+
 
 	document.body.addEventListener('contextmenu', (e) => {
 	    e.preventDefault();
@@ -102,6 +103,63 @@ $(function(){
 	});
 });
 
+function showMainMenu() {
+
+	const MainAppMenu = remote.Menu.buildFromTemplate(
+		[
+			{
+				label: 'Import Link List',
+				click: () => showUpload()
+			},
+			{
+				type: 'separator'
+			},
+			{
+				label: 'Open Favorites Window',
+				click: () => showFavorites()
+			},
+			{
+				label: 'Toggle Queue Window',
+				click: () => showQueue()
+			},
+			{
+				type: 'separator'
+			},
+			{
+				label: 'LiveMe Tools Github Page',
+				click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/')
+			},
+			{
+				label: 'Report an Issue',
+				click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/issues')
+			},
+			{
+				type: 'separator'
+			},
+			{
+				label: 'Settings',
+				click: () => showSettings()
+			},
+			{
+				type: 'separator'
+			},
+			{
+				label: 'Quit LiveMe Tools',
+				click: () => remote.app.quit()
+			},
+
+		]
+	);	
+
+	MainAppMenu.popup(
+		remote.getCurrentWindow(),
+		{
+			x: 0,
+			y: 40
+		}
+	)
+
+}
 
 function showSettings() { ipcRenderer.send('show-settings'); }
 function showFavorites() { ipcRenderer.send('show-favorites'); }
