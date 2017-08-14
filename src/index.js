@@ -7,7 +7,6 @@
 	 | |____| |\ V /  __/ |  | |  __/    | | (_) | (_) | \__ \
 	 |______|_| \_/ \___|_|  |_|\___|    |_|\___/ \___/|_|___/
 
-													v3.x.x
 		
 		 			Licensed under GPL3 now
 
@@ -18,23 +17,42 @@
 
 */
 const 	{app, BrowserWindow, ipcMain, Menu} = require('electron'), os = require('os'), 
-		fs = require('fs'), isDev = require('electron-is-dev');
+		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path');
 		
 
-let mainwin, queuewin, playerWindow, settingsWindow, favoritesWindow, chatWindow, menu;
+let 	mainwin, queuewin, playerWindow, settingsWindow, favoritesWindow, chatWindow, 
+		splashWindow, menu, appSettings = require('electron-settings');
 
 function createWindow(){
+	/*
+		Load Settings
+	*/
+	if (!appSettings.get('downloads.directory')) {
+		appSettings.set('downloads', {
+			directory : path.join(app.getPath('home'), 'Downloads'),
+			filemode: 0,
+			filetemplate: '',
+			history: true,
+			engine: 'internal'
+		});
+
+	}
+
+	/*
+		Create Windows
+	*/
 	mainwin=new BrowserWindow({
-		icon: __dirname + '/appicon.ico', width:980, height:600, minWidth:980, minHeight:522, darkTheme:true, autoHideMenuBar:false,
-		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, vibrancy:'dark', 
+		icon: __dirname + '/appicon.ico', width:980, height:600, minWidth:980, minHeight:600, darkTheme:true, autoHideMenuBar:false,
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, vibrancy:'dark', backgroundColor: '#4a4d4e',
 		webPreferences:{ webSecurity:false, textAreasAreResizable:false, plugins:true }
 	});
 
 	queuewin=new BrowserWindow({
-		width:600, height:320, resizable:false, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false,
-		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
+		width: 640, height: 280, resizable:false, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false,
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, backgroundColor: '#4a4d4e',
 		webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
+
 
 	mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
 	mainwin.on('closed', () => { 
@@ -44,19 +62,11 @@ function createWindow(){
 	});
 
 	queuewin.loadURL(`file://${__dirname}/lmt/queue.html`);
-	//queuewin.openDevTools();
 	queuewin.on('closed', () => { 
 		queuewin = null; 
 	});
 
-	chatWindow = new BrowserWindow({
-		width: 368, height: 640, resizable: true, darkTheme:true, autoHideMenuBar:false, show:false, skipTaskbar: false,
-		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
-	});
-	chatWindow.on('closed', () => { 
-		chatWindow = null; 
-	});
-	chatWindow.loadURL(`file://${__dirname}/lmt/chat.html`);
+	showSplashWindow();
 
 	/*
 		Only use custom menus if app is compiled, otherwise leave menus alone during development testing.
@@ -84,12 +94,29 @@ if (shouldQuit) {
 
 app.on('ready', createWindow)
 app.on('window-all-closed', () => { 
+	mainwin.webContents.send('do-shutdown');
 	app.quit();
 });
 app.on('activate', () => { if (mainwin === null) { createWindow(); } });
 
 
 
+
+
+/*
+	Splash/About Window
+*/
+function showSplashWindow() {
+	splashWindow=new BrowserWindow({
+		width: 480, height: 212, resizable:false, darkTheme:true, autoHideMenuBar:true, show: true, skipTaskbar: true, backgroundColor: '#4a4d4e',
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, movable: false,
+		parent: mainwin, child: true, webPreferences:{ webSecurity:false, plugins:false, devTools:false }
+	});
+	splashWindow.loadURL(`file://${__dirname}/lmt/splash.html`);
+	splashWindow.on('closed', () => { 
+		splashWindow = null; 
+	});	
+}
 
 
 
@@ -99,7 +126,7 @@ app.on('activate', () => { if (mainwin === null) { createWindow(); } });
 */
 ipcMain.on('show-favorites', () => {
 	favoritesWindow = new BrowserWindow({
-		width:320, height:600, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false,
+		width:320, height:720, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false, backgroundColor: '#4a4d4e',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
 		webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
@@ -108,7 +135,11 @@ ipcMain.on('show-favorites', () => {
 		favoritesWindow = null; 
 	});
 	favoritesWindow.show();
+});
 
+ipcMain.on('favorites-refresh', (event, arg) => {
+	if (typeof(favoritesWindow) == 'undefined') return;
+	favoritesWindow.send('favorites-refresh');
 });
 
 
@@ -122,20 +153,21 @@ ipcMain.on('show-favorites', () => {
 	Settings Related
 */
 ipcMain.on('show-settings', () => {
-	settingsWindow = new BrowserWindow({
-		width:400, height:240, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false,
+	showSettings();
+});
+
+function showSettings() {
+	var settingsWindow = new BrowserWindow({
+		width: 900, height: 360, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false, center: true, backgroundColor: '#4a4d4e',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
-		parent: mainwin, webPreferences:{ webSecurity:false, plugins:true, devTools:true }
+		parent: mainwin, modal: false, webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
 	settingsWindow.loadURL(`file://${__dirname}/lmt/settings.html`);
 	settingsWindow.on('closed', () => { 
 		settingsWindow = null; 
 	});
 	settingsWindow.show();
-
-
-});
-
+}
 
 
 
@@ -171,12 +203,13 @@ ipcMain.on('livemesearch', (event, arg) => {
 	Queue Related
 */
 ipcMain.on('download-video', (event, arg) => {
-
 	if (queuewin.isVisible() == false) { queuewin.showInactive(); }
-	queuewin.webContents.send('add-to-queue', { url: arg.url });
+	queuewin.webContents.send('add-to-queue', arg);
 });
 ipcMain.on('show-queue', () => { queuewin.show(); });
 ipcMain.on('hide-queue', () => { queuewin.hide(); });
+
+
 
 
 
@@ -189,7 +222,7 @@ ipcMain.on('hide-queue', () => { queuewin.hide(); });
 */
 ipcMain.on('open-window', (event, arg) => {
 	var win = new BrowserWindow({
-		width: 320, height: 640, resizable:false, darkTheme:true, autoHideMenuBar:false, skipTaskbar: false,
+		width: 320, height: 720, resizable:false, darkTheme:true, autoHideMenuBar:false, skipTaskbar: false, backgroundColor: '#4a4d4e',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
 	});
 	win.setMenu(null);
@@ -216,7 +249,7 @@ ipcMain.on('open-window', (event, arg) => {
 ipcMain.on('play-video', (event, arg) => {
 	if (playerWindow == null) {
 		playerWindow = new BrowserWindow({
-			width: 368, height: 640, resizable: true, darkTheme:true, autoHideMenuBar:false, show:true, skipTaskbar: false,
+			width: 368, height: 640, resizable: true, darkTheme:true, autoHideMenuBar:false, show:true, skipTaskbar: false, backgroundColor: '#4a4d4e',
 			disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
 		});
 		playerWindow.on('closed', () => { 
@@ -239,7 +272,16 @@ ipcMain.on('hide-player', (event, arg) => {
 	Chat Window 
 */
 ipcMain.on('open-chat', (event, arg) => {
-	if (chatWindow.isVisible() == false) { chatWindow.showInactive(); }
+	chatWindow = new BrowserWindow({
+		width: 320, height: 760, resizable: true, darkTheme:true, autoHideMenuBar:false, show:false, skipTaskbar: false, backgroundColor: '#4a4d4e',
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
+	});
+	chatWindow.on('closed', () => { 
+		chatWindow = null; 
+	});
+	chatWindow.loadURL(`file://${__dirname}/lmt/chat.html`);
+	chatWindow.showInactive();
+
 	chatWindow.webContents.send('set-chat', { url: arg.url, startTime: arg.startTime });
 });
 ipcMain.on('hide-chat', () => { chatWindow.hide(); });
@@ -250,157 +292,112 @@ ipcMain.on('hide-chat', () => { chatWindow.hide(); });
 
 
 
+/*
+	Relay for downloads
+*/
+ipcMain.on('download-add', (event, arg) => {
+	if (!queuewin.isVisible()) {
+		queuewin.showInactive();
+	}
+
+	queuewin.send('download-add', arg);
+});
+
+ipcMain.on('download-finish', (event, arg) => {
+	queuewin.send('download-finish', arg);
+});
+
+ipcMain.on('download-error', (event, arg) => {
+	queuewin.send('download-error', arg);
+});
+
+ipcMain.on('download-progress', (event, arg) => {
+	queuewin.send('download-progress', arg);
+});
+
+ipcMain.on('download-start', (event, arg) => {
+	queuewin.send('download-start', arg);
+});
+
+ipcMain.on('download-pause', (event, arg) => {
+	queuewin.send('download-pause', arg);
+});
+
+ipcMain.on('download-resume', (event, arg) => {
+	queuewin.send('download-resume', arg);
+});
+
+ipcMain.on('download-pause-request', (event, arg) => {
+	mainwin.send('download-pause-request', arg);
+});
+
+ipcMain.on('download-resume-request', (event, arg) => {
+	mainwin.send('download-resume-request', arg);
+});
+
+
+
+
+/*
+	History relay
+*/
+
+ipcMain.on('history-delete', (event, arg) => {
+	mainwin.send('history-delete', {});
+});
+
+
+
 
 
 function getMenuTemplate () {
+
+
 	var template = [
-	{
-		label: 'Edit',
-		submenu: [
-			{
-				label: 'Cut',
-				accelerator: 'CmdOrCtrl+X',
-				role: 'cut'
-			},
-			{
-				label: 'Copy',
-				accelerator: 'CmdOrCtrl+C',
-				role: 'copy'
-			},
-			{
-				label: 'Paste',
-				accelerator: 'CmdOrCtrl+V',
-				role: 'paste'
-			},
-			{
-				label: 'Select All',
-				accelerator: 'CmdOrCtrl+A',
-				role: 'selectall'
-			},
-			/*
-			{
-				type: 'separator'
-			},
-			{
-				label: 'Preferences',
-				accelerator: 'CmdOrCtrl+,',
-				click: () => windows.main.dispatch('preferences')
-			}
-			*/
-			]
-		},
-		/*
 		{
-			label: 'Help',
-			role: 'help',
+			label: 'Edit',
 			submenu: [
-			{
-				label: 'Learn more about ' + config.APP_NAME,
-				click: () => shell.openExternal(config.HOME_PAGE_URL)
-			},
-			{
-				label: 'Contribute on GitHub',
-				click: () => shell.openExternal(config.GITHUB_URL)
-			},
-			{
-				type: 'separator'
-			},
-			{
-				label: 'Report an Issue...',
-				click: () => shell.openExternal(config.GITHUB_URL_ISSUES)
-			}
+				{role: 'undo'},
+				{role: 'redo'},
+				{type: 'separator'},
+				{role: 'cut'},
+				{role: 'copy'},
+				{role: 'paste'},
+				{role: 'delete'},
+				{role: 'selectall'}
 			]
 		}
-		*/
-	]
+	];
+
 
 	if (process.platform === 'darwin') {
-		// Add WebTorrent app menu (OS X)
 		template.unshift({
-			label: 'LiveMe Tools',
+			label: app.getName(),
 			submenu: [
-				{
-					label: 'Services',
-					role: 'services',
-					submenu: []
-				},
-				{
-					type: 'separator'
-				},
-				{
-					label: 'Hide LiveMe Tools',
-					accelerator: 'Command+H',
-					role: 'hide'
-				},
-				{
-					label: 'Hide Others',
-					accelerator: 'Command+Alt+H',
-					role: 'hideothers'
-				},
-				{
-					label: 'Show All',
-					role: 'unhide'
-				},
-				{
-					type: 'separator'
-				},
-				{
-					label: 'Quit',
-					accelerator: 'Command+Q',
-					click: () => app.quit()
-				}
+				{role: 'about'},
+				{type: 'separator'},
+				{role: 'services', submenu: []},
+				{type: 'separator'},
+				{role: 'hide'},
+				{role: 'hideothers'},
+				{role: 'unhide'},
+				{type: 'separator'},
+				{role: 'quit'}
 			]
 		});
-
-		/*
-		// Add Window menu (OS X)
-		template.splice(5, 0, {
-		label: 'Window',
-		role: 'window',
-		submenu: [
-		{
-		label: 'Minimize',
-		accelerator: 'CmdOrCtrl+M',
-		role: 'minimize'
-		},
-		{
-		type: 'separator'
-		},
-		{
-		label: 'Bring All to Front',
-		role: 'front'
-		}
-		]
-		})
-		*/
-		}
-
-	/*
-	// On Windows and Linux, open dialogs do not support selecting both files and
-	// folders and files, so add an extra menu item so there is one for each type.
-	if (process.platform === 'linux' || process.platform === 'win32') {
-
-	// Help menu (Windows, Linux)
-	template[4].submenu.push(
-	{
-	type: 'separator'
-	},
-	{
-	label: 'About ' + config.APP_NAME,
-	click: () => windows.about.init()
 	}
-	)
-	}
+
 	// Add "File > Quit" menu item so Linux distros where the system tray icon is
 	// missing will have a way to quit the app.
 	if (process.platform === 'linux') {
-	// File menu (Linux)
-	template[0].submenu.push({
-	label: 'Quit',
-	click: () => app.quit()
-	})
+		// File menu (Linux)
+		template[0].submenu.push({
+			label: 'Quit',
+			click: () => app.quit()
+		})
 	}
-	*/
+
+	
 
 	return template
 }

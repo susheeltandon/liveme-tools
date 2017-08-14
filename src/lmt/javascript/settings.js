@@ -1,31 +1,66 @@
-const remote = require('electron').remote, app = remote.app, fs = require('fs'), path = require('path');
+const {electron, remote, ipcRenderer} = require('electron'), appSettings = remote.require('electron-settings');
+const path = require('path');
 
-$(function(){
-	getSettings();
+$(function() {
+
+	if (appSettings.has('downloads.directory') == false) {
+		appSettings.set('downloads', {
+			directory : path.join(remote.app.getPath('home'), 'Downloads'),
+			filemode: 0,
+			filetemplate: '',
+			history: true,
+			engine: 'internal'
+		});
+	}
+
+	setTimeout(function(){
+		$('#download_folder').val(appSettings.get('downloads.directory'));
+		$('#filemode').prop('checked', appSettings.get('downloads.filemode'));
+		$('#filetemplate').val(appSettings.get('downloads.filetemplate'));
+		$('#history').prop('checked', appSettings.get('downloads.history'));
+		$('#engine').val(appSettings.get('downloads.engine'));
+		checkType();
+	}, 100);
 });
 
-function closeWindow() { window.close(); }
-
-function getSettings() {
-	var fn = path.join(app.getPath('appData'), app.getName(), 'settings.json');
-	
-	fs.readFile(fn, 'utf8', function (err,data) {
-		if (err) {
-			settings = {
-				downloadpath : path.join(app.getPath('appData'), 'Downloads')
-			};
-		} else {
-			settings = JSON.parse(data);
-		}
-		
-		$('#download_folder').val(settings.downloadpath);
-
-		return;
-	});
+function closeWindow() {
+	window.close();
 }
 
-function setSettings() {
-	fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'settings.json'), JSON.stringify(settings), 'utf8', function(){
-		window.close();
+function saveSettings() {
+	let oldHistory = appSettings.get('downloads.history');
+
+	appSettings.set('downloads', { 
+		directory: $('#download_folder').val(), 
+		filemode: $('#filemode').is(':checked') ? 1 : 0,
+		filetemplate: $('#filetemplate').val(),
+		history: $('#history').is(':checked') ? 1 : 0,
+		engine: $('#engine').val()
 	});
+
+	if (oldHistory && !appSettings.get('downloads.history')) {
+		ipcRenderer.send('history-delete');
+	}
+
+	closeWindow();
+}
+
+function checkType() {
+	if ($('#filemode').is(':checked') == 0) {
+		$('#ftblock-yes').hide();
+		$('#ftblock-no').show();
+	} else {
+		$('#ftblock-no').hide();
+		$('#ftblock-yes').show();
+	}
+}
+
+function SetDownloadPath() {
+	var dir_path = remote.dialog.showOpenDialog({
+		properties: ['openDirectory']
+	});
+	if (typeof (dir_path) != 'undefined') {
+		appSettings.set('downloads', { directory: dir_path });
+		$('#download_folder').val(dir_path);
+	}
 }

@@ -18,9 +18,7 @@
 			function doFetch() {
 			    var e = window.location.href.split("?")[1].split("#");
 			    userID = e[0];
-			    $('header h4').html(e[2] + '\'s Followings');
-
-
+			    
 			    max = e[1], $.ajax({
 			        url: "http://live.ksmobile.net/follow/getfollowinglistship",
 			        data: {
@@ -38,10 +36,8 @@
 
 			                    if ($("#small_user_list").append(t), ct + i > max) break
 			                }
-			                setTimeout(function() {
-			                    cp++;
-			                    doFetch();
-			                }, 200);
+		                    cp++;
+		                    doFetch();
 			            }
 			        }
 			    })

@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+	<head>
+		<script>
+			if (typeof module === 'object') {window.module = module; module = undefined;} 
+		</script>
+		<link rel="stylesheet" href="style/style.css">
+		<script src="javascript/jquery-2.2.4.min.js"></script>
+
+		<script>
+			const 	{ remote } = require('electron');
+			$(function(){
+				$('h2').html('v '+remote.app.getVersion());
+				setTimeout(function(){
+					window.close();
+				}, 2500);
+			})
+		</script>
+
+
+		<style>
+			ul { list-style: none; margin: 0; padding: 0; }
+			ul li { font-size: 9pt; font-weight: 300; display: inline; }
+			ul li:after { content: ', ' }
+			ul li:last-child:after { content: ' '; }
+
+			#splash {
+				display: block;
+				height: 208px;
+				background: url(images/liveme.tools.icon.svg) 16px 16px no-repeat;
+				background-size: 128px 128px;
+				position: relative;
+				color: rgba(255,255,255,0.6);
+			}
+			#splash h1 { 
+				position: absolute;
+				left: 160px;
+				top: 48px;
+				line-height: 60px;  
+				font-size: 36pt;
+				font-weight: 300;
+				color: rgba(255,255,255,0.9);
+			}
+			#splash h2 {
+				position: absolute;
+				bottom: 4px;
+				right: 8px;
+				font-size: 12pt;
+				font-weight: 300;
+				letter-spacing: 0.08em;
+				color: rgba(255,255,255,0.4);
+			}
+			#splash h3 {
+				font-size: 10pt;
+			}
+			.credits {
+				padding: 4px 8px;
+				position: absolute;
+				bottom: 8px;
+				left: 16px;
+				color: rgba(255,255,255,0.6);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="splash">
+			<h1>LiveMe Tools</h1>
+			<h2>-</h2>
+			<div class="credits">
+				<h3>Developers:</h3>
+				<ul>
+					<li>thecoder75</li>
+					<li>polydragon</li>
+				</ul>
+			</div>
+		</div>
+	</body>
+</html>

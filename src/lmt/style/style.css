@@ -67,10 +67,7 @@ header img {
 }
 
 header img.close-icon { right: 12px; }
-header img.settings-icon { right: 60px; }
-header img.favorites-icon { right: 92px; }
-header img.upload-icon { right: 124px; }
-header img.download-icon { right: 156px; }
+header img.menu-icon { left: 12px; }
 
 header img:hover {
 	opacity: 0.9;
@@ -85,6 +82,7 @@ header h1, header h4 {
 	padding: 2px 0 0;
 	vertical-align: top;
 }
+header h1.logo { margin-left: 40px; }
 header h1 small {
 	font-size: 10pt;
 	font-weight: 400;
@@ -95,15 +93,19 @@ header h1 small {
 }
 
 header .search {
-	display: inline-block;
+	position: absolute;
+	top: 0;
+	right: 64px;
+	display: block;
 	height: 40px;
 	vertical-align: top;
 	-webkit-app-region: no-drag;
 }
 header .search input, header .search .select { margin-bottom: 5px; }
 header .search .select { width: 120px; }
-header .search input[type=search] { width: 320px; }
+header .search input[type=search] { width: 460px; }
 header .search input[type=text] { width: 65px; text-align: center; }
+
 
 header.small {
 	line-height: 24px;
@@ -146,7 +148,7 @@ body:hover > header.small.transparent > * {
 
 .inset {
 	position: absolute;
-	top: 40px;
+	top: 24px;
 	left: 0;
 	right: 0;
 	bottom: 0;
@@ -190,16 +192,66 @@ body:hover > header.small.transparent > * {
 
 
 
-#queuelist {
+#queueheader {
 	position: absolute;
 	top: 24px;
+	left: 0;
+	right: 0;
+	display: block;
+	height: 48px;
+	background-color: rgba(0,0,0,0.1);
+	color: rgba(255,255,255,0.4);
+	box-shadow: 0px 1px 2px rgba(0,0,0,0.3);
+}
+
+#queueheader .pause {
+	position: absolute;
+	left: 8px;
+	top: 8px;
+	display: block;
+	width: 32px;
+	height: 32px;
+	cursor: pointer;
+	opacity: 0.4;
+}
+#queueheader .pause:hover { opacity: 0.8; }
+
+#queueheader .active_url {
+	position: absolute;
+	top: 8px;
+	left: 48px;
+	right: 8px;	
+	font-size: 9pt;
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	color: rgba(255,255,255,0.7);
+}
+#queueheader .active_url h5 {
+	display: block;
+	font-size: 8pt;
+	font-weight: 400;
+	color: rgba(255,255,255,0.4);
+}
+#queueheader .progress {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	display: block;
+	width: 0;
+	height: 4px;
+	background-color: #00B8D4;
+}
+
+#queuelist {
+	position: absolute;
+	top: 72px;
 	left: 0;
 	right: 0;
 	bottom: 0;
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
-
 #queuelist .entry {
 	display: block;
 	height: 24px;
@@ -208,17 +260,6 @@ body:hover > header.small.transparent > * {
 	margin: 4px;
 	padding: 0;
 	position: relative;
-}
-#queuelist .entry .progress {
-	display: block;
-	position: absolute;
-	z-index: 1;
-	left: 0;
-	top: 0;
-	height: 24px;
-	width: 0%;
-	background-color: rgba(0,240,0,0.3);
-	border-radius: 5px;
 }
 #queuelist .entry .title {
 	display: block;
@@ -238,13 +279,14 @@ body:hover > header.small.transparent > * {
 }
 
 #queuelist .entry.active {
-	background-color: rgba(0,0,0,0.2);
+	background-color: #01579B;
 }
 #queuelist .entry.active .title {
-	color: rgba(255,255,255,0.9);
+	color: rgba(255,255,255,0.8);
 }
 #queuelist .entry.active > img { opacity: 0; }
-
+#queuelist .entry.error { background-color: rgba(224,0,0,0.5); }
+#queuelist .entry.finished { background-color: rgba(0,224,0,0.5); }
 
 
 
@@ -477,10 +519,9 @@ body:hover > header.small.transparent > * {
 	color: #eaebed;
 }
 .user_entry input[type=button].user { position: absolute; top: 35px; left: 260px; width: 140px; }
-
-.user_entry input[type=button].videos { position: absolute; top: 35px; right: 40px; width: 100px; }
-.user_entry input[type=button].fans { position: absolute; top: 35px; right: 160px; width: 100px; }
-.user_entry input[type=button].followings { position: absolute; top: 35px; right: 280px; width: 100px; }
+/* .user_entry input[type=button].videos { position: absolute; top: 35px; right: 40px; width: 100px; } */
+.user_entry input[type=button].fans { position: absolute; top: 35px; right: 24px; width: 100px; }
+.user_entry input[type=button].followings { position: absolute; top: 35px; right: 160px; width: 100px; }
 
 .user_entry.small {
 	height: 60px;
@@ -529,6 +570,10 @@ body:hover > header.small.transparent > * {
 	background-color: #595b5b;
 	border-radius: 5px;
 	position: relative;
+}
+
+.video_entry.downloaded {
+	background-color: rgba(0, 200, 0, 0.1);
 }
 
 .video_entry .date {
@@ -786,3 +831,7 @@ input[type=button].small {
 	left: 0
 }
 
+#pauseButton {
+	top: 3px;
+	right: 12px;
+}

@@ -62,4 +62,4 @@ src/.DS_Store
 
 # Specific to our code
 dist
-build.sh
+*.sh

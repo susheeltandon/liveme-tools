@@ -1,13 +1,72 @@
 <!doctype html>
 <html>
 	<head>
+		<title>Download Queue</title>
 		<link rel="stylesheet" href="style/style.css">
 
 		<script>
 			if (typeof module === 'object') {window.module = module; module = undefined;} 
 		</script>
+		
 		<script src="javascript/jquery-2.2.4.min.js"></script>
-		<script type="text/javascript" src="javascript/queue.js"></script>
+		<script type="text/javascript">
+			const { ipcRenderer } = require('electron');
+			var isPaused = false;
+
+			$(function() {
+				ipcRenderer.on('download-add', (event, arg) => {
+					$('#queuelist').append(`<div class="entry" id="${arg.id}"><div class="title">${arg.value}</div></div>`);
+				});
+
+				ipcRenderer.on('download-error', (event, arg) => {
+					$('#' + arg.id).addClass("error");
+
+					setTimeout(() => {
+						$('#' + arg.id).fadeOut(800).remove();
+					}, 3000);
+				});
+
+				ipcRenderer.on('download-progress', (event, arg) => {
+					//$('#' + arg.id + ' .progress').css({ width: arg.value + '%' });
+					$('#queueheader .progress').css({ width: arg.value + '%' });
+					$('.active_url').html('<h5>Downloading:</h5>'+arg.url);
+				});
+
+				ipcRenderer.on('download-start', (event, arg) => {
+					$('#' + arg.id).addClass('active');
+				});
+
+				ipcRenderer.on('download-finish', (event, arg) => {
+					$('#' + arg.id).addClass("finished");
+					$('#queueheader .progress').css({ width: '0%' });
+					$('.active_url').empty();
+
+					setTimeout(() => {
+						$('#' + arg.id).fadeOut(800).remove();
+					}, 3000);
+				});
+
+				ipcRenderer.on('download-resume', (event, arg) => {
+					isPaused = false;
+					$('#queueheader img.pause').prop('src', 'images/ic_pause_circle_outline_white_24px.svg');
+				});
+
+				ipcRenderer.on('download-pause', (event, arg) => {
+					isPaused = true;
+					$('#queueheader img.pause').prop('src', 'images/ic_play_circle_outline_white_24px.svg');
+				});
+
+				
+			});
+
+			function pauseResume() {
+				if (isPaused) {
+					ipcRenderer.send('download-resume-request', {});
+				} else {
+					ipcRenderer.send('download-pause-request', {});
+				}
+			}
+		</script>
 
 	</head>
 	<body onContextMenu="return false;">
@@ -15,6 +74,11 @@
 		<header class="small">
 			<h4>Download Queue</h4>
 		</header>
+		<div id="queueheader">
+			<img class="pause" src="images/ic_pause_circle_outline_white_24px.svg" onClick="pauseResume()">
+			<div class="active_url"></div>
+			<div class="progress"></div>
+		</div>
 		
 		<div id="queuelist"></div>
 

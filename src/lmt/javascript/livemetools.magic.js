@@ -7,12 +7,9 @@
 	 | |____| |\ V /  __/ |  | |  __/    | | (_) | (_) | \__ \
 	 |______|_| \_/ \___|_|  |_|\___|    |_|\___/ \___/|_|___/
 
-													v3.0.0
-		
-		(c)2017 by TheCoder - Licensed under GPL now
 
-
-	This is where the magic is...
+		  See main readme.md for details on this project.
+		  
 */
 var	callback_holder = null, query = '', query_orig = '', page_index = 0, return_data = [], index = 0, max_count = 0;
 var build_table = [], build_table2 = [];
@@ -275,20 +272,8 @@ function _dosearch() {
 				});
 			}
 
-			if (page_index < 3) {
-				if (e.data.data_info.length < 10) {
-					index = 0;
-					max_count = return_data.length - 1;
-					_dosearch2();			
-				} else {
-					page_index++;
-					_dosearch();
-				}
-			} else {
-				index = 0;
-				max_count = return_data.length - 1;
-				_dosearch2();			
-			}		
+			index = 0;
+			_dosearch2();			
 
 		}
 	});
@@ -312,6 +297,8 @@ function _dosearch2() {
 		},
 		success: function(e) {
 			
+			console.log(index);
+
 			return_data[index] = {
 					userid: e.data.user.user_info.uid,
 					nickname: e.data.user.user_info.nickname,
@@ -325,17 +312,26 @@ function _dosearch2() {
 			};
 			
 
-			if (index < max_count) {
-				index++;
+			index++;
+			if (index < return_data.length) {
 				_dosearch2();
 			} else {
 				index = 0;
-				_dosearch3();
+				// We return data instead of getting videos
+				callback_holder(return_data);
 			}
 
 		}
 	});
 }
+
+
+/*
+
+		NO LONGER CALL GET REPLAYVIDEOS AS IT WAS ADDING TOO MUCH
+		TIME TO SEARCHES AND CAUSED TIMEOUTS AT TIMES.
+
+*/
 
 function _dosearch3() {
 
