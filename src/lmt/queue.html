@@ -72,6 +72,10 @@
 			function remove(vid) {
 				ipcRenderer.send('download-remove-request', { id: vid });
 			}
+
+			function hideQueue() {
+				ipcRenderer.send('hide-queue');
+			}
 		</script>
 
 	</head>
@@ -79,6 +83,7 @@
 
 		<header class="small">
 			<h4>Download Queue</h4>
+			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="hideQueue()">
 		</header>
 		<div id="queueheader">
 			<img class="pause" src="images/ic_pause_circle_outline_white_24px.svg" onClick="pauseResume()">
