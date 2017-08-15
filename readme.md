@@ -4,14 +4,8 @@ This is an Electron-based app developed for searching and browsing of
 users and videos posted on the LiveMe platform.  
 
 ## Getting Started
-After you clone this project to your computer, run:
-```
-     npm install
-```
-This will install any required packages that aren't already installed in 
-your local copy.
 
-### Installing
+### Downloading and Installing
 You can download the [latest release](https://github.com/thecoder75/liveme-tools/releases/latest)
 if you wish to not compile it yourself.
 
