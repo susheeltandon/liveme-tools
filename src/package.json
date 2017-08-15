@@ -1,6 +1,6 @@
 {
   "name": "LiveMeTools",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "A tool designed to help in searching and viewing of LiveMe broadcasts.",
   "main": "index.js",
   "author": "TheCoder",
