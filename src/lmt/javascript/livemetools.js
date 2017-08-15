@@ -124,6 +124,9 @@ function showMainMenu() {
 				click: () => showFavorites()
 			},
 			{
+				type: 'separator'
+			},
+			{
 				label: 'Toggle Queue Window',
 				click: () => showQueue()
 			},
