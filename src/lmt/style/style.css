@@ -254,10 +254,10 @@ body:hover > header.small.transparent > * {
 }
 #queuelist .entry {
 	display: block;
-	height: 24px;
+	height: 32px;
 	border-radius: 5px;
-	background-color: rgba(0,0,0,0);
-	margin: 4px;
+	background-color: rgba(0,0,0,0.1);
+	margin: 8px;
 	padding: 0;
 	position: relative;
 }
@@ -266,16 +266,27 @@ body:hover > header.small.transparent > * {
 	position: absolute;
 	top: 0;
 	left: 0;
-	height: 24px;
-	width: 100%;
+	width: 580px;
+	height: 32px;
 	z-index: 5;
-	line-height: 24px;
+	line-height: 32px;
 	font-size: 9pt;
 	font-weight: 400;
 	padding: 0 8px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	color: rgba(255,255,255,0.4);
+}
+
+#queuelist .entry .remove {
+	position: absolute;
+	right: 8px;
+	top: 6px;
+	z-index: 10;
+	display: block;
+	height: 20px;
+	width: 20px;
+	cursor: pointer;
 }
 
 #queuelist .entry.active {
@@ -288,11 +299,6 @@ body:hover > header.small.transparent > * {
 #queuelist .entry.error { background-color: rgba(224,0,0,0.5); }
 #queuelist .entry.finished { background-color: rgba(0,224,0,0.5); }
 
-#queuelist .entry .remove {
-	position: absolute;
-	right: 0;
-	z-index: 1000;
-}
 
 
 
