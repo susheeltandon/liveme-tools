@@ -34,8 +34,9 @@
                         } else {
                             for (var i = 0; i < messages.length; i++) {
                                 var message = messages[i];
-                                var timeOffset = parseInt(message.timestamp) - startTime;
-                                var t = new Date(timeOffset).toTimeString().split(' ')[0];
+                                // Server stores time in UTC so we need to calculate from there to display correct offsets
+                                var timeOffset = new Date(parseInt(message.timestamp) - startTime), hh = timeOffset.getUTCHours(), mm = timeOffset.getUTCMinutes(), ss = timeOffset.getUTCSeconds();
+                                var t = (hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm+':'+(ss<10?'0':'')+ss;
 
                                 if (message.objectName == "app:joinchatroommsgcontent") {
                                     //$('#message_history').append('<div class="chat_joinmsg"><span class="time">[' + message.timestamp + ']</span><span class="author">' + message.content.user.name + '</span><span class="message">joined the room</span></div>');
