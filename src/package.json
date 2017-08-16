@@ -1,11 +1,16 @@
 {
   "name": "LiveMeTools",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "A tool designed to help in searching and viewing of LiveMe broadcasts.",
   "main": "index.js",
-  "author": "TheCoder",
+  "author": {
+    "name":"The Coder",
+    "email":"thecoder75@gmail.com"
+  },
+  "homepage":"https://github.com/thecoder75/liveme-tools/",
   "devDependencies": {
-    "electron": "^1.6.11"
+    "electron": "^1.6.11",
+    "electron-builder": "^19.22.1"
   },
   "dependencies": {
     "async": "^2.5.0",
@@ -22,11 +27,72 @@
   },
   "keywords": [
     "node",
+    "electron",
+    "video",
+    "tools",
     "liveme"
   ],
   "contributors": [
     "thecoder75",
     "polydragon"
   ],
-  "license": "GPL3"
+  "license": "GPL3",
+  "build": {
+    "appId": "com.thecoderstoolbox.livemetools",
+    "asar": true,
+    "compression":"maximum",
+    "mac":{
+      "category":"public.app-category.video",
+      "target":[ "pkg", "dmg" ],
+      "identity":null,
+      "icon":"build/appicon.icns"
+    },
+    "dmg": {
+      "title": "LiveMe Tools for macOS",
+      "icon": "build/appicon.icns",
+      "iconSize": 128,
+      "iconTextSize": 13,
+      "background": "build/background.png",
+      "contents": [
+        {
+          "x": 392,
+          "y": 208,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 152,
+          "y": 208,
+          "type": "file",
+          "path": "LiveMe Tools.app"
+        }
+      ]
+    },
+    "pkg":{
+      "installLocation":"/Applications"
+    },
+    "win": {
+      "target":[ "nsis", "zip" ],
+      "icon":"build/appicon.ico",
+      "msi": true
+    },
+    "nsis":{
+      "oneClick": false,
+      "installerIcon":"build/appicon.ico",
+      "uninstallerIcon":"build/appicon.ico"
+    },
+    "linux":{
+      "target":["deb"],
+      "maintainer":"thecoder75@gmail.com"
+    },
+    "deb":{
+      "compression":"bzip2"
+    }
+  },
+  "scripts": {
+    "postinstall": "install-app-deps",
+    "start": "./node_modules/.bin/electron . --enable-logging",
+    "dev": "NODE_ENV='development' npm run start",
+    "dist": "build -mwl --x64 --ia32"
+  }
 }
