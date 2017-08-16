@@ -284,6 +284,11 @@ ipcMain.on('hide-chat', () => { chatWindow.hide(); });
 	Relay for downloads
 */
 ipcMain.on('download-add', (event, arg) => {
+	if (typeof queuewin == 'undefined') {
+		console.log('Impossible error: queuewin undefined.  This should never happen.');
+		return;
+	}
+	
 	if (!queuewin.isVisible()) {
 		queuewin.showInactive();
 	}
