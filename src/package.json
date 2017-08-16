@@ -1,5 +1,6 @@
 {
   "name": "LiveMeTools",
+  "title": "LiveMe Tools",
   "version": "4.1.2",
   "description": "A tool designed to help in searching and viewing of LiveMe broadcasts.",
   "main": "index.js",
@@ -39,42 +40,22 @@
   "license": "GPL3",
   "build": {
     "appId": "com.thecoderstoolbox.livemetools",
+    "productName": "LiveMe Tools",
     "asar": true,
     "compression":"maximum",
     "mac":{
       "category":"public.app-category.video",
-      "target":[ "pkg", "dmg" ],
-      "identity":null,
+      "target":[ "pkg" ],
+      "identity": null,
       "icon":"build/appicon.icns"
     },
-    "dmg": {
-      "title": "LiveMe Tools for macOS",
-      "icon": "build/appicon.icns",
-      "iconSize": 128,
-      "iconTextSize": 13,
-      "background": "build/background.png",
-      "contents": [
-        {
-          "x": 512,
-          "y": 256,
-          "type": "link",
-          "path": "/Applications"
-        },
-        {
-          "x": 128,
-          "y": 256,
-          "type": "file",
-          "path": "LiveMe Tools.app"
-        }
-      ]
-    },
     "pkg":{
-      "installLocation":"/Applications"
+      "allowAnywhere": false,
+      "artifactName": "${productName}.${ext}"
     },
     "win": {
-      "target":[ "nsis", "zip" ],
-      "icon":"build/appicon.ico",
-      "msi": true
+      "target":[ "nsis","zip" ],
+      "icon":"build/appicon.ico"
     },
     "nsis":{
       "oneClick": false,
@@ -82,17 +63,20 @@
       "uninstallerIcon":"build/appicon.ico"
     },
     "linux":{
-      "target":["deb"],
+      "target":[ "deb" ],
       "maintainer":"thecoder75@gmail.com"
     },
     "deb":{
-      "compression":"bzip2"
+      "compression": "bzip2"
     }
   },
   "scripts": {
     "postinstall": "install-app-deps",
     "start": "./node_modules/.bin/electron . --enable-logging",
     "dev": "NODE_ENV='development' npm run start",
-    "dist": "build -mwl --x64 --ia32"
+    "dist-win": "build -w --x64 --ia32",
+    "dist-linux": "build -l --x64 --ia32",
+    "dist-mac": "build -m && appdmg build/appdmg.json dist/LiveMe\\ Tools.dmg",
+    "dist": "rm -rd dist/* && npm run dist-mac && npm run dist-linux && npm run dist-win"
   }
 }
