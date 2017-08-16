@@ -48,7 +48,7 @@ function createWindow(){
 	});
 
 	queuewin=new BrowserWindow({
-		width: 640, height: 400, resizable:false, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false,
+		width: 640, height: 400, resizable:true, minWidth:640, maxWidth: 640, minHeight: 160, maxHeight: 1600, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false,
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, backgroundColor: '#4a4d4e',
 		webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
