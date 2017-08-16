@@ -1,12 +1,12 @@
 {
   "name": "LiveMeTools",
   "title": "LiveMe Tools",
-  "version": "4.1.2",
+  "version": "4.1.3",
   "description": "A tool designed to help in searching and viewing of LiveMe broadcasts.",
   "main": "index.js",
   "author": {
     "name":"The Coder",
-    "email":"thecoder75@gmail.com"
+    "email":"thecoder1975@gmail.com"
   },
   "homepage":"https://github.com/thecoder75/liveme-tools/",
   "devDependencies": {
@@ -64,7 +64,7 @@
     },
     "linux":{
       "target":[ "deb" ],
-      "maintainer":"thecoder75@gmail.com"
+      "maintainer":"thecoder1975@gmail.com"
     },
     "deb":{
       "compression": "bzip2"
