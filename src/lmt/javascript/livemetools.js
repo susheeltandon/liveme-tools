@@ -213,14 +213,24 @@ function showUpload() {
 			
 			for (i = 0; i < filelist.length; i++)  {
 				if (filelist[i].indexOf('http') > -1) {
-					ipcRenderer.send('download-video', { url: filelist[i], user: {} });
+					Downloads.add({
+						user: {
+							id: null,
+							name: null
+						},
+						video: {
+							id: null,
+							title: null,
+							time: 0,
+							url: filelist[i]
+						}
+					});
+
 				}
 			}
 
 		}
 		
-		$('#download_folder').val(appSettings.get('downloader.directory'));
-
 		return;
 	});
 
