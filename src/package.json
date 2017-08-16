@@ -55,14 +55,14 @@
       "background": "build/background.png",
       "contents": [
         {
-          "x": 392,
-          "y": 208,
+          "x": 512,
+          "y": 256,
           "type": "link",
           "path": "/Applications"
         },
         {
-          "x": 152,
-          "y": 208,
+          "x": 128,
+          "y": 256,
           "type": "file",
           "path": "LiveMe Tools.app"
         }
