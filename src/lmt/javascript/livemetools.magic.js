@@ -266,10 +266,18 @@ function _dosearch() {
 		},
 		success: function(e) {
 
-			for (i = 0; i < e.data.data_info.length; i++) {
-				return_data.push({
-					userid : e.data.data_info[i].user_id
-				});
+			if (e.data.data_info.length == 0) {
+				callback_holder(return_data);
+				return;
+			} else {
+				for (i = 0; i < e.data.data_info.length; i++) {
+					// Only push ones that are defined.
+					if (typeof e.data.data_info[i].user_id != 'undefined') {
+						return_data.push({
+							userid : e.data.data_info[i].user_id
+						});
+					}
+				}
 			}
 
 			index = 0;
@@ -282,6 +290,7 @@ function _dosearch() {
 }
 
 function _dosearch2() {
+
 
 	$.ajax({
 		url: 'http://live.ksmobile.net/user/getinfo',
@@ -296,9 +305,6 @@ function _dosearch2() {
 			callback_holder(return_data);
 		},
 		success: function(e) {
-			
-			console.log(index);
-
 			return_data[index] = {
 					userid: e.data.user.user_info.uid,
 					nickname: e.data.user.user_info.nickname,
