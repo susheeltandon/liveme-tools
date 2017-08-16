@@ -208,18 +208,6 @@ ipcMain.on('livemesearch', (event, arg) => {
 
 
 
-/*
-	Queue Related
-*/
-ipcMain.on('download-video', (event, arg) => {
-	if (queuewin.isVisible() == false) { queuewin.showInactive(); }
-	queuewin.webContents.send('add-to-queue', arg);
-});
-ipcMain.on('show-queue', () => { queuewin.show(); });
-ipcMain.on('hide-queue', () => { queuewin.hide(); });
-
-
-
 
 
 
@@ -301,6 +289,14 @@ ipcMain.on('download-add', (event, arg) => {
 	}
 
 	queuewin.send('download-add', arg);
+});
+
+ipcMain.on('show-queue', () => { 
+	queuewin.show(); 
+});
+
+ipcMain.on('hide-queue', () => { 
+	queuewin.hide(); 
 });
 
 ipcMain.on('download-finish', (event, arg) => {
