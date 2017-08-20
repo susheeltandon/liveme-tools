@@ -88,7 +88,7 @@ function createWindow(){
 
 	setTimeout(function(){
 		CheckForUpgrade();
-	}, 1000);
+	}, 15000);
 
 }
 
