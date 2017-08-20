@@ -6,10 +6,10 @@
   "description": "A tool designed to help in searching and viewing of LiveMe broadcasts.",
   "main": "index.js",
   "author": {
-    "name":"The Coder",
-    "email":"thecoder1975@gmail.com"
+    "name": "The Coder",
+    "email": "thecoder1975@gmail.com"
   },
-  "homepage":"https://github.com/thecoder75/liveme-tools/",
+  "homepage": "https://github.com/thecoder75/liveme-tools/",
   "devDependencies": {
     "electron": "^1.6.11",
     "electron-builder": "^19.22.1"
@@ -21,7 +21,8 @@
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^4.0.1",
     "init": "^0.1.2",
-    "miniget": "^1.0.0"
+    "miniget": "^1.0.0",
+    "request": "^2.81.0"
   },
   "repository": {
     "type": "git",
@@ -43,31 +44,37 @@
     "appId": "com.thecoderstoolbox.livemetools",
     "productName": "LiveMe Tools",
     "asar": true,
-    "compression":"maximum",
-    "mac":{
-      "category":"public.app-category.video",
-      "target":[ "dmg" ],
+    "compression": "maximum",
+    "mac": {
+      "category": "public.app-category.video",
+      "target": [
+        "dmg"
+      ],
       "identity": null,
-      "icon":"build/appicon.icns"
+      "icon": "build/appicon.icns"
     },
-    "pkg":{
+    "pkg": {
       "allowAnywhere": false,
       "artifactName": "${productName}-${version}.${ext}"
     },
     "win": {
-      "target":[ "zip" ],
-      "icon":"build/appicon.ico"
+      "target": [
+        "zip"
+      ],
+      "icon": "build/appicon.ico"
     },
-    "nsis":{
+    "nsis": {
       "oneClick": false,
-      "installerIcon":"build/appicon.ico",
-      "uninstallerIcon":"build/appicon.ico"
+      "installerIcon": "build/appicon.ico",
+      "uninstallerIcon": "build/appicon.ico"
     },
-    "linux":{
-      "target":[ "deb" ],
-      "maintainer":"thecoder1975@gmail.com"
+    "linux": {
+      "target": [
+        "deb"
+      ],
+      "maintainer": "thecoder1975@gmail.com"
     },
-    "deb":{
+    "deb": {
       "compression": "bzip2"
     }
   },
