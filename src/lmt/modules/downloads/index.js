@@ -268,17 +268,17 @@ function getLocalFilename(item) {
         fullPath = defaultPath;
     } else {
         let finalname = appSettings.get('downloads.filetemplate')
-                                    .replace("%%username%%", item.user.name)
-                                    .replace("%%userid%%", item.user.id)
-                                    //.replace("%%usercountry%%", user.country)
-                                    .replace("%%videoid%%", item.video.id)
-                                    .replace("%%videotitle%%", item.video.title ? item.video.title : 'untitled')
-                                    .replace("%%videotime%%", item.video.time);
+                                    .replace(/%%username%%/g, item.user.name)
+                                    .replace(/%%userid%%/g, item.user.id)
+                                    //.replace(/%%usercountry%%/g, user.country)
+                                    .replace(/%%videoid%%/g, item.video.id)
+                                    .replace(/%%videotitle%%/g, item.video.title ? item.video.title : 'untitled')
+                                    .replace(/%%videotime%%/g, item.video.time);
 
         if (!finalname || finalname == "") {
             fullPath = defaultPath;
         } else {
-            fullPath = path.join(appSettings.get('downloads.directory'), finalname + ".ts");
+            fullPath = path.join(appSettings.get('downloads.directory'), finalname.replace(/[:*?""<>|]/g, '_') + ".ts");
         }
     }
 
