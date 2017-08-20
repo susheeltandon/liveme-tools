@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+	<head>
+		<title>LiveMe Tools</title>
+		<script>
+			if (typeof module === 'object') {window.module = module; module = undefined; }
+		</script>
+
+		<link rel="stylesheet" href="style/style.css">
+		<script src="javascript/jquery-2.2.4.min.js"></script>
+		<script>
+			const { remote, shell } = require('electron');
+
+			$(function(){
+				$.ajax({
+					url: "https://raw.githubusercontent.com/thecoder75/liveme-tools/master/src/package.json",
+					cache: false,
+					type: "GET",
+					dataType: "json",
+					success: function(e) {
+						
+						console.log(e);
+						$('#new').html(e.minversion);
+						$('#current').html(remote.app.getVersion());
+					}
+				});
+			});
+			function closeWin() { window.close(); }
+			function getDownloads() { shell.openExternal('https://github.com/thecoder75/liveme-tools/releases/latest'); }
+		</script>
+
+	</head>
+
+	<body onContextMenu="return false;">
+
+		<header class="small">
+			<h4>&nbsp;</h4>
+			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="closeWin()">
+		</header>
+
+		<div id="main" style="padding: 0 20px; text-align: center;">
+			<h2>Upgrade Available</h2>
+			<p style="padding: 20px 0; font-size: 12pt">
+				Looks like version <span id="new"></span> has been released!<br>
+				You're running version <span id="current"></span>.
+			</p>
+			<input type="button" value="Visit Download Page" onClick="getDownloads()">
+		</div>
+	</body>
+</html>

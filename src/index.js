@@ -17,7 +17,8 @@
 
 */
 const 	{app, BrowserWindow, ipcMain, Menu} = require('electron'), os = require('os'), 
-		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path');
+		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path'),
+		request = require('request');
 		
 
 let 	mainwin, queuewin, playerWindow, settingsWindow, favoritesWindow, chatWindow, 
@@ -84,6 +85,10 @@ function createWindow(){
 		menu = Menu.buildFromTemplate(getMenuTemplate())
 		Menu.setApplicationMenu(menu)
 	}
+
+	setTimeout(function(){
+		CheckForUpgrade();
+	}, 1000);
 
 }
 
@@ -410,3 +415,33 @@ function getMenuTemplate () {
 
 	return template
 }
+
+
+function CheckForUpgrade() {
+	/*
+		To do this we query the github repo and get the raw contents of the package.json file
+
+		There's an entry called minversion that we will compare to so we can determine if we
+		need to notify user of an upgrade being available.
+	*/
+	var r = new Date().getTime();
+	request({
+		url: 'https://raw.githubusercontent.com/thecoder75/liveme-tools/master/src/package.json?random='+r,
+		timeout: 15000,
+	}, function (err, response, body) {
+		var js = JSON.parse(body), isCurrent = js.minversion < app.getVersion();
+
+		if (!isCurrent) {
+			var win = new BrowserWindow({
+				width: 400, height: 240, resizable:false, darkTheme:true, autoHideMenuBar:false, skipTaskbar: false, backgroundColor: '#4a4d4e',
+				disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
+			});
+			win.loadURL(`file://${__dirname}/lmt/upgrade.html`);
+			win.show();
+		}
+		
+	});
+
+}
+
+
