@@ -436,7 +436,7 @@ function CheckForUpgrade() {
 
 		if (nv > ov) {
 			var win = new BrowserWindow({
-				width: 400, height: 240, resizable:false, darkTheme:true, autoHideMenuBar:false, skipTaskbar: false, backgroundColor: '#4a4d4e',
+				width: 400, height: 244, resizable:false, darkTheme:true, autoHideMenuBar:false, skipTaskbar: false, backgroundColor: '#4a4d4e',
 				disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
 			});
 			win.loadURL(`file://${__dirname}/lmt/upgrade.html`);
