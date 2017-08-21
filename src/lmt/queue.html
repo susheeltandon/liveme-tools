@@ -22,8 +22,8 @@
 					$('#' + arg.id).addClass("error");
 
 					setTimeout(() => {
-						$('#' + arg.id).fadeOut(800).remove();
-					}, 3000);
+						$('#' + arg.id).slideUp(400).remove();
+					}, 4000);
 				});
 
 				ipcRenderer.on('download-progress', (event, arg) => {
@@ -42,8 +42,8 @@
 					$('.active_url').empty();
 
 					setTimeout(() => {
-						$('#' + arg.id).fadeOut(800).remove();
-					}, 3000);
+						$('#' + arg.id).slideUp(400).remove();
+					}, 4000);
 				});
 
 				ipcRenderer.on('download-resume', (event, arg) => {
