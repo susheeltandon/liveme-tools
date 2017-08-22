@@ -16,7 +16,7 @@
 	polydragon		- https://github.com/polydragon
 
 */
-const 	{app, BrowserWindow, ipcMain, Menu} = require('electron'), os = require('os'), 
+const 	{app, BrowserWindow, ipcMain, Menu, shell} = require('electron'), os = require('os'), 
 		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path'),
 		request = require('request');
 		
@@ -366,7 +366,6 @@ ipcMain.on('history-delete', (event, arg) => {
 
 function getMenuTemplate () {
 
-
 	var template = [
 		{
 			label: 'Edit',
@@ -379,6 +378,27 @@ function getMenuTemplate () {
 				{role: 'paste'},
 				{role: 'delete'},
 				{role: 'selectall'}
+			]
+		},
+		{
+			role: 'window',
+			submenu: [
+				{role: 'minimize'},
+				{role: 'close'}
+
+			]
+		},
+		{
+			role: 'help',
+			submenu: [
+				{
+					label: 'LiveMe Tools Github Page',
+					click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/')
+				},
+				{
+					label: 'Report an Issue',
+					click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/issues')
+				}
 			]
 		}
 	];
@@ -418,12 +438,7 @@ function getMenuTemplate () {
 
 
 function CheckForUpgrade() {
-	/*
-		To do this we query the github repo and get the raw contents of the package.json file
 
-		There's an entry called minversion that we will compare to so we can determine if we
-		need to notify user of an upgrade being available.
-	*/
 	var r = new Date().getTime();
 	request({
 		url: 'https://raw.githubusercontent.com/thecoder75/liveme-tools/master/src/package.json?random='+r,
