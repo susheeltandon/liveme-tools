@@ -7,7 +7,7 @@ $(function(){
 
 	ipcRenderer.on('favorites-refresh' , function(event , data) { 
 		Favorites.recall(function(e){
-			$('#small_user_list').html('');
+			$('#small_user_list').empty();
 			for (i = 0; i < e.length; i++) {
 				$("#small_user_list").append(`
 					<div title="Click to view user's videos." class="user_entry small clickable ${e[i].sex}" onClick="getVideos('${e[i].uid}')">
@@ -26,4 +26,8 @@ function closeWindow() { window.close(); }
 
 function getVideos(e) {
 	ipcRenderer.send('submit-search', { userid: e });
+}
+
+function updateList() {
+	Favorites.update();
 }
