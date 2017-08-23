@@ -26,7 +26,7 @@
 					}, 4000);
 				});
 
-				ipcRenderer.on('wipe-download-queue' () => {
+				ipcRenderer.on('wipe-download-queue', () => {
 					$('#queueheader .progress').css({ width: '0%' });
 					$('.active_url').empty();
 					$('#queuelist').empty();					
