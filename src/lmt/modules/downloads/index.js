@@ -117,6 +117,11 @@ module.exports = {
 
     purge_history: function() {
         purgeHistory();
+    },
+
+    purge_queue: function() {
+        download_queue = [];
+        ipcRenderer.send('wipe-download-queue');
     }
 };
 
