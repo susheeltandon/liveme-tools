@@ -5,7 +5,7 @@
 
 const	fs = require('fs'), {remote, ipcRenderer} = require('electron'), path = require('path');
 
-var fav_list = [], last_change = 0, is_saved = false;
+var fav_list = [], last_change = 0, is_saved = false, index = 0;
 
 module.exports = {
 
@@ -64,6 +64,12 @@ module.exports = {
 
 	tick : function() {	write_to_file(false); },
 	forceSave : function() { write_to_file(true); },
+	update: function() {
+		index = 0;
+		setTimeout(function(){
+			update_favorites_list();
+		}, 25);
+	}
 }
 
 function write_to_file(f) {
@@ -83,6 +89,46 @@ function read_from_file(cb) {
 			fav_list = JSON.parse(data);
 			last_change = new Date().getTime() / 1000;
 			cb(fav_list);
+		}
+	});
+
+}
+
+function update_favorites_list() {
+
+	$.ajax({
+		url: 'http://live.ksmobile.net/user/getinfo',
+		data: {
+			userid: fav_list[index].uid
+		},
+		cache: false,
+		type: "GET",
+		dataType: "json",
+		timeout: 15000,
+		error: function(e){
+			callback_holder(return_data);
+		},
+		success: function(e) {
+
+			if (e.status != 500) {
+				fav_list[index].face = e.data.user.user_info.face;
+				fav_list[index].nickname = e.data.user.user_info.nickname;
+				if (index%9 == 0) {
+					ipcRenderer.send('favorites-refresh');
+				}
+			} else {
+				console.log(e);
+			}
+			
+			index++;
+			if (index < fav_list.length) {
+				setTimeout(function(){
+					update_favorites_list();
+				}, 50);
+			} else {
+				ipcRenderer.send('favorites-refresh');
+			}
+
 		}
 	});
 
