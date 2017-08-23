@@ -72,12 +72,11 @@ module.exports = {
 	}
 }
 
-function write_to_file(f) {
+function write_to_file() {
 	var ti = new Date().getTime() / 1000;
 	last_change = ti;
 
-	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), JSON.stringify(fav_list), 'utf8', function(){
-		
+	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), JSON.stringify(fav_list), 'utf8', function(){		
 	});
 }
 
@@ -126,6 +125,7 @@ function update_favorites_list() {
 					update_favorites_list();
 				}, 50);
 			} else {
+				write_to_file();
 				ipcRenderer.send('favorites-refresh');
 			}
 
