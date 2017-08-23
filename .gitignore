@@ -63,3 +63,4 @@ src/.DS_Store
 # Specific to our code
 dist
 *.sh
+*.php
