@@ -349,6 +349,9 @@ ipcMain.on('download-remove', (event, arg) => {
 	queuewin.send('download-remove', arg);
 });
 
+ipcMain.on('wipe-download-queue', () => {
+	queuewin.send('wipe-download-queue');
+});
 
 
 
