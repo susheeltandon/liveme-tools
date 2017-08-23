@@ -26,6 +26,12 @@
 					}, 4000);
 				});
 
+				ipcRenderer.on('wipe-download-queue' () => {
+					$('#queueheader .progress').css({ width: '0%' });
+					$('.active_url').empty();
+					$('#queuelist').empty();					
+				});
+
 				ipcRenderer.on('download-progress', (event, arg) => {
 					//$('#' + arg.id + ' .progress').css({ width: arg.value + '%' });
 					$('#queueheader .progress').css({ width: arg.value + '%' });
