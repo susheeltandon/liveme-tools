@@ -429,9 +429,23 @@ body:hover > header.small.transparent > * {
 	overflow-y: scroll;
 }
 
+#small_user_list.offset {
+	top: 64px;
+}
 
 
 
+#favorites_header {
+	position: absolute;
+	top: 24px;
+	left: 0;
+	right: 0;
+	display: block;
+	height: 40px;
+	padding: 5px 10px;
+	box-shadow: 0px 1px 4px rgba(0,0,0,0.5);
+	z-index: 5;
+}
 
 
 
