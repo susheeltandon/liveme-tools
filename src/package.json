@@ -53,20 +53,11 @@
       "identity": null,
       "icon": "build/appicon.icns"
     },
-    "pkg": {
-      "allowAnywhere": false,
-      "artifactName": "${productName}-${version}.${ext}"
-    },
     "win": {
       "target": [
-        "zip"
+        "dir"
       ],
       "icon": "build/appicon.ico"
-    },
-    "nsis": {
-      "oneClick": false,
-      "installerIcon": "build/appicon.ico",
-      "uninstallerIcon": "build/appicon.ico"
     },
     "linux": {
       "target": [
