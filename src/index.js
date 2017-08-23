@@ -152,7 +152,7 @@ ipcMain.on('show-favorites', () => {
 });
 
 ipcMain.on('favorites-refresh', (event, arg) => {
-	if (typeof favoritesWindow == 'undefined') return;
+	if (favoritesWindow == null) return;
 	favoritesWindow.send('favorites-refresh');
 });
 
