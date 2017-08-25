@@ -484,6 +484,7 @@ body:hover > header.small.transparent > * {
 	color: rgba(255,255,255,0.7);
 	padding: 24px 16px 8px;
 }
+.message.highlight { background-color: rgba(255,224,0,0.15); }
 
 
 
