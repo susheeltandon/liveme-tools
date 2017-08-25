@@ -275,7 +275,7 @@ ipcMain.on('hide-player', (event, arg) => {
 */
 ipcMain.on('open-chat', (event, arg) => {
 	chatWindow.showInactive();
-	chatWindow.webContents.send('set-chat', { url: arg.url, startTime: arg.startTime });
+	chatWindow.webContents.send('set-chat', { url: arg.url, startTime: arg.startTime, nickname: arg.nickname });
 });
 ipcMain.on('hide-chat', () => { chatWindow.hide(); });
 
