@@ -415,12 +415,12 @@ function downloadVideo(userid, username, videoid, videotitle, videotime, videour
 	});
 }
 
-function openChat(u, t) {
+function openChat(u, t, a) {
 	if (debounced) return;
 	debounced = true;
 	setTimeout(function(){ debounced = false; }, 500);
 
-	ipcRenderer.send('open-chat', { url: u, startTime: t });
+	ipcRenderer.send('open-chat', { url: u, startTime: t, nickname: a });
 }
 
 function renderUserLookup(e) {
@@ -493,7 +493,7 @@ function renderUserLookup(e) {
 						<label>Shares:</label><span>${e.videos[i].shares}</span>
 						<label>Country:</label><span>${e.videos[i].location.country}</span>
 					</div>
-					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e.videos[i].msgfile}', '${e.videos[i].dt}')" title="View Message History">
+					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e.videos[i].msgfile}', '${e.videos[i].dt}', '${e.userinfo.username}')" title="View Message History">
 					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e.videos[i].url}')" title="Play Video">
 					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userinfo.userid}', '${e.userinfo.username}', '${e.videos[i].videoid}', '${e.videos[i].title.replace("'", "")}', '${e.videos[i].dt}', '${e.videos[i].url}')" title="Download Video">
 				</div>
