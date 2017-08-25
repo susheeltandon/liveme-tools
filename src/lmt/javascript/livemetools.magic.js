@@ -62,9 +62,11 @@ function _dolookup() {
 		dataType: "json",
 		timeout: 15000,
 		error: function(e){
+			console.log(e);
 			callback_holder(return_data);
 		},
 		success: function(e) {
+
 			if (e.data.length == 0) {
 				callback_holder(return_data);
 				return;
@@ -95,8 +97,10 @@ function _dolookup1() {
 		timeout: 15000,
 		error: function(e){
 			callback_holder(return_data);
+			console.log(e);
 		},
 		success: function(e) {
+
 			if (typeof e.data.user == "undefined") {
 				callback_holder(return_data);
 				return;
@@ -135,6 +139,7 @@ function _dolookup2() {
 		timeout: 15000,
 		error: function(e){
 			callback_holder(return_data);
+			console.log(e);
 		},
 		success: function(e) {
 
@@ -204,6 +209,7 @@ function _dolookup3() {
 		dataType: "json",
 		timeout: 15000,
 		error: function(e){
+			console.log(e);
 			callback_holder(return_data);
 		},
 		success: function(e) {
