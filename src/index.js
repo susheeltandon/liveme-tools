@@ -20,9 +20,10 @@ const 	{app, BrowserWindow, ipcMain, Menu, shell} = require('electron'), os = re
 		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path'),
 		request = require('request');
 		
+let 	mainwin = null, queuewin = null, playerWindow = null, settingsWindow = null, 
+		favoritesWindow = null, chatWindow = null, splashWindow = null, menu = null, 
+		appSettings = require('electron-settings');
 
-let 	mainwin, queuewin, playerWindow, settingsWindow, favoritesWindow, chatWindow, 
-		splashWindow, menu, appSettings = require('electron-settings');
 
 function createWindow(){
 	/*
@@ -293,10 +294,6 @@ ipcMain.on('hide-chat', () => { chatWindow.hide(); });
 	Relay for downloads
 */
 ipcMain.on('download-add', (event, arg) => {
-	if (typeof queuewin == 'undefined') {
-		console.log('Impossible error: queuewin undefined.  This should never happen.');
-		return;
-	}
 	if (queuewin == null) { return; }
 	
 	if (!queuewin.isVisible()) {
