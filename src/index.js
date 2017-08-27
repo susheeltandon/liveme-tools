@@ -92,7 +92,7 @@ function createWindow(){
 
 	setTimeout(function(){
 		CheckForUpgrade();
-	}, 15000);
+	}, 10000);
 
 }
 
@@ -466,9 +466,6 @@ function CheckForUpgrade() {
 		timeout: 15000,
 	}, function (err, response, body) {
 		var js = JSON.parse(body), nv = parseFloat(js.minversion.replace('.','')), ov = parseFloat(app.getVersion().replace('.','')), isCurrent = nv > ov;
-
-		console.log('New: ' + nv);
-		console.log('Old: ' + ov);
 
 		if (nv > ov) {
 			var win = new BrowserWindow({

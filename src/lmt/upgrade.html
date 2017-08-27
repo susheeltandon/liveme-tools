@@ -20,7 +20,7 @@
 					success: function(e) {
 						
 						console.log(e);
-						$('#new').html(e.minversion);
+						$('#new').html(e.version);
 						$('#current').html(remote.app.getVersion());
 					}
 				});
