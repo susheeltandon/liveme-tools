@@ -62,7 +62,11 @@ function createWindow(){
 	mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
 	mainwin.on('closed', () => { 
 		mainwin = null; 
-		queuewin.close();
+		
+		if (queuewin != null) {
+			queuewin.close();
+		}
+
 		app.quit();
 	});
 
