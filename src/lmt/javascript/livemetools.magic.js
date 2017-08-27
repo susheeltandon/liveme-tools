@@ -62,7 +62,6 @@ function _dolookup() {
 		dataType: "json",
 		timeout: 15000,
 		error: function(e){
-			console.log(e);
 			callback_holder(return_data);
 		},
 		success: function(e) {
@@ -97,7 +96,6 @@ function _dolookup1() {
 		timeout: 15000,
 		error: function(e){
 			callback_holder(return_data);
-			console.log(e);
 		},
 		success: function(e) {
 
@@ -139,7 +137,6 @@ function _dolookup2() {
 		timeout: 15000,
 		error: function(e){
 			callback_holder(return_data);
-			console.log(e);
 		},
 		success: function(e) {
 
@@ -209,7 +206,6 @@ function _dolookup3() {
 		dataType: "json",
 		timeout: 15000,
 		error: function(e){
-			console.log(e);
 			callback_holder(return_data);
 		},
 		success: function(e) {
