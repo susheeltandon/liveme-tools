@@ -121,6 +121,7 @@ module.exports = {
 
     purge_queue: function() {
         download_queue = [];
+        saveQueue();
         ipcRenderer.send('wipe-download-queue');
     }
 };
