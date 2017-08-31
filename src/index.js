@@ -145,7 +145,7 @@ function showSplashWindow() {
 */
 ipcMain.on('show-favorites', () => {
 	favoritesWindow = new BrowserWindow({
-		width:320, height:720, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false, backgroundColor: '#4a4d4e',
+		width:360, height:720, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false, backgroundColor: '#4a4d4e',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
 		webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
