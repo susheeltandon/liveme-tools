@@ -520,7 +520,7 @@ function renderSearchResults(e) {
 		if (e[i].userid > 0) {
 			$('#userlist').append(`
 				<div class="user_entry ${e[i].sex}">
-					<img class="avatar" src="'${e[i].thumb}'" onerror="this.src='images/blank.png'">
+					<img class="avatar" src="${e[i].face}" onerror="this.src='images/blank.png'">
 					<h4>${e[i].nickname}</h4>
 					<div class="userid">UserID:</div>
 					<div class="level">Level: <span>${e[i].level}</span></div>

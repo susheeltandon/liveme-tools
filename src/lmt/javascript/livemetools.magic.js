@@ -244,7 +244,7 @@ function _dolookup3() {
 */
 function _dosearch() {
 
-
+	$('#overlay .status').html('<progress></progress><br>Searching for usernames matching query...');
 	$.ajax({
 		url: 'http://live.ksmobile.net/search/searchkeyword',
 		data: {
@@ -286,7 +286,7 @@ function _dosearch() {
 
 function _dosearch2() {
 
-
+	$('#overlay .status').html('<progress></progress><br>Getting info on users...');
 	$.ajax({
 		url: 'http://live.ksmobile.net/user/getinfo',
 		data: {
@@ -300,11 +300,12 @@ function _dosearch2() {
 			callback_holder(return_data);
 		},
 		success: function(e) {
+			console.log(JSON.stringify(e.data.user.user_info, null, 2));
 			return_data[index] = {
 					userid: e.data.user.user_info.uid,
 					nickname: e.data.user.user_info.nickname,
-					sex: e.data.user.user_info.sex == 0 ? 'female' : 'male',
-					thumb: e.data.user.user_info.face,
+					sex: e.data.user.user_info.sex < 0 ? '' : ( e.data.user.user_info.sex == 0 ? 'female' : 'male'),
+					face: e.data.user.user_info.face,
 					level: parseInt(e.data.user.user_info.level),
 					followings: parseInt(e.data.user.count_info.following_count),
 					fans: parseInt(e.data.user.count_info.follower_count),
@@ -321,62 +322,6 @@ function _dosearch2() {
 				// We return data instead of getting videos
 				callback_holder(return_data);
 			}
-
-		}
-	});
-}
-
-
-/*
-
-		NO LONGER CALL GET REPLAYVIDEOS AS IT WAS ADDING TOO MUCH
-		TIME TO SEARCHES AND CAUSED TIMEOUTS AT TIMES.
-
-*/
-
-function _dosearch3() {
-
-
-	$.ajax({
-		url: 'http://live.ksmobile.net/live/getreplayvideos',
-		data: {
-			userid: return_data[index].userid,
-			page_index: 1,
-			page_size: 12
-		},
-		cache: false,
-		type: "GET",
-		dataType: "json",
-		timeout: 15000,
-		error: function(e){
-			callback_holder(return_data);
-		},
-		success: function(e) {
-
-			var max = e.data.video_info.length;
-			if (max > 10) max = 10;
-			for (i = 0; i < max; i++) {
-				return_data[index].videos.push({
-					url: e.data.video_info[i].hlsvideosource,
-					dt: parseInt(e.data.video_info[i].vtime),
-					length: parseInt(e.data.video_info[i].videolength),
-					videoid: e.data.video_info[i].vdoid,
-					title: e.data.video_info[i].title,
-					views: e.data.video_info[i].watchnumber,
-					plays: e.data.video_info[i].playnumber,
-					likes: e.data.video_info[i].likenum,
-					shares: e.data.video_info[i].sharenum,
-					location: { country : e.data.video_info[i].countryCode }
-				});
-			}
-			return_data[index].videosplus = e.data.video_info.length > 10 ? true : false;
-
-			if (index < max_count) {
-				index++;
-				_dosearch3();
-			} else {
-				callback_holder(return_data);
-			}	
 
 		}
 	});
