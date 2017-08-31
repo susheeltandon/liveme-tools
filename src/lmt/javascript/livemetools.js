@@ -165,6 +165,8 @@ function showMainMenu() {
 
 }
 
+function cancelAction() { cancelLMTweb = true; }
+
 function showSettings() { ipcRenderer.send('show-settings'); }
 function showFavorites() { ipcRenderer.send('show-favorites'); }
 function showQueue() { ipcRenderer.send('show-queue'); }
