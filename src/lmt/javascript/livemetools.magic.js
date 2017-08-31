@@ -12,12 +12,13 @@
 		  
 */
 var	callback_holder = null, query = '', query_orig = '', page_index = 0, return_data = [], index = 0, max_count = 0;
-var build_table = [], build_table2 = [], video_count = 0;
+var build_table = [], build_table2 = [], video_count = 0, cancelLMTweb = false;
 
 var PAGE_SIZE = 5;		// The Higher the number, the less the calls to the server but the larger the progress steps...
 
 function getuservideos (u, cb) {
 
+	cancelLMTweb = false;
 	query_orig = null;
 	query = u;
 	callback_holder = cb;
@@ -41,6 +42,7 @@ function getuservideos (u, cb) {
 
 function searchkeyword(k, cb) {
 
+	cancelLMTweb = false;
 	query = k;
 	callback_holder = cb;
 	page_index = 1;
@@ -119,8 +121,12 @@ function _dolookup1() {
 					fans: parseInt(e.data.user.count_info.follower_count)
 				}
 			}
-			page_index = 1;
-			_dolookup2();			
+			if (video_count > 0) {
+				page_index = 1;
+				_dolookup2();	
+			} else {
+				_dolookup3();
+			}
 		}
 	});
 
@@ -130,7 +136,12 @@ function _dolookup1() {
 
 function _dolookup2() {
 
-	$('#overlay .status').html('<progress value="'+((page_index - 1) * PAGE_SIZE)+'" max="'+video_count+'" min="0"></progress><br>Getting details on '+video_count+' replays...');
+	if (cancelLMTweb) {
+		callback_holder(return_data);
+		return;
+	}
+
+	$('#overlay .status').html('<progress value="'+((page_index - 1) * PAGE_SIZE)+'" max="'+video_count+'" min="0"></progress><br>Getting details on '+video_count+' replays...<br><br><input type="button" value="Cancel" onClick="cancelAction()">');
 	$.ajax({
 		url: 'http://live.ksmobile.net/live/getreplayvideos',
 		data: {
@@ -186,6 +197,8 @@ function _dolookup2() {
 
 function _dolookup3() {
 
+	$('#overlay .status').html('<progress></progress><br>Finishing up...');
+	
 	if (query_orig == null) {
 		callback_holder(return_data);
 		return;
