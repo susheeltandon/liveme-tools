@@ -177,16 +177,17 @@ body:hover > header.small.transparent > * {
 	left: 50%;
 
 	display: block;
-	width: 160px;
+	width: 200px;
 	height: 40px;
 
 	font-size: 10pt;
-	font-weight: 300;
+	font-weight: 400;
 
-	margin: -20px 0 0 -80px;
+	margin: -20px 0 0 -100px;
 	text-align: center;
-	/* background: rgba(0,0,0,0) url(../images/wait.gif) top no-repeat; */
+	letter-spacing: 0.06em;
 }
+#overlay .status progress { width: 190px; }
 
 .emptylist {
 	display: block;
