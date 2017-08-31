@@ -177,17 +177,17 @@ body:hover > header.small.transparent > * {
 	left: 50%;
 
 	display: block;
-	width: 200px;
-	height: 40px;
+	width: 400px;
+	height: 100px;
 
 	font-size: 10pt;
 	font-weight: 400;
 
-	margin: -20px 0 0 -100px;
+	margin: -30px 0 0 -200px;
 	text-align: center;
 	letter-spacing: 0.06em;
 }
-#overlay .status progress { width: 190px; }
+#overlay .status progress { width: 300px; }
 
 .emptylist {
 	display: block;
