@@ -12,8 +12,6 @@ module.exports = {
 	add : function(e) {
 		fav_list.push(e);
 		update_single_user(fav_list.length - 1);
-		ipcRenderer.send('favorites-refresh', fav_list);
-		write_to_file();		
 	},
 
 	remove: function(e) {
