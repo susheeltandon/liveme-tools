@@ -114,6 +114,7 @@ function _dolookup1() {
 					fans: parseInt(e.data.user.count_info.follower_count)
 				}
 			}
+			page_index = 1;
 			_dolookup2();			
 		}
 	});
@@ -128,7 +129,7 @@ function _dolookup2() {
 		url: 'http://live.ksmobile.net/live/getreplayvideos',
 		data: {
 			userid: query,
-			page_size: 20,
+			page_size: 10,
 			page_index: page_index
 		},
 		cache: false,
@@ -162,26 +163,15 @@ function _dolookup2() {
 						private: false
 					});
 				}
-			}
 
-			if (typeof e.data.video_info !== undefined) {
-				if (query_orig == null) {
-					callback_holder(return_data);
+				if (e.data.video_info.length == 10) {
+					page_index++;
+					_dolookup2();
 				} else {
 					_dolookup3();
 				}
-				return;
-			} else if (page_index < 20) {
-				if (e.data.video_info.length < 20) {
-					_dolookup3();			
-				} else {
-					page_index++;
-					_dolookup2();
-				}
-				return;
 			} else {
-				_dolookup3();
-				return;
+				do_lookup3();
 			}
 
 		}
