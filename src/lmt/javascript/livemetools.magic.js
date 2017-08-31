@@ -12,7 +12,7 @@
 		  
 */
 var	callback_holder = null, query = '', query_orig = '', page_index = 0, return_data = [], index = 0, max_count = 0;
-var build_table = [], build_table2 = [];
+var build_table = [], build_table2 = [], progress = 0;
 
 
 function getuservideos (u, cb) {
@@ -51,6 +51,7 @@ function searchkeyword(k, cb) {
 
 function _dolookup() {
 
+	$('#overlay .status').html('<progress></progress><br>Looking up Video ID...');
 	$.ajax({
 		url: 'http://live.ksmobile.net/live/queryinfo',
 		data: {
@@ -84,7 +85,7 @@ function _dolookup() {
 
 function _dolookup1() {
 
-
+	$('#overlay .status').html('<progress></progress><br>Getting user info...');
 	$.ajax({
 		url: 'http://live.ksmobile.net/user/getinfo',
 		data: {
@@ -125,6 +126,7 @@ function _dolookup1() {
 
 function _dolookup2() {
 
+	$('#overlay .status').html('<progress></progress><br>Getting replay videos...');
 	$.ajax({
 		url: 'http://live.ksmobile.net/live/getreplayvideos',
 		data: {
@@ -227,6 +229,7 @@ function _dolookup3() {
 					private: true
 				});
 			}
+			$('#overlay .status').html('');			
 			callback_holder(return_data);			
 		}
 	});
