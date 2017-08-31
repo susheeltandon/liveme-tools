@@ -300,7 +300,6 @@ function _dosearch2() {
 			callback_holder(return_data);
 		},
 		success: function(e) {
-			console.log(JSON.stringify(e.data.user.user_info, null, 2));
 			return_data[index] = {
 					userid: e.data.user.user_info.uid,
 					nickname: e.data.user.user_info.nickname,
