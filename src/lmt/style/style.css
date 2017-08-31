@@ -168,8 +168,24 @@ body:hover > header.small.transparent > * {
 
 #overlay {
 	display: none;
-	background: rgba(0,0,0,0) url(../images/wait.gif) center no-repeat;
 	z-index: 10;
+	vertical-align: middle;
+}
+#overlay .status {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+
+	display: block;
+	width: 160px;
+	height: 40px;
+
+	font-size: 10pt;
+	font-weight: 300;
+
+	margin: -20px 0 0 -80px;
+	text-align: center;
+	/* background: rgba(0,0,0,0) url(../images/wait.gif) top no-repeat; */
 }
 
 .emptylist {
