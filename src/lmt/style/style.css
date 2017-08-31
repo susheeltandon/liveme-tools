@@ -352,6 +352,7 @@ body:hover > header.small.transparent > * {
 	width: 160px;
 	height: 160px;
 	border-radius: 80px;
+	background-color: rgba(0,0,0,0.3);
 }
 
 #userinfo label {
@@ -527,6 +528,7 @@ body:hover > header.small.transparent > * {
 	height: 100px;
 
 	border-radius: 50px;
+	background-color: rgba(0,0,0,0.3);
 
 	position: absolute;
 	left: 0;
@@ -582,6 +584,7 @@ body:hover > header.small.transparent > * {
 	left: -2px;
 	z-index: 5;
 	box-shadow: 0px 1px 3px rgba(0,0,0,0.2);
+	background-color: rgba(0,0,0,0.3);
 }
 .user_entry.small h4, .user_entry.small h5 {
 	top: 19px;
