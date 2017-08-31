@@ -12,8 +12,9 @@
 		  
 */
 var	callback_holder = null, query = '', query_orig = '', page_index = 0, return_data = [], index = 0, max_count = 0;
-var build_table = [], build_table2 = [], progress = 0;
+var build_table = [], build_table2 = [], video_count = 0;
 
+var PAGE_SIZE = 5;		// The Higher the number, the less the calls to the server but the larger the progress steps...
 
 function getuservideos (u, cb) {
 
@@ -44,6 +45,8 @@ function searchkeyword(k, cb) {
 	callback_holder = cb;
 	page_index = 1;
 	return_data = [];
+
+	$('#overlay .status').html('<progress></progress><br>Searching for usernames matching query...');
 	_dosearch();
 
 }
@@ -105,6 +108,7 @@ function _dolookup1() {
 				return;
 			}
 			if (e.status != 500) {
+				video_count = e.data.user.count_info.video_count;
 				return_data.userinfo = {
 					userid: e.data.user.user_info.uid,
 					username: e.data.user.user_info.nickname,
@@ -126,12 +130,12 @@ function _dolookup1() {
 
 function _dolookup2() {
 
-	$('#overlay .status').html('<progress></progress><br>Getting replay videos...');
+	$('#overlay .status').html('<progress value="'+((page_index - 1) * PAGE_SIZE)+'" max="'+video_count+'" min="0"></progress><br>Getting details on '+video_count+' replays...');
 	$.ajax({
 		url: 'http://live.ksmobile.net/live/getreplayvideos',
 		data: {
 			userid: query,
-			page_size: 10,
+			page_size: PAGE_SIZE,
 			page_index: page_index
 		},
 		cache: false,
@@ -166,7 +170,7 @@ function _dolookup2() {
 					});
 				}
 
-				if (e.data.video_info.length == 10) {
+				if (e.data.video_info.length == PAGE_SIZE) {
 					page_index++;
 					_dolookup2();
 				} else {
@@ -244,12 +248,12 @@ function _dolookup3() {
 */
 function _dosearch() {
 
-	$('#overlay .status').html('<progress></progress><br>Searching for usernames matching query...');
+	$('#overlay .status').html('<progress></progress><br>Found '+(return_data.length)+' matching query...');
 	$.ajax({
 		url: 'http://live.ksmobile.net/search/searchkeyword',
 		data: {
 			keyword: encodeURI(query),
-			page_size: 10,
+			page_size: PAGE_SIZE,
 			page_index: page_index
 		},
 		cache: false,
@@ -273,11 +277,16 @@ function _dosearch() {
 						});
 					}
 				}
+
+				// Even with this code here it still will only return 10 results max.
+				if (e.data.data_info.length == PAGE_SIZE) {
+					page_index++;
+					_dosearch();
+				} else {
+					index = 0;
+					_dosearch2();
+				}
 			}
-
-			index = 0;
-			_dosearch2();			
-
 		}
 	});
 
@@ -286,7 +295,7 @@ function _dosearch() {
 
 function _dosearch2() {
 
-	$('#overlay .status').html('<progress></progress><br>Getting info on users...');
+	$('#overlay .status').html('<progress min="0" max="'+return_data.length+'" value="'+index+'"></progress><br>Getting info on '+return_data.length+' users...');
 	$.ajax({
 		url: 'http://live.ksmobile.net/user/getinfo',
 		data: {
