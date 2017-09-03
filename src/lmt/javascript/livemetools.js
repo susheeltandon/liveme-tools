@@ -220,7 +220,7 @@ function showUpload() {
 							id: null,
 							title: null,
 							time: 0,
-							url: filelist[i]
+							url: filelist[i].trim()
 						}
 					});
 
