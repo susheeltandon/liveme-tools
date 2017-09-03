@@ -208,7 +208,7 @@ function processItem(item) {
                     resolve();
                 },
                 on_error: function(e) {
-                    download_queue.push(item);
+                    //download_queue.push(item);
                     ipcRenderer.send('download-error', { id: item.video.id });
                     resolve();
                 },
@@ -240,7 +240,7 @@ function processItem(item) {
                     ipcRenderer.send('download-start', { id: item.video.id, value: item.video.url });
                 })
                 .on('error', function(err, stdout, etderr) {
-                    download_queue.push(item);
+                    //download_queue.push(item);
                     ipcRenderer.send('download-error', { id: item.video.id });
                     resolve();
                 })
