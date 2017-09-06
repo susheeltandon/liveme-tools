@@ -110,7 +110,11 @@ function showMainMenu() {
 		[
 			{
 				label: 'Import Link List',
-				click: () => showUpload()
+				click: () => showImportURLList()
+			},
+			{
+				label: 'Import VideoID List',
+				click: () => showImportVideoIDList()
 			},
 			{
 				type: 'separator'
@@ -186,8 +190,66 @@ function onTypeChange() {
 }
 
 
+function showImportVideoIDList() {
+	var d = remote.dialog.showOpenDialog(
+		remote.getCurrentWindow(),
+		{
+			properties: [
+				'openFile'
+			]
+		}
+	);
 
-function showUpload() {
+	if (typeof d == "undefined") return;
+	
+	// Get contents of file...
+	fs.readFile(d[0], 'utf8', function (err,data) {
+		if (err) {
+			remote.dialog.showErrorBox(
+				'Import Error',
+				'There was an error while attempting to import the selected file.'
+			);
+			return;
+		} else {
+			var filelist = data.split('\n');
+			
+			/*
+				TODO:
+
+				Need to query each video individually to get URL and add them to the queue
+
+
+
+			for (i = 0; i < filelist.length; i++)  {
+
+				if (filelist[i].indexOf('http') > -1) {
+					Downloads.add({
+						user: {
+							id: null,
+							name: null
+						},
+						video: {
+							id: null,
+							title: null,
+							time: 0,
+							url: filelist[i].trim()
+						}
+					});
+
+				}
+			}
+			*/
+
+		}
+		
+		return;
+	});
+
+}
+
+
+
+function showImportURLList() {
 	var d = remote.dialog.showOpenDialog(
 		remote.getCurrentWindow(),
 		{
@@ -484,17 +546,17 @@ function renderUserLookup(e) {
 	for(i = 0; i < e.videos.length; i++) {
 		if (e.videos[i].url.length > 8) {
 
-			var dt = new Date(e.videos[i].dt * 1000);
+			let dt = new Date(e.videos[i].dt * 1000);
 			var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
 			var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == e.videos[i].url ? true : false) : false;
 			var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == e.videos[i].videoid ? true : false) : false;
 
 			var ls = (e.videos[i].length - Math.round(e.videos[i].length / 60)) % 60, lm = Math.round(e.videos[i].length / 60);
 			var length = lm + ':' + (ls < 10 ? '0' : '') + ls;
-			let deleted = e.videos[i].private == true ? '[DELETED] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
-			let downloaded = Downloads.has_been_downloaded(e.videos[i].videoid) ? 'downloaded' : '';
+			var deleted = e.videos[i].private == true ? '[DELETED] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
+			var downloaded = Downloads.has_been_downloaded(e.videos[i].videoid) ? 'downloaded' : '';
 
-			$('#videolist').append(`
+			var h = `
 				<div class="video_entry ${highlight} ${downloaded}">
 					<input class="vdoid" type="text" value="${e.videos[i].videoid}"><input class="url" type="text" value="${e.videos[i].url}">
 					<span class="vid">ID:</span>
@@ -508,11 +570,20 @@ function renderUserLookup(e) {
 						<label>Shares:</label><span>${e.videos[i].shares}</span>
 						<label>Country:</label><span>${e.videos[i].location.country}</span>
 					</div>
-					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e.videos[i].msgfile}', '${e.videos[i].dt}', '${e.userinfo.username}')" title="View Message History">
 					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e.videos[i].url}')" title="Play Video">
+				`;
+			if (e.videos[i].url.indexOf('liveplay') < 0) {
+				h += `
+					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e.videos[i].msgfile}', '${e.videos[i].dt}', '${e.userinfo.username}')" title="View Message History">
 					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userinfo.userid}', '${e.userinfo.username}', '${e.videos[i].videoid}', '${e.videos[i].title.replace("'", "")}', '${e.videos[i].dt}', '${e.videos[i].url}')" title="Download Video">
+				`;
+			}
+				
+			h += `
 				</div>
-			`);
+			`;
+
+			$('#videolist').append(h);
 		}
 	}
 
@@ -577,9 +648,39 @@ function renderHashtagResults(e) {
 			var ll = parseFloat(e[i].videolength), lh = Math.round(ll / 3600), lm = Math.round(ll / 60) % 60, ls = ll % 60;
 			//var ls = (parseInt(e[i].videolength) - Math.round(parseInt(e[i].videolength) / 60)) % 60, lm = Math.round(parseInt(e[i].videolength) / 60);
 			var length = lh + ':' + (lm < 10 ? '0' : '') + lm + ':' + (ls < 10 ? '0' : '') + ls;
-			let deleted = e[i].private == true ? '[DELETED] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
-			let downloaded = Downloads.has_been_downloaded(e[i].vdoid) ? 'downloaded' : '';
+			var deleted = e[i].private == true ? '[DELETED] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
+			var downloaded = Downloads.has_been_downloaded(e[i].vdoid) ? 'downloaded' : '';
 
+			var h = `
+				<div class="video_entry ${highlight} ${downloaded}">
+					<input class="vdoid" type="text" value="${e[i].vdoid}"><input class="url" type="text" value="${e[i].videosource}">
+					<span class="vid">ID:</span>
+					<span class="uid">URL:</span>
+					<h4 class="date">${ds}</h4>
+					<h4 class="title"><span onClick="showUser('${e[i].userid}')">${e[i].uname}</span> - ${deleted}${e[i].title}</h4>
+					<div class="counts">
+						<label>Length:</label><span>${length}</span>
+						<label>Views:</label><span>${e[i].playnumber}</span>
+						<label>Likes:</label><span>${e[i].likenum}</span>
+						<label>Shares:</label><span>${e[i].sharenum}</span>
+						<label>Country:</label><span>${e[i].countryCode}</span>
+					</div>
+					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e[i].videosource}')" title="Play Video">
+				`;
+			if (e.videos[i].url.indexOf('liveplay') < 0) {
+				h += `
+					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e[i].msgfile}', '${e[i].vtime}', '${e.uname}')" title="View Message History">
+					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userid}', '${e.uname}', '${e[i].vdoid}', '${e[i].title.replace("'", "")}', '${e[i].vtime}', '${e[i].videosource}')" title="Download Video">
+				`;
+			}
+				
+			h += `
+				</div>
+			`;
+
+			$('#videolist').append(h);
+
+			/*
 			$('#videolist_full').append(`
 				<div class="video_entry ${highlight} ${downloaded}">
 					<input class="vdoid" type="text" value="${e[i].vdoid}"><input class="url" type="text" value="${e[i].videosource}">
@@ -599,6 +700,7 @@ function renderHashtagResults(e) {
 					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userid}', '${e.uname}', '${e[i].vdoid}', '${e[i].title.replace("'", "")}', '${e[i].vtime}', '${e[i].videosource}')" title="Download Video">
 				</div>
 			`);
+			*/
 		}
 	}
 
