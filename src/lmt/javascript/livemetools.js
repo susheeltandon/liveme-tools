@@ -181,6 +181,7 @@ function onTypeChange() {
 		case 'video-lookup': $('#query').attr('placeholder', 'Enter VideoID'); $('#maxlevel').hide(); break;
 		case 'url-lookup': $('#query').attr('placeholder', 'Enter URL'); $('#maxlevel').hide(); break;
 		case 'search': $('#query').attr('placeholder', 'Enter Partial or Full Username'); $('#maxlevel').show(); break;
+		case 'hashtag': $('#query').attr('placeholder', 'Enter a hashtag'); $('#maxlevel').hide(); break;
 	}
 }
 
@@ -264,11 +265,18 @@ function beginSearch() {
 			$('#type').val('url-lookup');
 			onTypeChange();
 		}
+	} else if (u.indexOf('#') > -1) {
+		if ($('#type').val() != 'hashtag') {
+			$('#type').val('hashtag');
+			onTypeChange();
+		}
+/*
 	} else {
-		if ($('#type').val() != 'search') {
+		if (($('#type').val() != 'search') || ($('#type').val() != 'hashtag')) {
 			$('#type').val('search');
 			onTypeChange();
 		}
+*/		
 	}
 	beginSearch2();
 }
@@ -344,6 +352,13 @@ function beginSearch2() {
 			isSearching = false;
 			$('#main').html('<div id="results" class="panel"></div>'); 
 			renderSearchResults(e);
+			$('#overlay').hide();
+		});
+	} else if ($('#type').val() == 'hashtag') {
+		search_hashtag($('#query').val(), function(e) {
+			isSearching = false;
+			$('#main').html('<div id="videolist_full" class="panel"></div>'); 
+			renderHashtagResults(e);
 			$('#overlay').hide();
 		});
 	} else {
@@ -481,7 +496,7 @@ function renderUserLookup(e) {
 
 			$('#videolist').append(`
 				<div class="video_entry ${highlight} ${downloaded}">
-					<input class="url" type="text" value="${e.videos[i].url}">
+					<input class="vdoid" type="text" value="${e[i].vdoid}"><input class="url" type="text" value="${e[i].videosource}">
 					<h4 class="date">${ds}</h4>
 					<h4 class="title">${deleted}${e.videos[i].title}</h4>
 					<div class="counts">
@@ -536,4 +551,51 @@ function renderSearchResults(e) {
 	}
 }
 
+function renderHashtagResults(e) {
 
+	$('#main').html('<div id="videolist_full"></div>');
+
+	if (typeof(e) == "undefined") {
+		return;
+	}
+
+	if (e.length < 1) {
+		$('#main').html('<div class="emptylist">No videos were found on LiveMe matching the specified hashtag.</div>');
+		return;
+	}
+
+	for(i = 0; i < e.length; i++) {
+		if (e[i].videosource.length > 8) {
+
+			var dt = new Date(e[i].vtime * 1000);
+			var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
+			var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == e[i].url ? true : false) : false;
+			var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == e[i].vdoid ? true : false) : false;
+
+			var ll = parseFloat(e[i].videolength), lh = Math.round(ll / 3600), lm = Math.round(ll / 60) % 60, ls = ll % 60;
+			//var ls = (parseInt(e[i].videolength) - Math.round(parseInt(e[i].videolength) / 60)) % 60, lm = Math.round(parseInt(e[i].videolength) / 60);
+			var length = lh + ':' + (lm < 10 ? '0' : '') + lm + ':' + (ls < 10 ? '0' : '') + ls;
+			let deleted = e[i].private == true ? '[DELETED] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
+			let downloaded = Downloads.has_been_downloaded(e[i].vdoid) ? 'downloaded' : '';
+
+			$('#videolist_full').append(`
+				<div class="video_entry ${highlight} ${downloaded}">
+					<input class="vdoid" type="text" value="${e[i].vdoid}"><input class="url" type="text" value="${e[i].videosource}">
+					<h4 class="date">${ds}</h4>
+					<h4 class="title"><span onClick="showUser('${e[i].userid}')">${e[i].uname}</span> - ${deleted}${e[i].title}</h4>
+					<div class="counts">
+						<label>Length:</label><span>${length}</span>
+						<label>Views:</label><span>${e[i].playnumber}</span>
+						<label>Likes:</label><span>${e[i].likenum}</span>
+						<label>Shares:</label><span>${e[i].sharenum}</span>
+						<label>Country:</label><span>${e[i].countryCode}</span>
+					</div>
+					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e[i].msgfile}', '${e[i].vtime}', '${e.uname}')" title="View Message History">
+					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e[i].videosource}')" title="Play Video">
+					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userid}', '${e.uname}', '${e[i].vdoid}', '${e[i].title.replace("'", "")}', '${e[i].vtime}', '${e[i].videosource}')" title="Download Video">
+				</div>
+			`);
+		}
+	}
+
+}
