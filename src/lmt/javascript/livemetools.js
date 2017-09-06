@@ -496,7 +496,7 @@ function renderUserLookup(e) {
 
 			$('#videolist').append(`
 				<div class="video_entry ${highlight} ${downloaded}">
-					<input class="vdoid" type="text" value="${e[i].vdoid}"><input class="url" type="text" value="${e[i].videosource}">
+					<input class="vdoid" type="text" value="${e.videos[i].videoid}"><input class="url" type="text" value="${e.videos[i].url}">
 					<h4 class="date">${ds}</h4>
 					<h4 class="title">${deleted}${e.videos[i].title}</h4>
 					<div class="counts">
