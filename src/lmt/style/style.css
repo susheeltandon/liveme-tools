@@ -689,16 +689,36 @@ body:hover > header.small.transparent > * {
 	line-height: 26px;
 	font-size: 9pt;
 	font-weight: 400;
+	box-shadow: none;
+	border: none;
+	background-color: rgba(0,0,0,0.1);
 }
+
 .video_entry .vdoid {
-	left: 10px;
+	left: 30px;
 	width: 140px;
 	text-align: center;
 }
+
 .video_entry .url {
-	left: 160px;
-	width: calc(100% - 170px);
+	left: 210px;
+	width: calc(100% - 220px);
 }
+
+.video_entry span.vid, .video_entry span.uid {
+	position: absolute;
+	display: inline-block;
+	top: 65px;
+	line-height: 30px;
+	font-size: 8pt;
+	font-weight: 600;
+	color: rgba(255,255,255,0.3);
+}
+
+.video_entry span.vid { left: 10px; }
+.video_entry span.uid { left: 180px; }
+
+
 .video_entry.highlight > .url { color: rgb(255,255,80); }
 
 .video_entry .watch, .video_entry .download, .video_entry .chat {
