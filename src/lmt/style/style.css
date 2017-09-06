@@ -167,9 +167,11 @@ body:hover > header.small.transparent > * {
 }
 
 #overlay {
+	top: 0;
 	display: none;
 	z-index: 10;
 	vertical-align: middle;
+	background-color: rgba(0,0,0,0.4);
 }
 #overlay .status {
 	position: absolute;
@@ -209,6 +211,7 @@ body:hover > header.small.transparent > * {
 
 
 
+
 #queueheader {
 	position: absolute;
 	top: 24px;
@@ -221,7 +224,7 @@ body:hover > header.small.transparent > * {
 	box-shadow: 0px 1px 2px rgba(0,0,0,0.3);
 }
 
-#queueheader .pause {
+#queueheader .pause, #queueheader .addurl {
 	position: absolute;
 	left: 8px;
 	top: 8px;
@@ -231,13 +234,14 @@ body:hover > header.small.transparent > * {
 	cursor: pointer;
 	opacity: 0.4;
 }
-#queueheader .pause:hover { opacity: 0.8; }
+#queueheader .pause:hover, #queueheader .addurl:hover { opacity: 0.8; }
+#queueheader .addurl { left: auto; right: 8px; }
 
 #queueheader .active_url {
 	position: absolute;
 	top: 8px;
 	left: 48px;
-	right: 8px;	
+	right: 48px;	
 	font-size: 9pt;
 	display: block;
 	overflow: hidden;
@@ -507,6 +511,37 @@ body:hover > header.small.transparent > * {
 
 
 
+.popup_prompt {
+	position: absolute;
+	left: 50%;
+	top: 0;
+
+	display: none;
+	width: 480px;
+	margin-left: -240px;
+
+	color: rgba(255,255,255,0.7);
+	background-color: #595b5b;
+	
+	border-radius: 0 0 10px 10px;
+	box-shadow: 0px 4px 9px rgba(0,0,0,0.3);
+	z-index: 10;
+}
+
+.popup_prompt .content {
+	font-weight: 300;
+	font-size: 10pt;
+	padding: 40px 20px 10px;
+}
+
+.popup_prompt .buttons {
+	padding: 10px 20px;
+	text-align: right;
+}
+
+.popup_prompt .buttons input {
+	margin-left: 16px;
+}
 
 
 
