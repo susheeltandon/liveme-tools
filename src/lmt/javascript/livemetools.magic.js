@@ -12,9 +12,9 @@
 		  
 */
 var	callback_holder = null, query = '', query_orig = '', page_index = 0, return_data = [], index = 0, max_count = 0;
-var build_table = [], build_table2 = [], video_count = 0, cancelLMTweb = false;
+var build_table = [], build_table2 = [], video_count = 0, cancelLMTweb = false, searchType = 1;
 
-var PAGE_SIZE = 5;		// The Higher the number, the less the calls to the server but the larger the progress steps...
+var PAGE_SIZE = 10;		// The Higher the number, the less the calls to the server but the larger the progress steps...
 
 function getuservideos (u, cb) {
 
@@ -46,9 +46,24 @@ function searchkeyword(k, cb) {
 	query = k;
 	callback_holder = cb;
 	page_index = 1;
+	searchType = 1;
 	return_data = [];
 
 	$('#overlay .status').html('<progress></progress><br>Searching for usernames matching query...');
+	_dosearch();
+
+}
+
+function searchhashtag(k, cb) {
+
+	cancelLMTweb = false;
+	query = k;
+	callback_holder = cb;
+	page_index = 1;
+	searchType = 2;
+	return_data = [];
+
+	$('#overlay .status').html('<progress></progress><br>Searching for hashtags matching query...');
 	_dosearch();
 
 }
@@ -267,7 +282,8 @@ function _dosearch() {
 		data: {
 			keyword: encodeURI(query),
 			page_size: PAGE_SIZE,
-			page_index: page_index
+			page_index: page_index,
+			type : searchType
 		},
 		cache: false,
 		type: "GET",
@@ -285,9 +301,15 @@ function _dosearch() {
 				for (i = 0; i < e.data.data_info.length; i++) {
 					// Only push ones that are defined.
 					if (typeof e.data.data_info[i].user_id != 'undefined') {
-						return_data.push({
-							userid : e.data.data_info[i].user_id
-						});
+						if (searchType == 1) {
+							return_data.push({
+								userid : e.data.data_info[i].user_id
+							});
+						} else {
+							return_data.push({
+								e.data..data_info[i]
+							})
+						}
 					}
 				}
 
@@ -297,7 +319,11 @@ function _dosearch() {
 					_dosearch();
 				} else {
 					index = 0;
-					_dosearch2();
+					if (searchType == 1) {
+						_dosearch2();
+					} else {
+						callback_holder(return_data);
+					}
 				}
 			}
 		}
@@ -347,6 +373,8 @@ function _dosearch2() {
 		}
 	});
 }
+
+
 
 
 
