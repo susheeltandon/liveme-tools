@@ -50,7 +50,7 @@ function searchkeyword(k, cb) {
 	return_data = [];
 
 	$('#overlay .status').html('<progress></progress><br>Searching for usernames matching query...');
-	_dosearch();
+	_dosearch(false);
 
 }
 
@@ -64,7 +64,7 @@ function search_hashtag(k, cb) {
 	return_data = [];
 
 	$('#overlay .status').html('<progress></progress><br>Searching for hashtags matching query...');
-	_dosearch();
+	_dosearch(false);
 
 }
 
@@ -274,9 +274,12 @@ function _dolookup3() {
 /*
 	User Lookup Search
 */
-function _dosearch() {
+function _dosearch(showOverlay=true) {
 
-	$('#overlay .status').html('<progress></progress><br>Found '+(return_data.length)+' matching query...');
+	if (showOverlay) {
+		$('#overlay .status').html('<progress></progress><br>Found '+(return_data.length)+' matching query...');
+	}
+
 	$.ajax({
 		url: 'http://live.ksmobile.net/search/searchkeyword',
 		data: {
