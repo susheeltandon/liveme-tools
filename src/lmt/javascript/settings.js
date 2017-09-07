@@ -45,10 +45,6 @@ function saveSettings() {
 	closeWindow();
 }
 
-function flushDownloadQueue() { 
-	downloads.purge_queue();
-}
-
 function checkType() {
 	if ($('#filemode').is(':checked') == 0) {
 		$('#ftblock-yes').hide();
