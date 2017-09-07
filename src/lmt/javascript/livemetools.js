@@ -109,12 +109,17 @@ function showMainMenu() {
 	const MainAppMenu = remote.Menu.buildFromTemplate(
 		[
 			{
-				label: 'Import Link List',
-				click: () => showImportURLList()
-			},
-			{
-				label: 'Import VideoID List',
-				click: () => showImportVideoIDList()
+				label: 'Import',
+				submenu: [
+					{
+						label: 'URL List',
+						click: () => showImportURLList()
+					},
+					{
+						label: 'VideoID List',
+						click: () => showImportVideoIDList()
+					}
+				]
 			},
 			{
 				type: 'separator'
@@ -211,35 +216,12 @@ function showImportVideoIDList() {
 			);
 			return;
 		} else {
-			var filelist = data.split('\n');
+			var t = data.split('\n'), idlist = [], i = 0;
 			
-			/*
-				TODO:
+			for (i = 0; i < t.length; i++)
+				idlist.push(t[i].trim());
 
-				Need to query each video individually to get URL and add them to the queue
-
-
-
-			for (i = 0; i < filelist.length; i++)  {
-
-				if (filelist[i].indexOf('http') > -1) {
-					Downloads.add({
-						user: {
-							id: null,
-							name: null
-						},
-						video: {
-							id: null,
-							title: null,
-							time: 0,
-							url: filelist[i].trim()
-						}
-					});
-
-				}
-			}
-			*/
-
+			ipcRenderer.send('show-import-win', { list: idlist });
 		}
 		
 		return;
@@ -327,12 +309,12 @@ function beginSearch() {
 			$('#type').val('url-lookup');
 			onTypeChange();
 		}
+/*
 	} else if (u.indexOf('#') > -1) {
 		if ($('#type').val() != 'hashtag') {
 			$('#type').val('hashtag');
 			onTypeChange();
 		}
-/*
 	} else {
 		if (($('#type').val() != 'search') || ($('#type').val() != 'hashtag')) {
 			$('#type').val('search');
