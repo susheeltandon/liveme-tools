@@ -136,6 +136,22 @@ header.small.transparent:hover {
 header.small.transparent:hover > * {
 	opacity: 1;
 }
+
+footer {
+	display: block;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 24px;
+	line-height: 23px;
+	font-size: 9pt;
+	font-weight: 400;
+	padding: 0 20px;
+	background-color: #303233;
+}
+
+
 body:hover > header.small.transparent {
 	opacity: 1;
 }
@@ -269,7 +285,7 @@ body:hover > header.small.transparent > * {
 	top: 72px;
 	left: 0;
 	right: 0;
-	bottom: 0;
+	bottom: 24px;
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
@@ -854,6 +870,7 @@ input[type=button] {
 	padding: 0 10px;
 	box-shadow: inset 0 1px 1px #737373, inset 0 -1px 1px #333;
 	cursor: pointer;
+	vertical-align: middle;
 }
 
 input[type=button]:hover {
@@ -865,9 +882,16 @@ input[type=button].small {
 	height: 22px;
 	line-height: 21px;
 	font-size: 9pt;
-	padding: 0 5px;
+	padding: 0 6px;
 }
 
+input[type=button].tiny {
+	height: 18px;
+	line-height: 17px;
+	font-size: 8.5pt;
+	padding: 0 8px;
+	border-radius: 9px;
+}
 
 
 .select {
