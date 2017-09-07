@@ -114,8 +114,23 @@
 				$('#overlay').fadeOut(200);
 				$('#prompt1').fadeOut(200);
 			}
-		</script>
 
+			function emptyQueue() {
+				$('#overlay').fadeIn(200);
+				$('#prompt2').fadeIn(200);
+			}
+
+			function emptyQueueYes() {
+				Downloads.purge_queue();
+				hideEmptyPrompt();
+			}
+
+			function hideEmptyPrompt() {
+				$('#overlay').fadeOut(200);
+				$('#prompt2').fadeOut(200);
+			}
+		</script>
+`
 	</head>
 	<body onContextMenu="return false;">
 
@@ -136,6 +151,16 @@
 			</div>
 		</div>
 
+		<div id="prompt2" class="popup_prompt">
+			<div class="content">
+				Confirm removal of all items currently in the download queue.
+			</div>
+			<div class="buttons">
+				<input type="button" value="Yes, empty it!" onClick="emptyQueueYes()">
+				<input type="button" value="No, don't do it!" onClick="hideEmptyPrompt()">
+			</div>
+		</div>
+
 		<div id="queueheader">
 			<img class="pause" src="images/ic_pause_circle_outline_white_24px.svg" onClick="pauseResume()">
 			<img class="addurl" src="images/ic_add_circle_outline_white_24px.svg" onClick="showURLPrompt()">
@@ -145,5 +170,11 @@
 		
 		<div id="queuelist"></div>
 
+		<footer>
+			<div style="text-align: right;">
+				<input type="button" value="Empty Queue" class="tiny" onClick="emptyQueue()">
+			</div>
+
+		</footer>
 	</body>
 </html>
