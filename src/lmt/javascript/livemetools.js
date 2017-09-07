@@ -649,7 +649,7 @@ function renderHashtagResults(e) {
 					</div>
 					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e[i].videosource}')" title="Play Video">
 				`;
-			if (e.videos[i].url.indexOf('liveplay') < 0) {
+			if (e[i].videosource.indexOf('liveplay') < 0) {
 				h += `
 					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e[i].msgfile}', '${e[i].vtime}', '${e.uname}')" title="View Message History">
 					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userid}', '${e.uname}', '${e[i].vdoid}', '${e[i].title.replace("'", "")}', '${e[i].vtime}', '${e[i].videosource}')" title="Download Video">
@@ -660,7 +660,7 @@ function renderHashtagResults(e) {
 				</div>
 			`;
 
-			$('#videolist').append(h);
+			$('#videolist_full').append(h);
 
 			/*
 			$('#videolist_full').append(`
