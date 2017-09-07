@@ -11,6 +11,7 @@
 		  See main readme.md for details on this project.
 		  
 */
+
 var	callback_holder = null, query = '', query_orig = '', page_index = 0, return_data = [], index = 0, max_count = 0;
 var build_table = [], build_table2 = [], video_count = 0, cancelLMTweb = false, searchType = 1;
 
@@ -136,8 +137,12 @@ function _dolookup1() {
 					fans: parseInt(e.data.user.count_info.follower_count)
 				}
 			}
+
 			if (video_count > 0) {
 				page_index = 1;
+				if (video_count > appSettings.get('downloads.replaycount')) { 
+					video_count = appSettings.get('downloads.replaycount');
+				}
 				_dolookup2();	
 			} else {
 				_dolookup3();
@@ -194,7 +199,10 @@ function _dolookup2() {
 						msgfile : e.data.video_info[i].msgfile,
 						private: false
 					});
+
+					//if (return_data.length >= parseInt(appSettings.get('downloads.replaycount')))  break;
 				}
+
 
 				if (e.data.video_info.length == PAGE_SIZE) {
 					page_index++;

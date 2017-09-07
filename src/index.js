@@ -35,6 +35,7 @@ function createWindow(){
 			filemode: 0,
 			filetemplate: '',
 			history: true,
+			replaycount: 10,
 			engine: 'internal'
 		});
 
@@ -201,7 +202,7 @@ ipcMain.on('show-settings', () => {
 
 function showSettings() {
 	var settingsWindow = new BrowserWindow({
-		width: 900, height: 400, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false, center: true, backgroundColor: '#4a4d4e',
+		width: 900, height: 432, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false, center: true, backgroundColor: '#4a4d4e',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
 		parent: mainwin, modal: false, webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
