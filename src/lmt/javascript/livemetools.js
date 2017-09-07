@@ -102,10 +102,6 @@ $(function(){
 		Downloads.remove(data.id);
 		ipcRenderer.send('download-remove', data);
 	});
-
-	ipcRenderer.on('flush-download-queue', function(event, data) {
-		Downloads.purge_queue();
-	});
 });
 
 function showMainMenu() {

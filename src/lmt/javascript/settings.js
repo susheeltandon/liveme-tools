@@ -1,5 +1,5 @@
 const {electron, remote, ipcRenderer} = require('electron'), appSettings = remote.require('electron-settings');
-const path = require('path');
+const path = require('path'), downloads = require('./modules/downloads');
 
 $(function() {
 
@@ -46,7 +46,7 @@ function saveSettings() {
 }
 
 function flushDownloadQueue() { 
-	ipcRenderer.send('flush-download-queue');
+	downloads.purge_queue();
 }
 
 function checkType() {

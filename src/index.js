@@ -344,14 +344,17 @@ ipcMain.on('download-resume', (event, arg) => {
 });
 
 ipcMain.on('download-pause-request', (event, arg) => {
+	if (queuewin == null) { return; }
 	mainwin.send('download-pause-request', arg);
 });
 
 ipcMain.on('download-resume-request', (event, arg) => {
+	if (queuewin == null) { return; }
 	mainwin.send('download-resume-request', arg);
 });
 
 ipcMain.on('download-remove-request', (event, arg) => {
+	if (queuewin == null) { return; }
 	mainwin.send('download-remove-request', arg);
 });
 
@@ -363,10 +366,6 @@ ipcMain.on('download-remove', (event, arg) => {
 ipcMain.on('wipe-download-queue', () => {
 	if (queuewin == null) { return; }
 	queuewin.send('wipe-download-queue');
-});
-
-ipcMain.on('flush-download-queue', () => {
-	mainwin.send('flush-download-queue');
 });
 
 

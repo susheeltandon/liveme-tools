@@ -272,7 +272,7 @@ function getLocalFilename(item) {
     let defaultPath = path.join(appSettings.get('downloads.directory'), path.basename(item.video.url).replace("m3u8", "ts"));
     let fullPath = null;
 
-    if (appSettings.get('downloads.filemode') == 0 || (item.user.id == null && item.video.id == null)) {
+    if (appSettings.get('downloads.filemode') == 0) {
         fullPath = defaultPath;
     } else {
         let finalname = appSettings.get('downloads.filetemplate')
