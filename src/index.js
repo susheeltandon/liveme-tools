@@ -22,7 +22,7 @@ const 	{app, BrowserWindow, ipcMain, Menu, shell} = require('electron'), os = re
 		
 let 	mainwin = null, queuewin = null, playerWindow = null, settingsWindow = null, 
 		favoritesWindow = null, chatWindow = null, splashWindow = null, menu = null, 
-		appSettings = require('electron-settings');
+		importwin = null, appSettings = require('electron-settings');
 
 
 function createWindow(){
@@ -56,8 +56,13 @@ function createWindow(){
 	});
 
 	chatWindow = new BrowserWindow({
-		width: 320, height: 760, resizable: true, darkTheme:true, autoHideMenuBar:false, show:false, skipTaskbar: false, backgroundColor: '#4a4d4e',
+		width: 320, height: 760, resizable: true, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false, backgroundColor: '#4a4d4e',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
+	});
+	
+	importwin = new BrowserWindow({
+		width: 320, height: 160, resizable: false, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false, backgroundColor: '#4a4d4e',
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, child: true, parent: mainwin
 	});
 	
 	mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
@@ -81,6 +86,11 @@ function createWindow(){
 		chatWindow = null; 
 	});
 
+	importwin.loadURL(`file://${__dirname}/lmt/importlist.html`);
+	importwin.on('closed', () => { 
+		importwin = null; 
+	});
+
 	showSplashWindow();
 
 	/*
@@ -94,6 +104,10 @@ function createWindow(){
 	setTimeout(function(){
 		CheckForUpgrade();
 	}, 10000);
+
+	setTimeout(function(){
+		importwin.hide();
+	}, 200);
 
 }
 
@@ -164,7 +178,17 @@ ipcMain.on('favorites-refresh', (event, arg) => {
 
 
 
+/*
+	Import Window
+*/
+ipcMain.on('show-import-win', (event, arg) => {
+	importwin.show();
+	importwin.webContents.send('import-list', { list: arg.list }); 
+});
 
+ipcMain.on('hide-import-win', () => {
+	importwin.hide();
+});
 
 
 
