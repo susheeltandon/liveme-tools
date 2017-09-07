@@ -40,3 +40,17 @@ function getVideos(e) {
 function updateList() {
 	Favorites.update();
 }
+
+function exportList() {
+	let d = remote.dialog.showSaveDialog(
+		remote.getCurrentWindow(),
+		{
+			filters: [ { name: "Text File", extensions: ["txt"] }, { name: 'All Files', extensions: ['*'] } ],
+			defaultPath: "favorites.txt"
+		}
+	);
+
+	if (typeof d == "undefined") return;
+
+	Favorites.export(d);
+}
