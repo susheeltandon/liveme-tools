@@ -126,7 +126,7 @@ function _dolookup1() {
 				return;
 			}
 			if (e.status != 500) {
-				video_count = e.data.user.count_info.video_count;
+				video_count = e.data.user.count_info.video_count > appSettings.get('downloads.replaycount') ? appSettings.get('downloads.replaycount') : e.data.user.count_info.video_count;
 				return_data.userinfo = {
 					userid: e.data.user.user_info.uid,
 					username: e.data.user.user_info.nickname,
@@ -140,9 +140,6 @@ function _dolookup1() {
 
 			if (video_count > 0) {
 				page_index = 1;
-				if (video_count > appSettings.get('downloads.replaycount')) { 
-					video_count = appSettings.get('downloads.replaycount');
-				}
 				_dolookup2();	
 			} else {
 				_dolookup3();
