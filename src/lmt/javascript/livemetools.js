@@ -143,7 +143,7 @@ function showMainMenu() {
 				submenu: [
 					{
 						label: 'Online Help',
-						openExternal('https://github.com/thecoder75/liveme-tools/blob/master/docs/index.md')
+						click: () => openExternal('https://github.com/thecoder75/liveme-tools/blob/master/docs/index.md')
 					},
 					{
 						type: 'separator'
