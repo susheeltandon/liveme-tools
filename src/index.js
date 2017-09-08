@@ -110,8 +110,9 @@ function createWindow(){
 		importwin.hide();
 	}, 200);
 
-
 	Favorites.load();
+	Downloader.load(appSettings);
+
 	global.Favorites = Favorites;
 	global.Downloader = Downloader;
 }
