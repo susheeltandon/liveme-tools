@@ -18,7 +18,11 @@
 */
 const 	{app, BrowserWindow, ipcMain, Menu, shell} = require('electron'), os = require('os'), 
 		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path'),
+<<<<<<< HEAD
 		request = require('request'), Favorites = require('./custom_modules/Favorites');
+=======
+		request = require('request'), Favorites = require('./custom_modules/Favorites'), Downloader = require('./custom_modules/Downloader');
+>>>>>>> 0189c2b2f451c196646d662afd29166330b3f174
 		
 let 	mainwin = null, queuewin = null, playerWindow = null, settingsWindow = null, 
 		favoritesWindow = null, chatWindow = null, splashWindow = null, menu = null, 
@@ -113,7 +117,7 @@ function createWindow(){
 
 	Favorites.load();
 	global.Favorites = Favorites;
-
+	global.Downloader = Downloader;
 }
 
 
