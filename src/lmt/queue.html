@@ -10,15 +10,14 @@
 		
 		<script src="javascript/jquery-2.2.4.min.js"></script>
 		<script type="text/javascript">
-			const { ipcRenderer } = require('electron');
-			var isPaused = false;
+			const { ipcRenderer, remote } = require('electron'), Downloader = remote.getGlobal('Downloader');
 
 			$(function() {
-				ipcRenderer.on('download-add', (event, arg) => {
+				Downloader.events.on('add', (arg) => {
 					$('#queuelist').append(`<div class="entry" id="${arg.id}"><div class="title">${arg.value}</div><img class="remove" src="images/ic_cancel_white_24px.svg" onClick="remove('${arg.id}')"></div>`);
 				});
 
-				ipcRenderer.on('download-error', (event, arg) => {
+				Downloader.events.on('fail', (arg) => {
 					$('#' + arg.id).addClass("error");
 
 					setTimeout(() => {
@@ -26,23 +25,22 @@
 					}, 4000);
 				});
 
-				ipcRenderer.on('wipe-download-queue', () => {
-					$('#queueheader .progress').css({ width: '0%' });
-					$('.active_url').empty();
-					$('#queuelist').empty();					
+				Downloader.events.on('clear-queue', () => {
+					$('#queuelist').empty();
 				});
 
-				ipcRenderer.on('download-progress', (event, arg) => {
-					//$('#' + arg.id + ' .progress').css({ width: arg.value + '%' });
+				Downloader.events.on('progress', (arg) => {
 					$('#queueheader .progress').css({ width: arg.value + '%' });
 					$('.active_url').html('<h5>Downloading:</h5>'+arg.url);
 				});
 
-				ipcRenderer.on('download-start', (event, arg) => {
-					$('#' + arg.id).addClass('active');
+				Downloader.events.on('start', (arg) => {
+					$('#' + arg.id).remove();
+					$('#queueheader .progress').css({ width: '0%' });
+					$('.active_url').html('<h5>Downloading:</h5>'+arg.url);
 				});
 
-				ipcRenderer.on('download-finish', (event, arg) => {
+				Downloader.events.on('finish', (arg) => {
 					$('#' + arg.id).addClass("finished");
 					$('#queueheader .progress').css({ width: '0%' });
 					$('.active_url').empty();
@@ -52,38 +50,93 @@
 					}, 4000);
 				});
 
-				ipcRenderer.on('download-resume', (event, arg) => {
-					isPaused = false;
+				Downloader.events.on('resume', () => {
 					$('#queueheader img.pause').prop('src', 'images/ic_pause_circle_outline_white_24px.svg');
 				});
 
-				ipcRenderer.on('download-pause', (event, arg) => {
-					isPaused = true;
+				Downloader.events.on('pause', () => {
 					$('#queueheader img.pause').prop('src', 'images/ic_play_circle_outline_white_24px.svg');
 				});
 
-				ipcRenderer.on('download-remove', (event, arg) => {
+				Downloader.events.on('remove', (arg) => {
 					$('#' + arg.id).remove();
+				});
+
+				Downloader.events.on('ffmpeg-danger', () => {
+					$('#overlay').fadeIn(200);
+					$('#prompt3').fadeIn(200);
 				});
 			});
 
 			function pauseResume() {
-				if (isPaused) {
-					ipcRenderer.send('download-resume-request', {});
+				if (!Downloader.isPaused()) {
+					Downloader.pause();
 				} else {
-					ipcRenderer.send('download-pause-request', {});
+					Downloader.resume();
 				}
 			}
 
 			function remove(vid) {
-				ipcRenderer.send('download-remove-request', { id: vid });
+				Downloader.remove(vid);
 			}
 
 			function hideQueue() {
 				ipcRenderer.send('hide-queue');
 			}
-		</script>
 
+			function addSingleURL() {
+				var u = $('#url').val();
+
+				$('#overlay').fadeOut(200);
+				$('#prompt1').fadeOut(200);
+
+				if (u != null) {
+					Downloader.add({
+						user: {
+							id: null,
+							name: null
+						},
+						video: {
+							id: new Date().getUTCMilliseconds(), // We need an ID, doesn't need to be real.
+							title: null,
+							time: 0,
+							url: u.trim()
+						}
+					});
+				}
+			}
+
+			function showURLPrompt() {
+				$('#overlay').fadeIn(200);
+				$('#prompt1').fadeIn(200);
+			}
+
+			function hideURLPrompt() {
+				$('#overlay').fadeOut(200);
+				$('#prompt1').fadeOut(200);
+			}
+
+			function emptyQueue() {
+				$('#overlay').fadeIn(200);
+				$('#prompt2').fadeIn(200);
+			}
+
+			function emptyQueueYes() {
+				Downloader.purgeQueue();
+				hideEmptyPrompt();
+			}
+
+			function hideEmptyPrompt() {
+				$('#overlay').fadeOut(200);
+				$('#prompt2').fadeOut(200);
+			}
+
+			function dismissFFMPEG() {
+				$('#overlay').fadeOut(200);
+				$('#prompt3').fadeOut(200);
+			}
+		</script>
+`
 	</head>
 	<body onContextMenu="return false;">
 
@@ -91,13 +144,52 @@
 			<h4>Download Queue</h4>
 			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="hideQueue()">
 		</header>
+
+		<div id="overlay">&nbsp;</div>
+		<div id="prompt1" class="popup_prompt">
+			<div class="content">
+				Enter the URL you would like to add to the download queue:
+				<input type="text" id="url" style="width: 440px; margin-top: 6px">
+			</div>
+			<div class="buttons">
+				<input type="button" value="Add URL" onClick="addSingleURL()">
+				<input type="button" value="Cancel" onClick="hideURLPrompt()">
+			</div>
+		</div>
+
+		<div id="prompt2" class="popup_prompt">
+			<div class="content">
+				Confirm removal of all items currently in the download queue.
+			</div>
+			<div class="buttons">
+				<input type="button" value="Yes, empty it!" onClick="emptyQueueYes()">
+				<input type="button" value="No, don't do it!" onClick="hideEmptyPrompt()">
+			</div>
+		</div>
+
+		<div id="prompt3" class="popup_prompt">
+			<div class="content">
+				Your settings are set to use the FFMPEG downloader, but FFMPEG was not found. Your queue has been paused. Change your settings to use the internal downloader, or follow the instructions on how to set up FFMPEG.
+			</div>
+			<div class="buttons">
+				<input type="button" value="Okay" onClick="dismissFFMPEG()">
+			</div>
+		</div>
+
 		<div id="queueheader">
 			<img class="pause" src="images/ic_pause_circle_outline_white_24px.svg" onClick="pauseResume()">
+			<img class="addurl" src="images/ic_add_circle_outline_white_24px.svg" onClick="showURLPrompt()">
 			<div class="active_url"></div>
 			<div class="progress"></div>
 		</div>
 		
 		<div id="queuelist"></div>
 
+		<footer>
+			<div style="text-align: right;">
+				<input type="button" value="Empty Queue" class="tiny" onClick="emptyQueue()">
+			</div>
+
+		</footer>
 	</body>
 </html>

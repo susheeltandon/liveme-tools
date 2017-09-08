@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Import List</title>
+		<link rel="stylesheet" href="style/style.css">
+
+		<script>
+			if (typeof module === 'object') {window.module = module; module = undefined;} 
+		</script>
+		
+		<script src="javascript/jquery-2.2.4.min.js"></script>
+		<script type="text/javascript">
+			const { ipcRenderer } = require('electron'), Downloads = require('./modules/downloads');
+			var list = [], index = 0;
+
+			$(function() {
+				ipcRenderer.on('import-list', (event, arg) => {
+					list = arg.list;
+					index = 0;
+					processSingle();
+				});
+			});
+
+			function processSingle() {
+
+				$('#status').html('Importing '+index+' of '+list.length+'...');
+
+				$.ajax({
+					url: 'http://live.ksmobile.net/live/queryinfo',
+					data: {
+						userid: 0,
+						videoid: list[index]
+					},
+					cache: false,
+					type: "GET",
+					dataType: "json",
+					timeout: 15000,
+					error: function(e){
+						index++;
+						processSingle();
+					},
+					success: function(e) {
+
+						// If we get a good response, we have some data...
+						if (e.status == 200) {
+							// Sometimes the response is empty so verify we have valid data...
+							if (e.data.video_info.vid.length > 16) {
+								Downloads.add({
+									user: {
+										id: e.data.video_info.userid,
+										name: e.data.video_info.uname
+									},
+									video: {
+										id: e.data.video_info.vid,
+										title: e.data.video_info.title,
+										time: e.data.video_info.vtime,
+										url: e.data.video_info.hlsvideosource
+									}
+								});
+							}
+						}
+
+						index++;
+						if (index < list.length) {
+							processSingle();
+						} else {
+							ipcRenderer.send('hide-import-win', {} );
+						}
+
+					}
+				});
+			}
+
+
+		</script>
+		<style>
+			.content { padding: 55px 30px 0px; text-align: center; font-weight: 300; font-size: 10pt; line-height: 14pt; }
+		</style>
+	</head>
+	<body onContextMenu="return false;">
+
+		<header class="small">
+			<h4>Importing</h4>
+		</header>
+
+		<div id="status" class="content"></div>
+
+	</body>
+</html>

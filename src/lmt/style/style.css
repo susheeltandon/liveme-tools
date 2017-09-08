@@ -136,6 +136,22 @@ header.small.transparent:hover {
 header.small.transparent:hover > * {
 	opacity: 1;
 }
+
+footer {
+	display: block;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 24px;
+	line-height: 23px;
+	font-size: 9pt;
+	font-weight: 400;
+	padding: 0 20px;
+	background-color: #303233;
+}
+
+
 body:hover > header.small.transparent {
 	opacity: 1;
 }
@@ -167,9 +183,11 @@ body:hover > header.small.transparent > * {
 }
 
 #overlay {
+	top: 0;
 	display: none;
 	z-index: 10;
 	vertical-align: middle;
+	background-color: rgba(0,0,0,0.4);
 }
 #overlay .status {
 	position: absolute;
@@ -209,6 +227,7 @@ body:hover > header.small.transparent > * {
 
 
 
+
 #queueheader {
 	position: absolute;
 	top: 24px;
@@ -221,7 +240,7 @@ body:hover > header.small.transparent > * {
 	box-shadow: 0px 1px 2px rgba(0,0,0,0.3);
 }
 
-#queueheader .pause {
+#queueheader .pause, #queueheader .addurl {
 	position: absolute;
 	left: 8px;
 	top: 8px;
@@ -231,13 +250,14 @@ body:hover > header.small.transparent > * {
 	cursor: pointer;
 	opacity: 0.4;
 }
-#queueheader .pause:hover { opacity: 0.8; }
+#queueheader .pause:hover, #queueheader .addurl:hover { opacity: 0.8; }
+#queueheader .addurl { left: auto; right: 8px; }
 
 #queueheader .active_url {
 	position: absolute;
 	top: 8px;
 	left: 48px;
-	right: 8px;	
+	right: 48px;	
 	font-size: 9pt;
 	display: block;
 	overflow: hidden;
@@ -265,7 +285,7 @@ body:hover > header.small.transparent > * {
 	top: 72px;
 	left: 0;
 	right: 0;
-	bottom: 0;
+	bottom: 24px;
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
@@ -404,7 +424,7 @@ body:hover > header.small.transparent > * {
 
 
 
-#videolist, #userlist, #message_history {
+#videolist, #videolist_full, #userlist, #message_history {
 	display: block;
 	z-index: 2;
 	position: absolute;
@@ -418,6 +438,7 @@ body:hover > header.small.transparent > * {
 #userlist, #message_history { left: 0; }
 #message_history { top: 24px; }
 
+#videolist_full { left: 0px; }
 
 
 #video {
@@ -506,6 +527,37 @@ body:hover > header.small.transparent > * {
 
 
 
+.popup_prompt {
+	position: absolute;
+	left: 50%;
+	top: 0;
+
+	display: none;
+	width: 480px;
+	margin-left: -240px;
+
+	color: rgba(255,255,255,0.7);
+	background-color: #595b5b;
+	
+	border-radius: 0 0 10px 10px;
+	box-shadow: 0px 4px 9px rgba(0,0,0,0.3);
+	z-index: 10;
+}
+
+.popup_prompt .content {
+	font-weight: 300;
+	font-size: 10pt;
+	padding: 40px 20px 10px;
+}
+
+.popup_prompt .buttons {
+	padding: 10px 20px;
+	text-align: right;
+}
+
+.popup_prompt .buttons input {
+	margin-left: 16px;
+}
 
 
 
@@ -640,7 +692,7 @@ body:hover > header.small.transparent > * {
 .video_entry {
 	display: block;
 	height: 100px;
-	width: calc(100%-25px);
+	/* width: calc(100%-25px); */
 	margin: 10px;
 	background-color: #595b5b;
 	border-radius: 5px;
@@ -662,6 +714,7 @@ body:hover > header.small.transparent > * {
 
 .video_entry .title {
 	position: absolute;
+	display: block;
 	top: 5px;
 	left: 10px;
 	font-size: 12pt;
@@ -669,18 +722,54 @@ body:hover > header.small.transparent > * {
 	letter-spacing: 0.04em;
 	line-height: 25px;
 }
+
+.video_entry .title span {
+	display: inline-block;
+	padding: 0 10px;
+	background-color: rgba(0,0,0,0.2);
+	border-radius: 5px;
+	cursor: pointer;
+}
+
 .video_entry.highlight > .title { color: rgb(255,255,80); }
 
-.video_entry .url {
+.video_entry .vdoid, .video_entry .url {
 	position: absolute;
-	left: 10px;
 	top: 65px;
-	width: 750px;
 	height: 26px;
 	line-height: 26px;
 	font-size: 9pt;
 	font-weight: 400;
+	box-shadow: none;
+	border: none;
+	background-color: rgba(0,0,0,0.1);
 }
+
+.video_entry .vdoid {
+	left: 30px;
+	width: 140px;
+	text-align: center;
+}
+
+.video_entry .url {
+	left: 210px;
+	width: calc(100% - 220px);
+}
+
+.video_entry span.vid, .video_entry span.uid {
+	position: absolute;
+	display: inline-block;
+	top: 65px;
+	line-height: 30px;
+	font-size: 8pt;
+	font-weight: 600;
+	color: rgba(255,255,255,0.3);
+}
+
+.video_entry span.vid { left: 10px; }
+.video_entry span.uid { left: 180px; }
+
+
 .video_entry.highlight > .url { color: rgb(255,255,80); }
 
 .video_entry .watch, .video_entry .download, .video_entry .chat {
@@ -781,6 +870,7 @@ input[type=button] {
 	padding: 0 10px;
 	box-shadow: inset 0 1px 1px #737373, inset 0 -1px 1px #333;
 	cursor: pointer;
+	vertical-align: middle;
 }
 
 input[type=button]:hover {
@@ -792,9 +882,16 @@ input[type=button].small {
 	height: 22px;
 	line-height: 21px;
 	font-size: 9pt;
-	padding: 0 5px;
+	padding: 0 6px;
 }
 
+input[type=button].tiny {
+	height: 18px;
+	line-height: 17px;
+	font-size: 8.5pt;
+	padding: 0 8px;
+	border-radius: 9px;
+}
 
 
 .select {

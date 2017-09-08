@@ -12,8 +12,8 @@
 const 	{ electron, BrowserWindow, remote, ipcRenderer, shell } = require('electron'),
 		fs = require('fs'), path = require('path'), 
 		appSettings = remote.require('electron-settings'),
-		Favorites = require('./modules/favorites'),
-		Downloads = require('./modules/downloads');
+		Favorites = remote.getGlobal('Favorites'),
+		Downloads = remote.getGlobal('Downloader');
 
 var isSearching = false, favorites_list = [], debounced = false, current_user = {};
 
@@ -81,27 +81,8 @@ $(function(){
 		Downloads.forceSave();
 	});
 
-	Favorites.load();
+	//Favorites.load();
 	Downloads.load();
-
-	ipcRenderer.on('history-delete', function(event, data) {
-		Downloads.purge_history();
-	});
-
-	ipcRenderer.on('download-pause-request', function(event, data) {
-		Downloads.stop();
-		ipcRenderer.send('download-pause', {});
-	});
-
-	ipcRenderer.on('download-resume-request', function(event, data) {
-		Downloads.resume();
-		ipcRenderer.send('download-resume', {});
-	});
-
-	ipcRenderer.on('download-remove-request', function(event, data) {
-		Downloads.remove(data.id);
-		ipcRenderer.send('download-remove', data);
-	});
 });
 
 function showMainMenu() {
@@ -109,8 +90,17 @@ function showMainMenu() {
 	const MainAppMenu = remote.Menu.buildFromTemplate(
 		[
 			{
-				label: 'Import Link List',
-				click: () => showUpload()
+				label: 'Import',
+				submenu: [
+					{
+						label: 'URL List',
+						click: () => showImportURLList()
+					},
+					{
+						label: 'VideoID List',
+						click: () => showImportVideoIDList()
+					}
+				]
 			},
 			{
 				type: 'separator'
@@ -130,12 +120,24 @@ function showMainMenu() {
 				type: 'separator'
 			},
 			{
-				label: 'LiveMe Tools Github Page',
-				click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/')
-			},
-			{
-				label: 'Report an Issue',
-				click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/issues')
+				label: 'Help',
+				submenu: [
+					{
+						label: 'Online Help',
+						click: () => openExternal('https://github.com/thecoder75/liveme-tools/blob/master/docs/index.md')
+					},
+					{
+						type: 'separator'
+					},
+					{
+						label: 'Github Home',
+						click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/')
+					},
+					{
+						label: 'Report an Issue',
+						click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/issues')
+					}
+				]
 			},
 			{
 				type: 'separator'
@@ -181,12 +183,48 @@ function onTypeChange() {
 		case 'video-lookup': $('#query').attr('placeholder', 'Enter VideoID'); $('#maxlevel').hide(); break;
 		case 'url-lookup': $('#query').attr('placeholder', 'Enter URL'); $('#maxlevel').hide(); break;
 		case 'search': $('#query').attr('placeholder', 'Enter Partial or Full Username'); $('#maxlevel').show(); break;
+		case 'hashtag': $('#query').attr('placeholder', 'Enter a hashtag'); $('#maxlevel').hide(); break;
 	}
 }
 
 
+function showImportVideoIDList() {
+	var d = remote.dialog.showOpenDialog(
+		remote.getCurrentWindow(),
+		{
+			properties: [
+				'openFile'
+			]
+		}
+	);
 
-function showUpload() {
+	if (typeof d == "undefined") return;
+	
+	// Get contents of file...
+	fs.readFile(d[0], 'utf8', function (err,data) {
+		if (err) {
+			remote.dialog.showErrorBox(
+				'Import Error',
+				'There was an error while attempting to import the selected file.'
+			);
+			return;
+		} else {
+			var t = data.split('\n'), idlist = [], i = 0;
+			
+			for (i = 0; i < t.length; i++)
+				idlist.push(t[i].trim());
+
+			ipcRenderer.send('show-import-win', { list: idlist });
+		}
+		
+		return;
+	});
+
+}
+
+
+
+function showImportURLList() {
 	var d = remote.dialog.showOpenDialog(
 		remote.getCurrentWindow(),
 		{
@@ -264,11 +302,18 @@ function beginSearch() {
 			$('#type').val('url-lookup');
 			onTypeChange();
 		}
+/*
+	} else if (u.indexOf('#') > -1) {
+		if ($('#type').val() != 'hashtag') {
+			$('#type').val('hashtag');
+			onTypeChange();
+		}
 	} else {
-		if ($('#type').val() != 'search') {
+		if (($('#type').val() != 'search') || ($('#type').val() != 'hashtag')) {
 			$('#type').val('search');
 			onTypeChange();
 		}
+*/		
 	}
 	beginSearch2();
 }
@@ -344,6 +389,13 @@ function beginSearch2() {
 			isSearching = false;
 			$('#main').html('<div id="results" class="panel"></div>'); 
 			renderSearchResults(e);
+			$('#overlay').hide();
+		});
+	} else if ($('#type').val() == 'hashtag') {
+		search_hashtag($('#query').val(), function(e) {
+			isSearching = false;
+			$('#main').html('<div id="videolist_full" class="panel"></div>'); 
+			renderHashtagResults(e);
 			$('#overlay').hide();
 		});
 	} else {
@@ -469,19 +521,21 @@ function renderUserLookup(e) {
 	for(i = 0; i < e.videos.length; i++) {
 		if (e.videos[i].url.length > 8) {
 
-			var dt = new Date(e.videos[i].dt * 1000);
+			let dt = new Date(e.videos[i].dt * 1000);
 			var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
 			var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == e.videos[i].url ? true : false) : false;
 			var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == e.videos[i].videoid ? true : false) : false;
 
 			var ls = (e.videos[i].length - Math.round(e.videos[i].length / 60)) % 60, lm = Math.round(e.videos[i].length / 60);
 			var length = lm + ':' + (ls < 10 ? '0' : '') + ls;
-			let deleted = e.videos[i].private == true ? '[DELETED] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
-			let downloaded = Downloads.has_been_downloaded(e.videos[i].videoid) ? 'downloaded' : '';
+			var deleted = e.videos[i].private == true ? '[DELETED] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
+			var downloaded = Downloads.hasBeenDownloaded(e.videos[i].videoid) ? 'downloaded' : '';
 
-			$('#videolist').append(`
+			var h = `
 				<div class="video_entry ${highlight} ${downloaded}">
-					<input class="url" type="text" value="${e.videos[i].url}">
+					<input class="vdoid" type="text" value="${e.videos[i].videoid}"><input class="url" type="text" value="${e.videos[i].url}">
+					<span class="vid">ID:</span>
+					<span class="uid">URL:</span>
 					<h4 class="date">${ds}</h4>
 					<h4 class="title">${deleted}${e.videos[i].title}</h4>
 					<div class="counts">
@@ -491,11 +545,20 @@ function renderUserLookup(e) {
 						<label>Shares:</label><span>${e.videos[i].shares}</span>
 						<label>Country:</label><span>${e.videos[i].location.country}</span>
 					</div>
-					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e.videos[i].msgfile}', '${e.videos[i].dt}', '${e.userinfo.username}')" title="View Message History">
 					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e.videos[i].url}')" title="Play Video">
+				`;
+			if (e.videos[i].url.indexOf('liveplay') < 0) {
+				h += `
+					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e.videos[i].msgfile}', '${e.videos[i].dt}', '${e.userinfo.username}')" title="View Message History">
 					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userinfo.userid}', '${e.userinfo.username}', '${e.videos[i].videoid}', '${e.videos[i].title.replace("'", "")}', '${e.videos[i].dt}', '${e.videos[i].url}')" title="Download Video">
+				`;
+			}
+				
+			h += `
 				</div>
-			`);
+			`;
+
+			$('#videolist').append(h);
 		}
 	}
 
@@ -536,4 +599,84 @@ function renderSearchResults(e) {
 	}
 }
 
+function renderHashtagResults(e) {
 
+	$('#main').html('<div id="videolist_full"></div>');
+
+	if (typeof(e) == "undefined") {
+		return;
+	}
+
+	if (e.length < 1) {
+		$('#main').html('<div class="emptylist">No videos were found on LiveMe matching the specified hashtag.</div>');
+		return;
+	}
+
+	for(i = 0; i < e.length; i++) {
+		if (e[i].videosource.length > 8) {
+
+			var dt = new Date(e[i].vtime * 1000);
+			var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
+			var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == e[i].url ? true : false) : false;
+			var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == e[i].vdoid ? true : false) : false;
+
+			var ll = parseFloat(e[i].videolength), lh = Math.round(ll / 3600), lm = Math.round(ll / 60) % 60, ls = ll % 60;
+			//var ls = (parseInt(e[i].videolength) - Math.round(parseInt(e[i].videolength) / 60)) % 60, lm = Math.round(parseInt(e[i].videolength) / 60);
+			var length = lh + ':' + (lm < 10 ? '0' : '') + lm + ':' + (ls < 10 ? '0' : '') + ls;
+			var deleted = e[i].private == true ? '[DELETED] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
+			var downloaded = Downloads.hasBeenDownloaded(e[i].vdoid) ? 'downloaded' : '';
+
+			var h = `
+				<div class="video_entry ${highlight} ${downloaded}">
+					<input class="vdoid" type="text" value="${e[i].vdoid}"><input class="url" type="text" value="${e[i].videosource}">
+					<span class="vid">ID:</span>
+					<span class="uid">URL:</span>
+					<h4 class="date">${ds}</h4>
+					<h4 class="title"><span onClick="showUser('${e[i].userid}')">${e[i].uname}</span> - ${deleted}${e[i].title}</h4>
+					<div class="counts">
+						<label>Length:</label><span>${length}</span>
+						<label>Views:</label><span>${e[i].playnumber}</span>
+						<label>Likes:</label><span>${e[i].likenum}</span>
+						<label>Shares:</label><span>${e[i].sharenum}</span>
+						<label>Country:</label><span>${e[i].countryCode}</span>
+					</div>
+					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e[i].videosource}')" title="Play Video">
+				`;
+			if (e[i].videosource.indexOf('liveplay') < 0) {
+				h += `
+					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e[i].msgfile}', '${e[i].vtime}', '${e.uname}')" title="View Message History">
+					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userid}', '${e.uname}', '${e[i].vdoid}', '${e[i].title.replace("'", "")}', '${e[i].vtime}', '${e[i].videosource}')" title="Download Video">
+				`;
+			}
+				
+			h += `
+				</div>
+			`;
+
+			$('#videolist_full').append(h);
+
+			/*
+			$('#videolist_full').append(`
+				<div class="video_entry ${highlight} ${downloaded}">
+					<input class="vdoid" type="text" value="${e[i].vdoid}"><input class="url" type="text" value="${e[i].videosource}">
+					<span class="vid">ID:</span>
+					<span class="uid">URL:</span>
+					<h4 class="date">${ds}</h4>
+					<h4 class="title"><span onClick="showUser('${e[i].userid}')">${e[i].uname}</span> - ${deleted}${e[i].title}</h4>
+					<div class="counts">
+						<label>Length:</label><span>${length}</span>
+						<label>Views:</label><span>${e[i].playnumber}</span>
+						<label>Likes:</label><span>${e[i].likenum}</span>
+						<label>Shares:</label><span>${e[i].sharenum}</span>
+						<label>Country:</label><span>${e[i].countryCode}</span>
+					</div>
+					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e[i].msgfile}', '${e[i].vtime}', '${e.uname}')" title="View Message History">
+					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e[i].videosource}')" title="Play Video">
+					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userid}', '${e.uname}', '${e[i].vdoid}', '${e[i].title.replace("'", "")}', '${e[i].vtime}', '${e[i].videosource}')" title="Download Video">
+				</div>
+			`);
+			*/
+		}
+	}
+
+}

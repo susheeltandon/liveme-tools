@@ -1,5 +1,5 @@
 const {electron, remote, ipcRenderer} = require('electron'), appSettings = remote.require('electron-settings');
-const path = require('path'), downloads = require('./modules/downloads');
+const path = require('path');
 
 $(function() {
 
@@ -9,7 +9,20 @@ $(function() {
 			filemode: 0,
 			filetemplate: '',
 			history: true,
-			engine: 'internal'
+			engine: 'internal',
+			replaycount: 10
+		});
+	}
+
+	// Upgrading from 4.x to 5.x
+	if (appSettings.has('downloads.directory') != false && appSettings.has('downloads.replaycount') == false) {
+		appSettings.set('downloads', {
+			directory: appSettings.get('downloads.directory'),
+			filemode: appSettings.get('downloads.filemode'),
+			filetemplate: appSettings.get('downloads.filetemplate'),
+			history: appSettings.get('downloads.history'),
+			engine: appSettings.get('downloads.engine'),
+			replaycount: 10
 		});
 	}
 
@@ -19,6 +32,7 @@ $(function() {
 		$('#filetemplate').val(appSettings.get('downloads.filetemplate'));
 		$('#history').prop('checked', appSettings.get('downloads.history'));
 		$('#engine').val(appSettings.get('downloads.engine'));
+		$('#replaycount').val(appSettings.get('downloads.replaycount'));
 		checkType();
 	}, 100);
 });
@@ -35,7 +49,8 @@ function saveSettings() {
 		filemode: $('#filemode').is(':checked') ? 1 : 0,
 		filetemplate: $('#filetemplate').val(),
 		history: $('#history').is(':checked') ? 1 : 0,
-		engine: $('#engine').val()
+		engine: $('#engine').val(),
+		replaycount: parseInt($('#replaycount').val())
 	});
 
 	if (oldHistory && !appSettings.get('downloads.history')) {
@@ -43,10 +58,6 @@ function saveSettings() {
 	}
 
 	closeWindow();
-}
-
-function flushDownloadQueue() { 
-	downloads.purge_queue();
 }
 
 function checkType() {

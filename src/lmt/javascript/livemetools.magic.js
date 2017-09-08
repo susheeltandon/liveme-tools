@@ -11,8 +11,9 @@
 		  See main readme.md for details on this project.
 		  
 */
+
 var	callback_holder = null, query = '', query_orig = '', page_index = 0, return_data = [], index = 0, max_count = 0;
-var build_table = [], build_table2 = [], video_count = 0, cancelLMTweb = false;
+var build_table = [], build_table2 = [], video_count = 0, cancelLMTweb = false, searchType = 1;
 
 var PAGE_SIZE = 5;		// The Higher the number, the less the calls to the server but the larger the progress steps...
 
@@ -46,10 +47,25 @@ function searchkeyword(k, cb) {
 	query = k;
 	callback_holder = cb;
 	page_index = 1;
+	searchType = 1;
 	return_data = [];
 
 	$('#overlay .status').html('<progress></progress><br>Searching for usernames matching query...');
-	_dosearch();
+	_dosearch(false);
+
+}
+
+function search_hashtag(k, cb) {
+
+	cancelLMTweb = false;
+	query = k;
+	callback_holder = cb;
+	page_index = 1;
+	searchType = 2;
+	return_data = [];
+
+	$('#overlay .status').html('<progress></progress><br>Searching for hashtags matching query...');
+	_dosearch(false);
 
 }
 
@@ -110,7 +126,7 @@ function _dolookup1() {
 				return;
 			}
 			if (e.status != 500) {
-				video_count = e.data.user.count_info.video_count;
+				video_count = e.data.user.count_info.video_count > appSettings.get('downloads.replaycount') ? appSettings.get('downloads.replaycount') : e.data.user.count_info.video_count;
 				return_data.userinfo = {
 					userid: e.data.user.user_info.uid,
 					username: e.data.user.user_info.nickname,
@@ -121,6 +137,7 @@ function _dolookup1() {
 					fans: parseInt(e.data.user.count_info.follower_count)
 				}
 			}
+
 			if (video_count > 0) {
 				page_index = 1;
 				_dolookup2();	
@@ -179,7 +196,10 @@ function _dolookup2() {
 						msgfile : e.data.video_info[i].msgfile,
 						private: false
 					});
+
+					//if (return_data.length >= parseInt(appSettings.get('downloads.replaycount')))  break;
 				}
+
 
 				if (e.data.video_info.length == PAGE_SIZE) {
 					page_index++;
@@ -259,15 +279,19 @@ function _dolookup3() {
 /*
 	User Lookup Search
 */
-function _dosearch() {
+function _dosearch(showOverlay=true) {
 
-	$('#overlay .status').html('<progress></progress><br>Found '+(return_data.length)+' matching query...');
+	if (showOverlay) {
+		$('#overlay .status').html('<progress></progress><br>Found '+(return_data.length)+' matching query...');
+	}
+
 	$.ajax({
 		url: 'http://live.ksmobile.net/search/searchkeyword',
 		data: {
 			keyword: encodeURI(query),
 			page_size: PAGE_SIZE,
-			page_index: page_index
+			page_index: page_index,
+			type : searchType
 		},
 		cache: false,
 		type: "GET",
@@ -284,20 +308,29 @@ function _dosearch() {
 			} else {
 				for (i = 0; i < e.data.data_info.length; i++) {
 					// Only push ones that are defined.
-					if (typeof e.data.data_info[i].user_id != 'undefined') {
-						return_data.push({
-							userid : e.data.data_info[i].user_id
-						});
+					if (typeof e.data.data_info[i] != 'undefined') {
+
+						if (searchType == 1) {
+							return_data.push({
+								userid : e.data.data_info[i].user_id
+							});
+						} else {
+							return_data.push(e.data.data_info[i]);
+						}
 					}
 				}
 
-				// Even with this code here it still will only return 10 results max.
+				// Even with this code is here it still will only return 10 results max.
 				if (e.data.data_info.length == PAGE_SIZE) {
 					page_index++;
 					_dosearch();
 				} else {
 					index = 0;
-					_dosearch2();
+					if (searchType == 1) {
+						_dosearch2();
+					} else {
+						callback_holder(return_data);
+					}
 				}
 			}
 		}
@@ -347,6 +380,8 @@ function _dosearch2() {
 		}
 	});
 }
+
+
 
 
 

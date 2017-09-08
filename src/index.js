@@ -18,11 +18,11 @@
 */
 const 	{app, BrowserWindow, ipcMain, Menu, shell} = require('electron'), os = require('os'), 
 		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path'),
-		request = require('request');
+		request = require('request'), Favorites = require('./custom_modules/Favorites'), Downloader = require('./custom_modules/Downloader');
 		
 let 	mainwin = null, queuewin = null, playerWindow = null, settingsWindow = null, 
 		favoritesWindow = null, chatWindow = null, splashWindow = null, menu = null, 
-		appSettings = require('electron-settings');
+		importwin = null, appSettings = require('electron-settings');
 
 
 function createWindow(){
@@ -35,6 +35,7 @@ function createWindow(){
 			filemode: 0,
 			filetemplate: '',
 			history: true,
+			replaycount: 10,
 			engine: 'internal'
 		});
 
@@ -56,8 +57,13 @@ function createWindow(){
 	});
 
 	chatWindow = new BrowserWindow({
-		width: 320, height: 760, resizable: true, darkTheme:true, autoHideMenuBar:false, show:false, skipTaskbar: false, backgroundColor: '#4a4d4e',
+		width: 320, height: 760, resizable: true, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false, backgroundColor: '#4a4d4e',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
+	});
+	
+	importwin = new BrowserWindow({
+		width: 320, height: 160, resizable: false, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false, backgroundColor: '#4a4d4e',
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, child: true, parent: mainwin
 	});
 	
 	mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
@@ -81,6 +87,11 @@ function createWindow(){
 		chatWindow = null; 
 	});
 
+	importwin.loadURL(`file://${__dirname}/lmt/importlist.html`);
+	importwin.on('closed', () => { 
+		importwin = null; 
+	});
+
 	showSplashWindow();
 
 	/*
@@ -95,6 +106,15 @@ function createWindow(){
 		CheckForUpgrade();
 	}, 10000);
 
+	setTimeout(function(){
+		importwin.hide();
+	}, 200);
+
+	Favorites.load();
+	Downloader.init(appSettings);
+
+	global.Favorites = Favorites;
+	global.Downloader = Downloader;
 }
 
 
@@ -156,14 +176,19 @@ ipcMain.on('show-favorites', () => {
 	favoritesWindow.show();
 });
 
-ipcMain.on('favorites-refresh', (event, arg) => {
-	if (favoritesWindow == null) return;
-	favoritesWindow.send('favorites-refresh', arg);
+
+
+/*
+	Import Window
+*/
+ipcMain.on('show-import-win', (event, arg) => {
+	importwin.show();
+	importwin.webContents.send('import-list', { list: arg.list }); 
 });
 
-
-
-
+ipcMain.on('hide-import-win', () => {
+	importwin.hide();
+});
 
 
 
@@ -177,7 +202,7 @@ ipcMain.on('show-settings', () => {
 
 function showSettings() {
 	var settingsWindow = new BrowserWindow({
-		width: 900, height: 400, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false, center: true, backgroundColor: '#4a4d4e',
+		width: 900, height: 432, resizable:false, darkTheme:true, autoHideMenuBar:false, show: true, skipTaskbar: false, center: true, backgroundColor: '#4a4d4e',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
 		parent: mainwin, modal: false, webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
@@ -187,9 +212,6 @@ function showSettings() {
 	});
 	settingsWindow.show();
 }
-
-
-
 
 
 
@@ -213,17 +235,6 @@ ipcMain.on('livemesearch', (event, arg) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 /*
 	Popup Windows (Followings/Fans)
 */
@@ -237,10 +248,6 @@ ipcMain.on('open-window', (event, arg) => {
 	win.show();
 	//win.once('ready-to-show', () => { win.show(); });
 });
-
-
-
-
 
 
 
@@ -291,18 +298,8 @@ ipcMain.on('hide-chat', () => { chatWindow.hide(); });
 
 
 /*
-	Relay for downloads
+	Download Queue
 */
-ipcMain.on('download-add', (event, arg) => {
-	if (queuewin == null) { return; }
-	
-	if (!queuewin.isVisible()) {
-		queuewin.showInactive();
-	}
-
-	queuewin.send('download-add', arg);
-});
-
 ipcMain.on('show-queue', () => { 
 	if (queuewin == null) { return; }
 	queuewin.show(); 
@@ -312,62 +309,6 @@ ipcMain.on('hide-queue', () => {
 	if (queuewin == null) { return; }
 	queuewin.hide(); 
 });
-
-ipcMain.on('download-finish', (event, arg) => {
-	if (queuewin == null) { return; }
-	queuewin.send('download-finish', arg);
-});
-
-ipcMain.on('download-error', (event, arg) => {
-	if (queuewin == null) { return; }
-	queuewin.send('download-error', arg);
-});
-
-ipcMain.on('download-progress', (event, arg) => {
-	if (queuewin == null) { return; }
-	queuewin.send('download-progress', arg);
-});
-
-ipcMain.on('download-start', (event, arg) => {
-	if (queuewin == null) { return; }
-	queuewin.send('download-start', arg);
-});
-
-ipcMain.on('download-pause', (event, arg) => {
-	if (queuewin == null) { return; }
-	queuewin.send('download-pause', arg);
-});
-
-ipcMain.on('download-resume', (event, arg) => {
-	if (queuewin == null) { return; }
-	queuewin.send('download-resume', arg);
-});
-
-ipcMain.on('download-pause-request', (event, arg) => {
-	if (queuewin == null) { return; }
-	mainwin.send('download-pause-request', arg);
-});
-
-ipcMain.on('download-resume-request', (event, arg) => {
-	if (queuewin == null) { return; }
-	mainwin.send('download-resume-request', arg);
-});
-
-ipcMain.on('download-remove-request', (event, arg) => {
-	if (queuewin == null) { return; }
-	mainwin.send('download-remove-request', arg);
-});
-
-ipcMain.on('download-remove', (event, arg) => {
-	if (queuewin == null) { return; }
-	queuewin.send('download-remove', arg);
-});
-
-ipcMain.on('wipe-download-queue', () => {
-	if (queuewin == null) { return; }
-	queuewin.send('wipe-download-queue');
-});
-
 
 
 /*
