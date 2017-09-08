@@ -1,11 +1,11 @@
-const { remote, ipcRenderer } = require('electron'), Favorites = require('./modules/favorites');
+const 	{ remote, ipcRenderer } = require('electron'), Favorites = remote.getGlobal('Favorites'), 
+		eventEmitter = remote.getGlobal('eventEmitter');
 
 $(function(){
-	setTimeout(function(){
-		Favorites.load();
-	}, 250);
+	eventEmitter.on('favorites-refresh', (data) => {
 
-	ipcRenderer.on('favorites-refresh' , function(event , data) { 
+		console.log('Favorites refresh invoked.');
+
 		$('#small_user_list').empty();
 		for (i = 0; i < data.length; i++) {
 			if (typeof data[i].stars == 'undefined') {
@@ -25,9 +25,12 @@ $(function(){
 					</div>
 				`);
 			}
-		}
+		}		
 	});
 
+	setTimeout(function(){
+		Favorites.refresh();	
+	}, 250);	
 
 });
 

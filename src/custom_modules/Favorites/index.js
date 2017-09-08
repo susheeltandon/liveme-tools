@@ -3,18 +3,21 @@
 */
 "use strict";
 
-const 	util = require('util'), eventEmitter = require('events').EventEmitter;
+const 	{ app } = require('electron'),
+		path = require('path'), axios = require('axios'), fs = require('fs');
 
-const	fs = require('fs'), {app, ipcRenderer} = require('electron'), path = require('path'), axios = require('axios');
 var 	fav_list = [], last_change = 0, is_saved = false, index = 0, test_var = 0;
+
 
 module.exports = {
 
 	add : function(e) {
 		fav_list.push(e);
 		update_single_user(fav_list.length - 1);
-		eventEmitter.emit('refresh');
+		eventEmitter.emit('favorites-refresh', fav_list);
 	},
+
+	refresh: function() { eventEmitter.emit('favorites-refresh', fav_list); },
 
 	remove: function(e) {
 		var idx = 0;
@@ -26,13 +29,13 @@ module.exports = {
 		
 		//ipcRenderer.send('favorites-refresh', fav_list);
 		write_to_file();
-		eventEmitter.emit('refresh');
+		eventEmitter.emit('favorites-refresh', fav_list);
 	},
 
 	save: function() {
 		//ipcRenderer.send('favorites-refresh', fav_list);
 		write_to_file();
-		eventEmitter.emit('refresh');
+		eventEmitter.emit('favorites-refresh', fav_list);
 	},
 
 	load: function() {
@@ -56,7 +59,7 @@ module.exports = {
 
 				fav_list = JSON.parse(data);
 				//ipcRenderer.send('favorites-refresh', fav_list);
-				eventEmitter.emit('refresh');
+				eventEmitter.emit('favorites-refresh', fav_list);
 			}
 		});
 
@@ -74,7 +77,7 @@ module.exports = {
 	update: function() {
 		index = 0;
 		update_favorites_list();
-		eventEmitter.emit('refresh');
+		eventEmitter.emit('favorites-refresh', fav_list);
 	},
 
 	export: function(file) {
@@ -93,7 +96,6 @@ module.exports = {
 	}
 }
 
-//util.inherits(Favorites, EventEmitter);
 
 
 
@@ -143,7 +145,8 @@ function update_single_user(index) {
 
 		fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'favorites.json'), JSON.stringify(fav_list, null, 2), function(){
 			update_favorites_list();
-			ipcRenderer.send('favorites-refresh', fav_list);
+			//ipcRenderer.send('favorites-refresh', fav_list);
+			eventEmitter.emit('favorites-refresh', fav_list);
 		});
 
 	}).catch(function(err){
@@ -176,14 +179,16 @@ function update_favorites_list() {
 		} 
 
 		if (index%3==2) {
-			ipcRenderer.send('favorites-refresh', fav_list);
+			//ipcRenderer.send('favorites-refresh', fav_list);
+			eventEmitter.emit('favorites-refresh', fav_list);
 		}
 		index++;
 
 		fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'favorites.json'), JSON.stringify(fav_list, null, 2), function(){
 			if (index < fav_list.length) {
 				update_favorites_list();
-				ipcRenderer.send('favorites-refresh', fav_list);
+				//ipcRenderer.send('favorites-refresh', fav_list);
+				eventEmitter.emit('favorites-refresh', fav_list);
 			}
 		});
 
