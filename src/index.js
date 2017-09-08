@@ -18,9 +18,7 @@
 */
 const 	{app, BrowserWindow, ipcMain, Menu, shell} = require('electron'), os = require('os'), 
 		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path'),
-		request = require('request'), EventEmitter = require('events').EventEmitter, eventEmitter = new EventEmitter(),
-		Favorites = require('./custom_modules/Favorites'),
-		Downloader = require('./custom_modules/Downloader');
+		request = require('request'), Favorites = require('./custom_modules/Favorites'), Downloader = require('./custom_modules/Downloader');
 		
 let 	mainwin = null, queuewin = null, playerWindow = null, settingsWindow = null, 
 		favoritesWindow = null, chatWindow = null, splashWindow = null, menu = null, 
