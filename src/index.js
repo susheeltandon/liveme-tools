@@ -18,8 +18,7 @@
 */
 const 	{app, BrowserWindow, ipcMain, Menu, shell} = require('electron'), os = require('os'), 
 		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path'),
-		request = require('request'), eventEmitter = require('events').EventEmitter;
-
+		request = require('request'), EventEmitter = require('events').EventEmitter, eventEmitter = new EventEmitter(),
 		Favorites = require('./custom_modules/Favorites'),
 		Downloader = require('./custom_modules/Downloader');
 		
