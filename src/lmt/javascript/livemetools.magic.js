@@ -126,7 +126,13 @@ function _dolookup1() {
 				return;
 			}
 			if (e.status != 500) {
-				video_count = e.data.user.count_info.video_count > appSettings.get('downloads.replaycount') ? appSettings.get('downloads.replaycount') : e.data.user.count_info.video_count;
+				
+				if (appSettings.get('downloads.replaycount') > 0) {
+					video_count = e.data.user.count_info.video_count > appSettings.get('downloads.replaycount') ? appSettings.get('downloads.replaycount') : e.data.user.count_info.video_count;
+				} else {
+					video_count = e.data.user.count_info.video_count;
+				}
+
 				return_data.userinfo = {
 					userid: e.data.user.user_info.uid,
 					username: e.data.user.user_info.nickname,
