@@ -18,7 +18,7 @@
 */
 const 	{app, BrowserWindow, ipcMain, Menu, shell} = require('electron'), os = require('os'), 
 		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path'),
-		request = require('request');
+		request = require('request'), Favorites = require('./custom_odules/Favorites');
 		
 let 	mainwin = null, queuewin = null, playerWindow = null, settingsWindow = null, 
 		favoritesWindow = null, chatWindow = null, splashWindow = null, menu = null, 
@@ -109,6 +109,9 @@ function createWindow(){
 	setTimeout(function(){
 		importwin.hide();
 	}, 200);
+
+
+	global.Favorites = Favorites;
 
 }
 
