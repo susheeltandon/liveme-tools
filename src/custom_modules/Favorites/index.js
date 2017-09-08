@@ -34,7 +34,7 @@ module.exports = {
 		}
 		
 		write_to_file();
-		eventEmitter.emit('refresh', fav_list);
+		eventEmitter.emit('removeSingle', { userid: e });
 	},
 
 	save: function() {
@@ -149,7 +149,6 @@ function update_single_user(index) {
 		} 
 
 		fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'favorites.json'), JSON.stringify(fav_list, null, 2), function(){
-			update_favorites_list();
 			eventEmitter.emit('refresh', fav_list);
 		});
 
@@ -185,12 +184,12 @@ function update_favorites_list() {
 
 		if (index == fav_list.length) {
 			fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'favorites.json'), JSON.stringify(fav_list, null, 2), function(){
-				if (index < fav_list.length) {
-					update_favorites_list();
-					eventEmitter.emit('refresh', fav_list);
-				}
+				eventEmitter.emit('refresh', fav_list);
 			});
 		}
+
+		eventEmitter.emit('status', 'Refreshing '+index+' of ' + fav_list.length + '...');
+		update_favorites_list();
 		
 	}).catch(function(err){
 		console.log('Error during favorites list update: ' + err);
