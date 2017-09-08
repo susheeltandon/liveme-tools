@@ -115,7 +115,6 @@ function createWindow(){
 
 	global.Favorites = Favorites;
 	global.Downloader = Downloader;
-	global.eventEmitter = eventEmitter;
 }
 
 
