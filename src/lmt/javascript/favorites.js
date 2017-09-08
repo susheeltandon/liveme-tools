@@ -3,9 +3,6 @@ const 	{ remote, ipcRenderer } = require('electron'), Favorites = remote.getGlob
 
 $(function(){
 	eventEmitter.on('favorites-refresh', (data) => {
-
-		console.log('Favorites refresh invoked.');
-
 		$('#small_user_list').empty();
 		for (i = 0; i < data.length; i++) {
 			if (typeof data[i].stars == 'undefined') {
@@ -37,7 +34,8 @@ $(function(){
 function closeWindow() { window.close(); }
 
 function getVideos(e) {
-	ipcRenderer.send('submit-search', { userid: e });
+	eventEmitter.emit('begin-user-search', { userid: e });
+	//ipcRenderer.send('submit-search', { userid: e });
 }
 
 function updateList() {
