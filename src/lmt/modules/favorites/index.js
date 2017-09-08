@@ -4,10 +4,12 @@
 "use strict";
 
 const	fs = require('fs'), {remote, ipcRenderer} = require('electron'), path = require('path'), axios = require('axios');
-
-var fav_list = [], last_change = 0, is_saved = false, index = 0;
+var fav_list = [], last_change = 0, is_saved = false, index = 0, test_var = 0;
 
 module.exports = {
+
+	set : function(e) { test_var = e; },
+	get : function() { return test_var; },
 
 	add : function(e) {
 		fav_list.push(e);
@@ -110,6 +112,7 @@ module.exports = {
 		});
 	}
 }
+
 
 function write_to_file() {
 	var ti = new Date().getTime() / 1000;
