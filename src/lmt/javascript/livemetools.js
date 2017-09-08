@@ -81,8 +81,8 @@ $(function(){
 		Downloads.forceSave();
 	});
 
-	Favorites.load();
-	Downloads.load();
+	//Favorites.load();
+	//Downloads.load();
 
 	ipcRenderer.on('history-delete', function(event, data) {
 		Downloads.purge_history();
