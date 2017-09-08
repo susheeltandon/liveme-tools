@@ -1,5 +1,7 @@
 # LiveMe Tools
-[![Downloads](https://img.shields.io/github/downloads/thecoder75/liveme-tools/latest/total.svg)](https://github.com/thecoder75/liveme-tools/releases/latest)
+Total: [![Downloads](https://img.shields.io/github/downloads/thecoder75/liveme-tools/total.svg)](https://github.com/thecoder75/liveme-tools/releases/latest)
+Latest: [![Downloads](https://img.shields.io/github/downloads/thecoder75/liveme-tools/latest/total.svg)](https://github.com/thecoder75/liveme-tools/releases/latest)
+4.6.1: [![Downloads](https://img.shields.io/github/downloads/thecoder75/liveme-tools/4.6.1/total.svg)](https://github.com/thecoder75/liveme-tools/releases/latest)
 
 This is an Electron-based app developed for searching for users, browsing, playing and downloading replays posted on the LiveMe platform.  
 
