@@ -5,7 +5,7 @@
 
 const 	util = require('util'), eventEmitter = require('events').EventEmitter;
 
-const	fs = require('fs'), {remote, ipcRenderer} = require('electron'), path = require('path'), axios = require('axios');
+const	fs = require('fs'), {app, ipcRenderer} = require('electron'), path = require('path'), axios = require('axios');
 var 	fav_list = [], last_change = 0, is_saved = false, index = 0, test_var = 0;
 
 module.exports = {
@@ -36,7 +36,7 @@ module.exports = {
 	},
 
 	load: function() {
-		fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), 'utf8', function (err,data) {
+		fs.readFile(path.join(app.getPath('appData'), app.getName(), 'favorites.json'), 'utf8', function (err,data) {
 			if (err) {
 				fav_list = [];
 			} else {
@@ -93,7 +93,7 @@ module.exports = {
 	}
 }
 
-util.inherits(Favorites, EventEmitter);
+//util.inherits(Favorites, EventEmitter);
 
 
 
@@ -102,11 +102,11 @@ function write_to_file() {
 	var ti = new Date().getTime() / 1000;
 	last_change = ti;
 
-	fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), JSON.stringify(fav_list, null, 2), function(){ });
+	fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'favorites.json'), JSON.stringify(fav_list, null, 2), function(){ });
 }
 
 function read_from_file(cb) {
-	fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), 'utf8', function (err,data) {
+	fs.readFile(path.join(app.getPath('appData'), app.getName(), 'favorites.json'), 'utf8', function (err,data) {
 		if (err) {
 			fav_list = [];
 		} else {
@@ -141,7 +141,7 @@ function update_single_user(index) {
 			fav_list[index].video_count = j.count_info.video_count;
 		} 
 
-		fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), JSON.stringify(fav_list, null, 2), function(){
+		fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'favorites.json'), JSON.stringify(fav_list, null, 2), function(){
 			update_favorites_list();
 			ipcRenderer.send('favorites-refresh', fav_list);
 		});
@@ -180,7 +180,7 @@ function update_favorites_list() {
 		}
 		index++;
 
-		fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), JSON.stringify(fav_list, null, 2), function(){
+		fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'favorites.json'), JSON.stringify(fav_list, null, 2), function(){
 			if (index < fav_list.length) {
 				update_favorites_list();
 				ipcRenderer.send('favorites-refresh', fav_list);
