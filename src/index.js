@@ -17,7 +17,7 @@
 
 */
 const 	{app, BrowserWindow, ipcMain, Menu, shell} = require('electron'), os = require('os'), 
-		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path'),
+		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path'), event
 		request = require('request'), Favorites = require('./custom_modules/Favorites'), Downloader = require('./custom_modules/Downloader');
 		
 let 	mainwin = null, queuewin = null, playerWindow = null, settingsWindow = null, 
@@ -176,12 +176,6 @@ ipcMain.on('show-favorites', () => {
 	favoritesWindow.show();
 });
 
-ipcMain.on('favorites-refresh', (event, arg) => {
-	if (favoritesWindow == null) return;
-	favoritesWindow.send('favorites-refresh', arg);
-});
-
-
 
 
 /*
@@ -195,6 +189,7 @@ ipcMain.on('show-import-win', (event, arg) => {
 ipcMain.on('hide-import-win', () => {
 	importwin.hide();
 });
+
 
 
 
@@ -220,9 +215,6 @@ function showSettings() {
 
 
 
-
-
-
 /*
 	Search Related
 */
@@ -243,17 +235,6 @@ ipcMain.on('livemesearch', (event, arg) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 /*
 	Popup Windows (Followings/Fans)
 */
@@ -267,10 +248,6 @@ ipcMain.on('open-window', (event, arg) => {
 	win.show();
 	//win.once('ready-to-show', () => { win.show(); });
 });
-
-
-
-
 
 
 
