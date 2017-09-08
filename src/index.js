@@ -17,7 +17,7 @@
 
 */
 const 	{app, BrowserWindow, ipcMain, Menu, shell} = require('electron'), os = require('os'), 
-		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path'), event
+		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path'),
 		request = require('request'), Favorites = require('./custom_modules/Favorites'), Downloader = require('./custom_modules/Downloader');
 		
 let 	mainwin = null, queuewin = null, playerWindow = null, settingsWindow = null, 
@@ -111,7 +111,7 @@ function createWindow(){
 	}, 200);
 
 	Favorites.load();
-	Downloader.load(appSettings);
+	Downloader.init(appSettings);
 
 	global.Favorites = Favorites;
 	global.Downloader = Downloader;

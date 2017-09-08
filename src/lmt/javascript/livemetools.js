@@ -82,7 +82,7 @@ $(function(){
 	});
 
 	//Favorites.load();
-	//Downloads.load();
+	Downloads.load();
 
 	ipcRenderer.on('history-delete', function(event, data) {
 		Downloads.purge_history();

@@ -35,7 +35,7 @@
 				});
 
 				Downloader.events.on('start', (arg) => {
-					$('#' + arg.id).addClass('active');
+					$('#' + arg.id).remove();
 					$('#queueheader .progress').css({ width: '0%' });
 					$('.active_url').html('<h5>Downloading:</h5>'+arg.url);
 				});
@@ -64,17 +64,14 @@
 			});
 
 			function pauseResume() {
-				if (Downloader.is_paused) {
-					//ipcRenderer.send('download-resume-request', {});
+				if (!Downloader.isPaused()) {
 					Downloader.pause();
 				} else {
-					//ipcRenderer.send('download-pause-request', {});
 					Downloader.resume();
 				}
 			}
 
 			function remove(vid) {
-				//ipcRenderer.send('download-remove-request', { id: vid });
 				Downloader.remove(vid);
 			}
 
@@ -120,7 +117,7 @@
 			}
 
 			function emptyQueueYes() {
-				Downloader.purge_queue();
+				Downloader.purgeQueue();
 				hideEmptyPrompt();
 			}
 

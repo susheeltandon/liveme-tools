@@ -83,7 +83,6 @@ module.exports = {
     */
     pause: function() {
         can_run = false;
-        is_paused = true;
         eventEmitter.emit('pause');
     },
 
@@ -93,7 +92,6 @@ module.exports = {
 
     resume: function() {
         can_run = true;
-        is_paused = false;
         eventEmitter.emit('resume');
 
         if (!is_running && can_run) {
@@ -101,18 +99,16 @@ module.exports = {
         }
     },
 
+    init: function(settings) {
+        appSettings = settings;
+    },
+
     /*
         Called on startup
     */
-    load: function(settings) {
-        appSettings = settings;
-        
+    load: function() {
         loadQueue();
         loadHistory();
-
-        if (download_queue.length > 0 && can_run) {
-            runDownloader();
-        }
     },
 
     /*
@@ -123,27 +119,27 @@ module.exports = {
         saveHistory();
     },
 
-    is_running: function() {
+    isRunning: function() {
         return is_running;
     },
 
-    is_paused: function() {
+    isPaused: function() {
         return !can_run; // If it can't run, it is paused
     },
 
     /*
         Checks if a video is in the download history
     */
-    has_been_downloaded: function(videoid) {
+    hasBeenDownloaded: function(videoid) {
         return download_history.indexOf(videoid) != -1;
     },
 
-    purge_history: function() {
+    purgeHistory: function() {
         fs.removeSync(path.join(app.getPath('appData'), app.getName(), 'downloadHistory.json'));
         download_history = [];
     },
 
-    purge_queue: function() {
+    purgeQueue: function() {
         download_queue = [];
         saveQueue();
         // TODO: SEND TO GUI -- ipcRenderer.send('wipe-download-queue');
@@ -215,7 +211,7 @@ function processItem(item) {
 
         if (downloadEngine == 'internal') {
             // TODO: SEND TO GUI -- ipcRenderer.send('download-start', { id: item.video.id, value: item.video.url });
-            eventEmitter.emit('start', { id: item.video.id, value: item.video.url });
+            eventEmitter.emit('start', { id: item.video.id, url: item.video.url });
             
             m3u8stream(remoteFilename, {
                 on_complete: function(e) {
@@ -262,7 +258,7 @@ function processItem(item) {
                 })
                 .on('start', function(c) {
                     // TODO: SEND TO GUI -- ipcRenderer.send('download-start', { id: item.video.id, value: item.video.url });
-                    eventEmitter.emit('start', { id: item.video.id, value: item.video.url });
+                    eventEmitter.emit('start', { id: item.video.id, url: item.video.url });
                 })
                 .on('error', function(err, stdout, etderr) {
                     //download_queue.push(item);
