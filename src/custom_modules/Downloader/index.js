@@ -7,7 +7,11 @@ const { app, ipcMain } = require('electron');
 const path = require('path'),
       ffmpeg = require('fluent-ffmpeg'),
       m3u8stream = require('../m3u8stream'),
-      fs = require('fs-extra');
+      fs = require('fs-extra'),
+      eventEmitter = new(require('events').EventEmitter)();
+
+//class DownloadEmitter extends EventEmitter {}
+//const eventEmitter = new DownloadEmitter();
 
 var appSettings = null,
     download_queue = [],
@@ -16,6 +20,8 @@ var appSettings = null,
     is_running = false;
 
 module.exports = {
+    events: eventEmitter,
+
     /*
         Expecting data in this format:
         user: {
@@ -32,6 +38,7 @@ module.exports = {
     add: function(obj) {
         download_queue.push(obj);
         // TODO: SEND TO GUI -- ipcRenderer.send('download-add', { id: obj.video.id, value: obj.video.url });
+        eventEmitter.emit('add', { id: obj.video.id, value: obj.video.url });
         saveQueue();
         
         if (!is_running && can_run) {
@@ -55,6 +62,7 @@ module.exports = {
         if (index != -1) {
             download_queue.splice(index, 1);
             saveQueue();
+            eventEmitter.emit('remove', { id: vid });
             return true;
         }
         
@@ -73,8 +81,10 @@ module.exports = {
     /*
         Stops downloading any new files after the one(s) it's downloading now, until told to start again
     */
-    stop: function() {
+    pause: function() {
         can_run = false;
+        is_paused = true;
+        eventEmitter.emit('pause');
     },
 
     /*
@@ -83,6 +93,8 @@ module.exports = {
 
     resume: function() {
         can_run = true;
+        is_paused = false;
+        eventEmitter.emit('resume');
 
         if (!is_running && can_run) {
             runDownloader();
@@ -135,6 +147,7 @@ module.exports = {
         download_queue = [];
         saveQueue();
         // TODO: SEND TO GUI -- ipcRenderer.send('wipe-download-queue');
+        eventEmitter.emit('clear-queue');
     }
 };
 
@@ -153,6 +166,7 @@ function loadQueue() {
         if (download_queue.length > 0) {
             for (i = 0; i < download_queue.length; i++) {
                 // TODO: SEND TO GUI -- ipcRenderer.send('download-add', { id: download_queue[i].video.id, value: download_queue[i].video.url });
+                eventEmitter.emit('add', { id: download_queue[i].video.id, value: download_queue[i].video.url });
             }
 
             runDownloader();
@@ -201,6 +215,7 @@ function processItem(item) {
 
         if (downloadEngine == 'internal') {
             // TODO: SEND TO GUI -- ipcRenderer.send('download-start', { id: item.video.id, value: item.video.url });
+            eventEmitter.emit('start', { id: item.video.id, value: item.video.url });
             
             m3u8stream(remoteFilename, {
                 on_complete: function(e) {
@@ -209,16 +224,19 @@ function processItem(item) {
                     }
 
                     // TODO: SEND TO GUI -- ipcRenderer.send('download-finish', { id: item.video.id });
+                    eventEmitter.emit('finish', { id: item.video.id });
                     resolve();
                 },
                 on_error: function(e) {
                     //download_queue.push(item);
                     // TODO: SEND TO GUI -- ipcRenderer.send('download-error', { id: item.video.id });
+                    eventEmitter.emit('fail', { id: item.video.id });
                     resolve();
                 },
                 on_progress: function(e) {
                     let percent = Math.round((e.current / e.total) * 100);
                     // TODO: SEND TO GUI -- ipcRenderer.send('download-progress', { id: item.video.id, url: item.video.url, value: percent });
+                    eventEmitter.emit('progress', { id: item.video.id, url: item.video.url, value: percent });
                 }
             }).pipe(fs.createWriteStream(localFilename));
         } else if (downloadEngine == 'ffmpeg') {
@@ -235,17 +253,21 @@ function processItem(item) {
                     }
 
                     // TODO: SEND TO GUI -- ipcRenderer.send('download-finish', { id: item.video.id });
+                    eventEmitter.emit('finish', { id: item.video.id });
                     resolve();
                 })
                 .on('progress', function(progress) {
                     // TODO: SEND TO GUI -- ipcRenderer.send('download-progress', { id: item.video.id, url: item.video.url, value: progress.percent });
+                    eventEmitter.emit('progress', { id: item.video.id, url: item.video.url, value: progress.percent });
                 })
                 .on('start', function(c) {
                     // TODO: SEND TO GUI -- ipcRenderer.send('download-start', { id: item.video.id, value: item.video.url });
+                    eventEmitter.emit('start', { id: item.video.id, value: item.video.url });
                 })
                 .on('error', function(err, stdout, etderr) {
                     //download_queue.push(item);
                     // TODO: SEND TO GUI -- ipcRenderer.send('download-error', { id: item.video.id });
+                    eventEmitter.emit('fail', { id: item.video.id });
                     resolve();
                 })
                 .run();
