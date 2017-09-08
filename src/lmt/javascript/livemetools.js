@@ -12,8 +12,8 @@
 const 	{ electron, BrowserWindow, remote, ipcRenderer, shell } = require('electron'),
 		fs = require('fs'), path = require('path'), 
 		appSettings = remote.require('electron-settings'),
-		Favorites = require('./modules/favorites'),
-		Downloads = require('./modules/downloads');
+		Favorites = remote.getGlobal('Favorites'),
+		Downloads = remote.getGlobal('Downloader');
 
 var isSearching = false, favorites_list = [], debounced = false, current_user = {};
 
@@ -102,6 +102,7 @@ $(function(){
 		Downloads.remove(data.id);
 		ipcRenderer.send('download-remove', data);
 	});
+
 });
 
 function showMainMenu() {
