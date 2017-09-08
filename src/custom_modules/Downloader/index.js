@@ -2,7 +2,7 @@
 	Downloader Module
 */
 
-const { ipcMain } = require('electron');
+const { app, ipcMain } = require('electron');
 
 const path = require('path'),
       ffmpeg = require('fluent-ffmpeg'),
@@ -31,7 +31,7 @@ module.exports = {
     */
     add: function(obj) {
         download_queue.push(obj);
-        ipcRenderer.send('download-add', { id: obj.video.id, value: obj.video.url });
+        // TODO: SEND TO GUI -- ipcRenderer.send('download-add', { id: obj.video.id, value: obj.video.url });
         saveQueue();
         
         if (!is_running && can_run) {
@@ -94,7 +94,7 @@ module.exports = {
     */
     load: function(settings) {
         appSettings = settings;
-
+        
         loadQueue();
         loadHistory();
 
@@ -127,19 +127,19 @@ module.exports = {
     },
 
     purge_history: function() {
-        fs.removeSync(path.join(remote.app.getPath('appData'), remote.app.getName(), 'downloadHistory.json'));
+        fs.removeSync(path.join(app.getPath('appData'), app.getName(), 'downloadHistory.json'));
         download_history = [];
     },
 
     purge_queue: function() {
         download_queue = [];
         saveQueue();
-        ipcRenderer.send('wipe-download-queue');
+        // TODO: SEND TO GUI -- ipcRenderer.send('wipe-download-queue');
     }
 };
 
 function loadQueue() {
-    fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'downloadQueue.json'), 'utf8', function(err, data) {
+    fs.readFile(path.join(app.getPath('appData'), app.getName(), 'downloadQueue.json'), 'utf8', function(err, data) {
         if (err) {
             download_queue = [];
         } else {
@@ -152,7 +152,7 @@ function loadQueue() {
         
         if (download_queue.length > 0) {
             for (i = 0; i < download_queue.length; i++) {
-                ipcRenderer.send('download-add', { id: download_queue[i].video.id, value: download_queue[i].video.url });
+                // TODO: SEND TO GUI -- ipcRenderer.send('download-add', { id: download_queue[i].video.id, value: download_queue[i].video.url });
             }
 
             runDownloader();
@@ -161,7 +161,7 @@ function loadQueue() {
 }
 
 function saveQueue() {
-    fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'downloadQueue.json'), JSON.stringify(download_queue), 'utf8', () => {});
+    fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'downloadQueue.json'), JSON.stringify(download_queue), 'utf8', () => {});
 }
 
 function loadHistory() {
@@ -169,7 +169,7 @@ function loadHistory() {
         return;
     }
 
-    fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'downloadHistory.json'), 'utf8', function(err, data) {
+    fs.readFile(path.join(app.getPath('appData'), app.getName(), 'downloadHistory.json'), 'utf8', function(err, data) {
         if (err) {
             download_history = [];
         } else {
@@ -187,7 +187,7 @@ function saveHistory() {
         return;
     }
 
-    fs.writeFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'downloadHistory.json'), JSON.stringify(download_history), 'utf8', () => {});
+    fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'downloadHistory.json'), JSON.stringify(download_history), 'utf8', () => {});
 }
 
 /*
@@ -200,7 +200,7 @@ function processItem(item) {
         let remoteFilename = item.video.url;
 
         if (downloadEngine == 'internal') {
-            ipcRenderer.send('download-start', { id: item.video.id, value: item.video.url });
+            // TODO: SEND TO GUI -- ipcRenderer.send('download-start', { id: item.video.id, value: item.video.url });
             
             m3u8stream(remoteFilename, {
                 on_complete: function(e) {
@@ -208,17 +208,17 @@ function processItem(item) {
                         download_history.push(item.video.id);
                     }
 
-                    ipcRenderer.send('download-finish', { id: item.video.id });
+                    // TODO: SEND TO GUI -- ipcRenderer.send('download-finish', { id: item.video.id });
                     resolve();
                 },
                 on_error: function(e) {
                     //download_queue.push(item);
-                    ipcRenderer.send('download-error', { id: item.video.id });
+                    // TODO: SEND TO GUI -- ipcRenderer.send('download-error', { id: item.video.id });
                     resolve();
                 },
                 on_progress: function(e) {
                     let percent = Math.round((e.current / e.total) * 100);
-                    ipcRenderer.send('download-progress', { id: item.video.id, url: item.video.url, value: percent });
+                    // TODO: SEND TO GUI -- ipcRenderer.send('download-progress', { id: item.video.id, url: item.video.url, value: percent });
                 }
             }).pipe(fs.createWriteStream(localFilename));
         } else if (downloadEngine == 'ffmpeg') {
@@ -234,18 +234,18 @@ function processItem(item) {
                         download_history.push(item.video.id);
                     }
 
-                    ipcRenderer.send('download-finish', { id: item.video.id });
+                    // TODO: SEND TO GUI -- ipcRenderer.send('download-finish', { id: item.video.id });
                     resolve();
                 })
                 .on('progress', function(progress) {
-                    ipcRenderer.send('download-progress', { id: item.video.id, url: item.video.url, value: progress.percent });
+                    // TODO: SEND TO GUI -- ipcRenderer.send('download-progress', { id: item.video.id, url: item.video.url, value: progress.percent });
                 })
                 .on('start', function(c) {
-                    ipcRenderer.send('download-start', { id: item.video.id, value: item.video.url });
+                    // TODO: SEND TO GUI -- ipcRenderer.send('download-start', { id: item.video.id, value: item.video.url });
                 })
                 .on('error', function(err, stdout, etderr) {
                     //download_queue.push(item);
-                    ipcRenderer.send('download-error', { id: item.video.id });
+                    // TODO: SEND TO GUI -- ipcRenderer.send('download-error', { id: item.video.id });
                     resolve();
                 })
                 .run();
