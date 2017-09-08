@@ -2,6 +2,23 @@
 
 ### 5.x.x Releases
 
+#### 2017-09-08 - v5.0.0
+**Added:**
+- Option to empty download queue now available in the queue window
+- Ability to add a single URL to download queue
+- Ability to limit number of replay results
+- Import of a list of VideoIDs
+- Export a list of Favorites (UserID) list
+- Shows VideoID of each replay next to its URL
+
+**Fixed:**
+- Disabled Live Video download so it doesn't cause a hangup of the queue
+- Moved custom modules to main thread to fix multiple instance issues and lost data 
+- Adding a URL to downloader igored Pause state (See #47)
+- Fixed critical download and queue bugs (See #47)
+- Fixed critical FFMPEG bug (See #47)
+- Fixed URL removal bug (See #47)
+
 
 ### 4.x.x Releases
 
@@ -104,6 +121,7 @@ Minor coding fixes and cleanup.  Also fixed the detector bug in the Update notic
 - Issue #16
 - Issue #18
 - Iusse #20
+
 
 ### 3.x.x Releases
 
