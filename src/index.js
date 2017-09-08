@@ -18,7 +18,7 @@
 */
 const 	{app, BrowserWindow, ipcMain, Menu, shell} = require('electron'), os = require('os'), 
 		fs = require('fs'), isDev = require('electron-is-dev'), path = require('path'),
-		request = require('request'), Favorites = require('./custom_odules/Favorites');
+		request = require('request'), Favorites = require('./custom_modules/Favorites');
 		
 let 	mainwin = null, queuewin = null, playerWindow = null, settingsWindow = null, 
 		favoritesWindow = null, chatWindow = null, splashWindow = null, menu = null, 
