@@ -61,6 +61,11 @@
 				Downloader.events.on('remove', (arg) => {
 					$('#' + arg.id).remove();
 				});
+
+				Downloader.events.on('ffmpeg-danger', () => {
+					$('#overlay').fadeIn(200);
+					$('#prompt3').fadeIn(200);
+				});
 			});
 
 			function pauseResume() {
@@ -125,6 +130,11 @@
 				$('#overlay').fadeOut(200);
 				$('#prompt2').fadeOut(200);
 			}
+
+			function dismissFFMPEG() {
+				$('#overlay').fadeOut(200);
+				$('#prompt3').fadeOut(200);
+			}
 		</script>
 `
 	</head>
@@ -154,6 +164,15 @@
 			<div class="buttons">
 				<input type="button" value="Yes, empty it!" onClick="emptyQueueYes()">
 				<input type="button" value="No, don't do it!" onClick="hideEmptyPrompt()">
+			</div>
+		</div>
+
+		<div id="prompt3" class="popup_prompt">
+			<div class="content">
+				Your settings are set to use the FFMPEG downloader, but FFMPEG was not found. Your queue has been paused. Change your settings to use the internal downloader, or follow the instructions on how to set up FFMPEG.
+			</div>
+			<div class="buttons">
+				<input type="button" value="Okay" onClick="dismissFFMPEG()">
 			</div>
 		</div>
 

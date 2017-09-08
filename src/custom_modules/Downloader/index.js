@@ -14,7 +14,8 @@ var appSettings = null,
     download_queue = [],
     download_history = [],
     can_run = true,
-    is_running = false;
+    is_running = false,
+    is_ffmpeg_available = false;
 
 module.exports = {
     events: eventEmitter,
@@ -97,6 +98,16 @@ module.exports = {
 
     init: function(settings) {
         appSettings = settings;
+
+        new Promise((resolve, reject) => {
+            ffmpeg.getAvailableCodecs((err, codecs) => {
+                if (err) {
+                    is_ffmpeg_available = false;
+                } else {
+                    is_ffmpeg_available = true;
+                }
+            });
+        });
     },
 
     /*
@@ -139,6 +150,10 @@ module.exports = {
         download_queue = [];
         saveQueue();
         eventEmitter.emit('clear-queue');
+    },
+
+    isFfmpegAvailable: function() {
+        return is_ffmpeg_available;
     }
 };
 
@@ -259,6 +274,13 @@ function processItem(item) {
     Starts processing the download queue until it's paused or empty
 */
 async function runDownloader() {
+    if (!is_ffmpeg_available && appSettings.get('downloads.engine') == 'ffmpeg') {
+        eventEmitter.emit('ffmpeg-danger');
+        can_run = false;
+        eventEmitter.emit('pause');
+        return;
+    }
+
     while (download_queue.length > 0 && can_run) {
         let item = download_queue.shift();
         is_running = true;
