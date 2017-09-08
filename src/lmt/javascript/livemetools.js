@@ -83,26 +83,6 @@ $(function(){
 
 	//Favorites.load();
 	Downloads.load();
-
-	ipcRenderer.on('history-delete', function(event, data) {
-		Downloads.purge_history();
-	});
-
-	ipcRenderer.on('download-pause-request', function(event, data) {
-		Downloads.stop();
-		ipcRenderer.send('download-pause', {});
-	});
-
-	ipcRenderer.on('download-resume-request', function(event, data) {
-		Downloads.resume();
-		ipcRenderer.send('download-resume', {});
-	});
-
-	ipcRenderer.on('download-remove-request', function(event, data) {
-		Downloads.remove(data.id);
-		ipcRenderer.send('download-remove', data);
-	});
-
 });
 
 function showMainMenu() {
@@ -549,7 +529,7 @@ function renderUserLookup(e) {
 			var ls = (e.videos[i].length - Math.round(e.videos[i].length / 60)) % 60, lm = Math.round(e.videos[i].length / 60);
 			var length = lm + ':' + (ls < 10 ? '0' : '') + ls;
 			var deleted = e.videos[i].private == true ? '[DELETED] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
-			var downloaded = Downloads.has_been_downloaded(e.videos[i].videoid) ? 'downloaded' : '';
+			var downloaded = Downloads.hasBeenDownloaded(e.videos[i].videoid) ? 'downloaded' : '';
 
 			var h = `
 				<div class="video_entry ${highlight} ${downloaded}">
@@ -644,7 +624,7 @@ function renderHashtagResults(e) {
 			//var ls = (parseInt(e[i].videolength) - Math.round(parseInt(e[i].videolength) / 60)) % 60, lm = Math.round(parseInt(e[i].videolength) / 60);
 			var length = lh + ':' + (lm < 10 ? '0' : '') + lm + ':' + (ls < 10 ? '0' : '') + ls;
 			var deleted = e[i].private == true ? '[DELETED] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
-			var downloaded = Downloads.has_been_downloaded(e[i].vdoid) ? 'downloaded' : '';
+			var downloaded = Downloads.hasBeenDownloaded(e[i].vdoid) ? 'downloaded' : '';
 
 			var h = `
 				<div class="video_entry ${highlight} ${downloaded}">

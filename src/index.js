@@ -298,18 +298,8 @@ ipcMain.on('hide-chat', () => { chatWindow.hide(); });
 
 
 /*
-	Relay for downloads
+	Download Queue
 */
-ipcMain.on('download-add', (event, arg) => {
-	if (queuewin == null) { return; }
-	
-	if (!queuewin.isVisible()) {
-		queuewin.showInactive();
-	}
-
-	queuewin.send('download-add', arg);
-});
-
 ipcMain.on('show-queue', () => { 
 	if (queuewin == null) { return; }
 	queuewin.show(); 
@@ -319,62 +309,6 @@ ipcMain.on('hide-queue', () => {
 	if (queuewin == null) { return; }
 	queuewin.hide(); 
 });
-
-ipcMain.on('download-finish', (event, arg) => {
-	if (queuewin == null) { return; }
-	queuewin.send('download-finish', arg);
-});
-
-ipcMain.on('download-error', (event, arg) => {
-	if (queuewin == null) { return; }
-	queuewin.send('download-error', arg);
-});
-
-ipcMain.on('download-progress', (event, arg) => {
-	if (queuewin == null) { return; }
-	queuewin.send('download-progress', arg);
-});
-
-ipcMain.on('download-start', (event, arg) => {
-	if (queuewin == null) { return; }
-	queuewin.send('download-start', arg);
-});
-
-ipcMain.on('download-pause', (event, arg) => {
-	if (queuewin == null) { return; }
-	queuewin.send('download-pause', arg);
-});
-
-ipcMain.on('download-resume', (event, arg) => {
-	if (queuewin == null) { return; }
-	queuewin.send('download-resume', arg);
-});
-
-ipcMain.on('download-pause-request', (event, arg) => {
-	if (queuewin == null) { return; }
-	mainwin.send('download-pause-request', arg);
-});
-
-ipcMain.on('download-resume-request', (event, arg) => {
-	if (queuewin == null) { return; }
-	mainwin.send('download-resume-request', arg);
-});
-
-ipcMain.on('download-remove-request', (event, arg) => {
-	if (queuewin == null) { return; }
-	mainwin.send('download-remove-request', arg);
-});
-
-ipcMain.on('download-remove', (event, arg) => {
-	if (queuewin == null) { return; }
-	queuewin.send('download-remove', arg);
-});
-
-ipcMain.on('wipe-download-queue', () => {
-	if (queuewin == null) { return; }
-	queuewin.send('wipe-download-queue');
-});
-
 
 
 /*

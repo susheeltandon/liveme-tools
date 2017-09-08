@@ -10,9 +10,6 @@ const path = require('path'),
       fs = require('fs-extra'),
       eventEmitter = new(require('events').EventEmitter)();
 
-//class DownloadEmitter extends EventEmitter {}
-//const eventEmitter = new DownloadEmitter();
-
 var appSettings = null,
     download_queue = [],
     download_history = [],
@@ -37,7 +34,6 @@ module.exports = {
     */
     add: function(obj) {
         download_queue.push(obj);
-        // TODO: SEND TO GUI -- ipcRenderer.send('download-add', { id: obj.video.id, value: obj.video.url });
         eventEmitter.emit('add', { id: obj.video.id, value: obj.video.url });
         saveQueue();
         
@@ -142,7 +138,6 @@ module.exports = {
     purgeQueue: function() {
         download_queue = [];
         saveQueue();
-        // TODO: SEND TO GUI -- ipcRenderer.send('wipe-download-queue');
         eventEmitter.emit('clear-queue');
     }
 };
@@ -161,7 +156,6 @@ function loadQueue() {
         
         if (download_queue.length > 0) {
             for (i = 0; i < download_queue.length; i++) {
-                // TODO: SEND TO GUI -- ipcRenderer.send('download-add', { id: download_queue[i].video.id, value: download_queue[i].video.url });
                 eventEmitter.emit('add', { id: download_queue[i].video.id, value: download_queue[i].video.url });
             }
 
@@ -210,7 +204,6 @@ function processItem(item) {
         let remoteFilename = item.video.url;
 
         if (downloadEngine == 'internal') {
-            // TODO: SEND TO GUI -- ipcRenderer.send('download-start', { id: item.video.id, value: item.video.url });
             eventEmitter.emit('start', { id: item.video.id, url: item.video.url });
             
             m3u8stream(remoteFilename, {
@@ -219,19 +212,15 @@ function processItem(item) {
                         download_history.push(item.video.id);
                     }
 
-                    // TODO: SEND TO GUI -- ipcRenderer.send('download-finish', { id: item.video.id });
                     eventEmitter.emit('finish', { id: item.video.id });
                     resolve();
                 },
                 on_error: function(e) {
-                    //download_queue.push(item);
-                    // TODO: SEND TO GUI -- ipcRenderer.send('download-error', { id: item.video.id });
                     eventEmitter.emit('fail', { id: item.video.id });
                     resolve();
                 },
                 on_progress: function(e) {
                     let percent = Math.round((e.current / e.total) * 100);
-                    // TODO: SEND TO GUI -- ipcRenderer.send('download-progress', { id: item.video.id, url: item.video.url, value: percent });
                     eventEmitter.emit('progress', { id: item.video.id, url: item.video.url, value: percent });
                 }
             }).pipe(fs.createWriteStream(localFilename));
@@ -248,21 +237,16 @@ function processItem(item) {
                         download_history.push(item.video.id);
                     }
 
-                    // TODO: SEND TO GUI -- ipcRenderer.send('download-finish', { id: item.video.id });
                     eventEmitter.emit('finish', { id: item.video.id });
                     resolve();
                 })
                 .on('progress', function(progress) {
-                    // TODO: SEND TO GUI -- ipcRenderer.send('download-progress', { id: item.video.id, url: item.video.url, value: progress.percent });
                     eventEmitter.emit('progress', { id: item.video.id, url: item.video.url, value: progress.percent });
                 })
                 .on('start', function(c) {
-                    // TODO: SEND TO GUI -- ipcRenderer.send('download-start', { id: item.video.id, value: item.video.url });
                     eventEmitter.emit('start', { id: item.video.id, url: item.video.url });
                 })
                 .on('error', function(err, stdout, etderr) {
-                    //download_queue.push(item);
-                    // TODO: SEND TO GUI -- ipcRenderer.send('download-error', { id: item.video.id });
                     eventEmitter.emit('fail', { id: item.video.id });
                     resolve();
                 })
