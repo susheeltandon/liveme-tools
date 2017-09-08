@@ -1,8 +1,7 @@
-const 	{ remote, ipcRenderer } = require('electron'), Favorites = remote.getGlobal('Favorites'), 
-		eventEmitter = remote.getGlobal('eventEmitter');
+const 	{ remote, ipcRenderer } = require('electron'), Favorites = remote.getGlobal('Favorites');
 
 $(function(){
-	eventEmitter.on('favorites-refresh', (data) => {
+	Favorites.events.on('refresh', (data) => {
 		$('#small_user_list').empty();
 		for (i = 0; i < data.length; i++) {
 			if (typeof data[i].stars == 'undefined') {
@@ -25,17 +24,20 @@ $(function(){
 		}		
 	});
 
+	Favorites.events.on('status', (m) => {
+		$('#small_user_list').html(`<div style="margin-top: 260px; text-align: center; font-size: 12pt; font-style: italic; font-weight: 300; color: rgba(255,255,255,0.4);">${m}</div>`);
+	});
+
 	setTimeout(function(){
 		Favorites.refresh();	
-	}, 250);	
+	}, 50);	
 
 });
 
 function closeWindow() { window.close(); }
 
 function getVideos(e) {
-	eventEmitter.emit('begin-user-search', { userid: e });
-	//ipcRenderer.send('submit-search', { userid: e });
+	ipcRenderer.send('submit-search', { userid: e });
 }
 
 function updateList() {
