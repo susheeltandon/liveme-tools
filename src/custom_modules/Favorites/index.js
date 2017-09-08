@@ -3,17 +3,17 @@
 */
 "use strict";
 
+const 	util = require('util'), eventEmitter = require('events').EventEmitter;
+
 const	fs = require('fs'), {remote, ipcRenderer} = require('electron'), path = require('path'), axios = require('axios');
-var fav_list = [], last_change = 0, is_saved = false, index = 0, test_var = 0;
+var 	fav_list = [], last_change = 0, is_saved = false, index = 0, test_var = 0;
 
 module.exports = {
-
-	set : function(e) { test_var = e; },
-	get : function() { return test_var; },
 
 	add : function(e) {
 		fav_list.push(e);
 		update_single_user(fav_list.length - 1);
+		eventEmitter.emit('refresh');
 	},
 
 	remove: function(e) {
@@ -23,38 +23,16 @@ module.exports = {
 				fav_list.splice(i, 1);
 			}
 		}
-		ipcRenderer.send('favorites-refresh', fav_list);
+		
+		//ipcRenderer.send('favorites-refresh', fav_list);
 		write_to_file();
+		eventEmitter.emit('refresh');
 	},
 
 	save: function() {
-		ipcRenderer.send('favorites-refresh', fav_list);
+		//ipcRenderer.send('favorites-refresh', fav_list);
 		write_to_file();
-	},
-
-	recall : function(cb) { 
-		fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), 'utf8', function (err,data) {
-			if (err) {
-				fav_list = [];
-			} else {
-				var i, j = JSON.parse(data);
-				for (i = 0; i < j.length; i++) {
-					fav_list.push({
-						'uid' : j[i].uid,
-						'face' : j[i].face,
-						'nickname' : j[i].nickname,
-						'sex' : j[i].sex,
-						'level' : j[i].level,
-						'video_count' : j[i].video_count,
-						'usign' : j[i].usign,
-						'stars' : j[i].stars
-					})
-				}
-
-				last_change = new Date().getTime() / 1000;
-				cb(fav_list);
-			}
-		});
+		eventEmitter.emit('refresh');
 	},
 
 	load: function() {
@@ -77,7 +55,8 @@ module.exports = {
 				}
 
 				fav_list = JSON.parse(data);
-				ipcRenderer.send('favorites-refresh', fav_list);
+				//ipcRenderer.send('favorites-refresh', fav_list);
+				eventEmitter.emit('refresh');
 			}
 		});
 
@@ -95,6 +74,7 @@ module.exports = {
 	update: function() {
 		index = 0;
 		update_favorites_list();
+		eventEmitter.emit('refresh');
 	},
 
 	export: function(file) {
@@ -112,6 +92,10 @@ module.exports = {
 		});
 	}
 }
+
+util.inherits(Favorites, EventEmitter);
+
+
 
 
 function write_to_file() {
