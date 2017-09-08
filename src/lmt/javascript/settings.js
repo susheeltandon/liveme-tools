@@ -1,5 +1,5 @@
 const {electron, remote, ipcRenderer} = require('electron'), appSettings = remote.require('electron-settings');
-const path = require('path'), downloads = require('./modules/downloads');
+const path = require('path');
 
 $(function() {
 
@@ -10,6 +10,18 @@ $(function() {
 			filetemplate: '',
 			history: true,
 			engine: 'internal',
+			replaycount: 10
+		});
+	}
+
+	// Upgrading from 4.x to 5.x
+	if (appSettings.has('downloads.directory') != false && appSettings.has('downloads.replaycount') == false) {
+		appSettings.set('downloads', {
+			directory: appSettings.get('downloads.directory'),
+			filemode: appSettings.get('downloads.filemode'),
+			filetemplate: appSettings.get('downloads.filetemplate'),
+			history: appSettings.get('downloads.history'),
+			engine: appSettings.get('downloads.engine'),
 			replaycount: 10
 		});
 	}
