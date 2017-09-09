@@ -2,6 +2,10 @@
 
 ### 5.x.x Releases
 
+#### 2017-09-08 - v5.0.1
+**Fixed:**
+- Fixed no replays when set to unlimited replays.
+
 #### 2017-09-08 - v5.0.0
 **Added:**
 - Option to empty download queue now available in the queue window
