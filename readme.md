@@ -1,9 +1,18 @@
 # LiveMe Tools
 
 [![Downloads](https://img.shields.io/github/downloads/thecoder75/liveme-tools/total.svg)](https://github.com/thecoder75/liveme-tools/releases/latest)
-[![Discord](https://img.shields.io/discord/340106715334836224.svg?style=plastic)]()(https://discord.gg/A5p2aF4)
+[![Discord](https://img.shields.io/discord/340106715334836224.svg)](https://discord.gg/A5p2aF4)
 
-This is an Electron-based app developed for searching for users, browsing, playing and downloading replays posted on the LiveMe platform.  
+This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux designed to:
+- *COMING SOON: Allow viewing a list of live videos with filter options*
+- Search for users or videos tagged with hashtags
+- View details on users and their replays
+- Watch and download replay videos
+- Create local Favorites lists without an account
+- Import a list of Replay URLs or VideoIDs for downloading
+- Ability to add a single URL
+- Can use either internal stream downloader or [FFMPEG](ffmpeg.md) to download videos
+- and much more!
 
 ## Getting Started
 
