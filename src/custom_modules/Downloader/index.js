@@ -99,6 +99,12 @@ module.exports = {
     init: function(settings) {
         appSettings = settings;
 
+        is_ffmpeg_available = true;
+
+        /*
+        BROKEN ON MAC - FFMPEG is in path and this fails but doing a download works.
+        Also fails if FFMPEG is right next to it.
+
         new Promise((resolve, reject) => {
             ffmpeg.getAvailableCodecs((err, codecs) => {
                 if (err) {
@@ -108,6 +114,7 @@ module.exports = {
                 }
             });
         });
+        */
     },
 
     /*
