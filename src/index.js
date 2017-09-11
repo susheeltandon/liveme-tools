@@ -113,6 +113,14 @@ function createWindow(){
 	Favorites.load();
 	Downloader.init(appSettings);
 
+
+	Downloader.events.on('show-queue', () => {
+		if (queuewin == null) { return; }
+		queuewin.show(); 	
+	});
+
+
+
 	global.Favorites = Favorites;
 	global.Downloader = Downloader;
 }
