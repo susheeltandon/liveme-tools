@@ -2,9 +2,19 @@
 
 ### 5.x.x Releases
 
+#### 2017-09-11 - v5.0.2
+**Added:**
+- Will show queue window when first download is clicked now.
+
+**Fixed:**
+- Issue #59
+- Issue #56
+
+
 #### 2017-09-08 - v5.0.1
 **Fixed:**
 - Fixed no replays when set to unlimited replays.
+
 
 #### 2017-09-08 - v5.0.0
 **Added:**
