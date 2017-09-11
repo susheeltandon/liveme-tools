@@ -34,8 +34,12 @@ module.exports = {
         }
     */
     add: function(obj) {
+        if (download_queue.length == 0) {
+            eventEmitter.emit('show-queue');
+        }
+        
         download_queue.push(obj);
-        eventEmitter.emit('add', { id: obj.video.id, value: obj.video.url });
+        eventEmitter.emit('add', { id: obj.video.id, value: obj.video.url});
         saveQueue();
         
         if (!is_running && can_run) {
