@@ -10,7 +10,7 @@
 		
 		<script src="javascript/jquery-2.2.4.min.js"></script>
 		<script type="text/javascript">
-			const { ipcRenderer } = require('electron'), Downloads = require('./modules/downloads');
+			const { ipcRenderer, remote } = require('electron'), Downloads = remote.getGlobal('Downloader');
 			var list = [], index = 0;
 
 			$(function() {
