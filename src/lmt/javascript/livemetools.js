@@ -554,7 +554,7 @@ function renderUserLookup(e) {
 					</div>
 					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e.videos[i].url}')" title="Play Video">
 				`;
-			if (e.videos[i].videosource.indexOf('liveplay') < 0 && e.videos[i].videosource.indexOf('hlslive') < 0) {
+			if (e.videos[i].url.indexOf('liveplay') < 0 && e.videos[i].url.indexOf('hlslive') < 0) {
 				h += `
 					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e.videos[i].msgfile}', '${e.videos[i].dt}', '${e.userinfo.username}')" title="View Message History">
 					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userinfo.userid}', '${e.userinfo.username}', '${e.videos[i].videoid}', '${e.videos[i].title.replace("'", "")}', '${e.videos[i].dt}', '${e.videos[i].url}')" title="Download Video">
