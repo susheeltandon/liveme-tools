@@ -155,9 +155,9 @@ app.on('activate', () => { if (mainwin === null) { createWindow(); } });
 */
 function showSplashWindow() {
 	splashWindow=new BrowserWindow({
-		width: 480, height: 212, resizable:false, darkTheme:true, autoHideMenuBar:true, show: true, skipTaskbar: true, backgroundColor: '#4a4d4e',
-		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, movable: false,
-		parent: mainwin, child: true, webPreferences:{ webSecurity:false, plugins:false, devTools:false }
+		width: 600, height: 180, resizable:false, darkTheme:true, autoHideMenuBar:true, show: true, skipTaskbar: true, 
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, movable: false, transparent: true,
+		webPreferences:{ webSecurity:false, plugins:false, devTools:false }
 	});
 	splashWindow.loadURL(`file://${__dirname}/lmt/splash.html`);
 	splashWindow.on('closed', () => { 
