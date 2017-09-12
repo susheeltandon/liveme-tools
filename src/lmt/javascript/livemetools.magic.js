@@ -15,7 +15,7 @@
 var	callback_holder = null, query = '', query_orig = '', page_index = 0, return_data = [], index = 0, max_count = 0;
 var build_table = [], build_table2 = [], video_count = 0, cancelLMTweb = false, searchType = 1;
 
-var PAGE_SIZE = 5;		// The Higher the number, the less the calls to the server but the larger the progress steps...
+var PAGE_SIZE = 25;		// The Higher the number, the less the calls to the server but the larger the progress steps...
 
 function getuservideos (u, cb) {
 
@@ -327,7 +327,7 @@ function _dosearch(showOverlay=true) {
 				}
 
 				// Even with this code is here it still will only return 10 results max.
-				if (e.data.data_info.length == PAGE_SIZE) {
+				if (e.data.data_info.length == PAGE_SIZE && searchType == 2) {
 					page_index++;
 					_dosearch();
 				} else {
