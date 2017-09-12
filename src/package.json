@@ -1,8 +1,8 @@
 {
   "name": "LiveMeTools",
   "title": "LiveMe Tools",
-  "version": "5.0.4",
-  "minversion": "5.0.4",
+  "version": "5.0.5",
+  "minversion": "5.0.5",
   "description": "A tool designed to help in searching and viewing of LiveMe broadcasts.",
   "main": "index.js",
   "author": {
