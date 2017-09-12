@@ -506,6 +506,13 @@ function renderUserLookup(e) {
 				<input type="button" value="${e.userinfo.fans} Fans" onClick="showFans('${e.userinfo.userid}', ${e.userinfo.following}, '${e.userinfo.username}')">
 				<input type="hidden" id="sex" value="${e.userinfo.sex}">
 		`);
+
+		setTimeout(function(){
+			if (Favorites.isOnList($('#useridtf').val()) == true) {
+				$('#favorites_button').addClass('active');
+			}
+		}, 250);
+
 	}
 
 	if (typeof e.videos === undefined) {
@@ -528,7 +535,7 @@ function renderUserLookup(e) {
 
 			var ls = (e.videos[i].length - Math.round(e.videos[i].length / 60)) % 60, lm = Math.round(e.videos[i].length / 60);
 			var length = lm + ':' + (ls < 10 ? '0' : '') + ls;
-			var deleted = e.videos[i].private == true ? '[DELETED] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
+			var deleted = e.videos[i].private == true ? '[PRIVATE] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
 			var downloaded = Downloads.hasBeenDownloaded(e.videos[i].videoid) ? 'downloaded' : '';
 
 			var h = `
@@ -547,7 +554,7 @@ function renderUserLookup(e) {
 					</div>
 					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e.videos[i].url}')" title="Play Video">
 				`;
-			if (e.videos[i].url.indexOf('liveplay') < 0) {
+			if (e[i].videosource.indexOf('liveplay') < 0 && e[i].videosource.indexOf('hlslive') < 0) {
 				h += `
 					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e.videos[i].msgfile}', '${e.videos[i].dt}', '${e.userinfo.username}')" title="View Message History">
 					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userinfo.userid}', '${e.userinfo.username}', '${e.videos[i].videoid}', '${e.videos[i].title.replace("'", "")}', '${e.videos[i].dt}', '${e.videos[i].url}')" title="Download Video">
@@ -562,11 +569,6 @@ function renderUserLookup(e) {
 		}
 	}
 
-	setTimeout(function(){
-		if (Favorites.isOnList($('#useridtf').val()) == true) {
-			$('#favorites_button').addClass('active');
-		}
-	}, 100);
 }
 
 function renderSearchResults(e) {
@@ -623,7 +625,7 @@ function renderHashtagResults(e) {
 			var ll = parseFloat(e[i].videolength), lh = Math.round(ll / 3600), lm = Math.round(ll / 60) % 60, ls = ll % 60;
 			//var ls = (parseInt(e[i].videolength) - Math.round(parseInt(e[i].videolength) / 60)) % 60, lm = Math.round(parseInt(e[i].videolength) / 60);
 			var length = lh + ':' + (lm < 10 ? '0' : '') + lm + ':' + (ls < 10 ? '0' : '') + ls;
-			var deleted = e[i].private == true ? '[DELETED] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
+			var deleted = e[i].private == true ? '[PRIVATE] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
 			var downloaded = Downloads.hasBeenDownloaded(e[i].vdoid) ? 'downloaded' : '';
 
 			var h = `
@@ -642,7 +644,7 @@ function renderHashtagResults(e) {
 					</div>
 					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e[i].videosource}')" title="Play Video">
 				`;
-			if (e[i].videosource.indexOf('liveplay') < 0) {
+			if (e[i].videosource.indexOf('liveplay') < 0 && e[i].videosource.indexOf('hlslive') < 0) {
 				h += `
 					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e[i].msgfile}', '${e[i].vtime}', '${e.uname}')" title="View Message History">
 					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userid}', '${e.uname}', '${e[i].vdoid}', '${e[i].title.replace("'", "")}', '${e[i].vtime}', '${e[i].videosource}')" title="Download Video">
@@ -654,28 +656,6 @@ function renderHashtagResults(e) {
 			`;
 
 			$('#videolist_full').append(h);
-
-			/*
-			$('#videolist_full').append(`
-				<div class="video_entry ${highlight} ${downloaded}">
-					<input class="vdoid" type="text" value="${e[i].vdoid}"><input class="url" type="text" value="${e[i].videosource}">
-					<span class="vid">ID:</span>
-					<span class="uid">URL:</span>
-					<h4 class="date">${ds}</h4>
-					<h4 class="title"><span onClick="showUser('${e[i].userid}')">${e[i].uname}</span> - ${deleted}${e[i].title}</h4>
-					<div class="counts">
-						<label>Length:</label><span>${length}</span>
-						<label>Views:</label><span>${e[i].playnumber}</span>
-						<label>Likes:</label><span>${e[i].likenum}</span>
-						<label>Shares:</label><span>${e[i].sharenum}</span>
-						<label>Country:</label><span>${e[i].countryCode}</span>
-					</div>
-					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e[i].msgfile}', '${e[i].vtime}', '${e.uname}')" title="View Message History">
-					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e[i].videosource}')" title="Play Video">
-					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userid}', '${e.uname}', '${e[i].vdoid}', '${e[i].title.replace("'", "")}', '${e[i].vtime}', '${e[i].videosource}')" title="Download Video">
-				</div>
-			`);
-			*/
 		}
 	}
 
