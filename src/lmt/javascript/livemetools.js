@@ -566,7 +566,7 @@ function renderUserLookup(e) {
 		if (Favorites.isOnList($('#useridtf').val()) == true) {
 			$('#favorites_button').addClass('active');
 		}
-	}, 50);
+	}, 100);
 }
 
 function renderSearchResults(e) {
