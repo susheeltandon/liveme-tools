@@ -2,6 +2,12 @@
 
 ### 5.x.x Releases
 
+#### 2017-09-11 - v5.0.3
+**Fixed:**
+- Search loop issue
+- Minor favorites cleanup
+
+
 #### 2017-09-11 - v5.0.2
 **Added:**
 - Will show queue window when first download is clicked now.
