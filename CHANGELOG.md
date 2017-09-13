@@ -2,6 +2,13 @@
 
 ### 5.x.x Releases
 
+#### 2017-09-13 - v5.0.6
+**Added:**
+- Automatically will download FFMPEG if its not found on the computer.
+
+**Fixed:**
+- Updated to use only FFMPEG for downloading of playlists.
+
 #### 2017-09-11 - v5.0.3
 **Fixed:**
 - Search loop issue
