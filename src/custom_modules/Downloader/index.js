@@ -104,13 +104,12 @@ module.exports = {
     init: function(settings) {
         appSettings = settings;
 
-        is_ffmpeg_available = shell.which('ffmpeg').length > 5;
+        //var t = shell.which('ffmpeg');
+        //is_ffmpeg_available = true; //t.length > 5;
 
-        if (shell.which('ffmpeg').length < 6) {
-            // Invoke FFMPEG downloader
-            const ffmpeg = require('@ffmpeg-installer/ffmpeg');
-            is_ffmpeg_available = ffmpeg.path.length > 5;
-        }
+        //const ffmpeg = require('@ffmpeg-installer/ffmpeg');
+        is_ffmpeg_available = true;
+
     },
 
     /*
