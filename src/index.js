@@ -68,13 +68,17 @@ function createWindow(){
 	
 	mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
 	mainwin.on('closed', () => { 
-		mainwin = null; 
-		
-		if (queuewin != null) {
-			queuewin.close();
-		}
 
-		app.quit();
+		const session = mainwin.webContents.session;
+		session.clearCache(() => {
+			mainwin = null; 
+			
+			if (queuewin != null) {
+				queuewin.close();
+			}
+
+			app.quit();
+		});
 	});
 
 	queuewin.loadURL(`file://${__dirname}/lmt/queue.html`);
@@ -89,7 +93,10 @@ function createWindow(){
 
 	importwin.loadURL(`file://${__dirname}/lmt/importlist.html`);
 	importwin.on('closed', () => { 
-		importwin = null; 
+		const importsession = importwin.webContents.session;
+		importsession.clearCache(() => {
+			importwin = null; 
+		});		
 	});
 
 	showSplashWindow();
@@ -275,7 +282,10 @@ ipcMain.on('play-video', (event, arg) => {
 			disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
 		});
 		playerWindow.on('closed', () => { 
-			playerWindow = null; 
+			const playersession = playerWindow.webContents.session;
+			playersession.clearCache(() => {
+				playerWindow = null; 
+			});		
 		});		
 	}
 	playerWindow.loadURL(`file://${__dirname}/lmt/player.html#`+arg.url);
