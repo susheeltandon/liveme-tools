@@ -136,6 +136,12 @@ function showMainMenu() {
 					{
 						label: 'Report an Issue',
 						click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/issues')
+					},
+					{
+						type: 'separator'
+					},
+					{
+						role: 'toggledevtools'
 					}
 				]
 			},
