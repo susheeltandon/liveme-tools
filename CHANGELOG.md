@@ -8,6 +8,9 @@
 
 **Fixed:**
 - Updated to use only FFMPEG for downloading of playlists.
+- Issue #54
+- Issue #56
+- Issue #57
 
 #### 2017-09-11 - v5.0.3
 **Fixed:**
