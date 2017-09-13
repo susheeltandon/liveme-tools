@@ -65,36 +65,38 @@ function createWindow(){
 		width: 320, height: 160, resizable: false, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false, backgroundColor: '#4a4d4e',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, child: true, parent: mainwin
 	});
-	
+
+	mainwin.webContents.session.clearCache(() => {});		
+	mainwin.webContents.session.clearStorageData();
 	mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
+
 	mainwin.on('closed', () => { 
-
-		mainwin.webContents.session.clearCache(() => {
-			mainwin = null; 
-			
-			if (queuewin != null) {
-				queuewin.close();
-			}
-
-			app.quit();
-		});
+		mainwin = null; 
+		if (queuewin != null) {
+			queuewin.close();
+		}
+		app.quit();
 	});
 
 	queuewin.loadURL(`file://${__dirname}/lmt/queue.html`);
+	queuewin.webContents.session.clearCache(() => {});		
+	queuewin.webContents.session.clearStorageData();
 	queuewin.on('closed', () => { 
 		queuewin = null; 
 	});
 
 	chatWindow.loadURL(`file://${__dirname}/lmt/chat.html`);
+	chatWindow.webContents.session.clearStorageData();
+	chatWindow.webContents.session.clearCache(() => {});		
 	chatWindow.on('closed', () => { 
 		chatWindow = null; 
 	});
 
 	importwin.loadURL(`file://${__dirname}/lmt/importlist.html`);
+	importwin.webContents.session.clearStorageData();
+	importwin.webContents.session.clearCache(() => {});		
 	importwin.on('closed', () => { 
-		importwin.webContents.session.clearCache(() => {
-			importwin = null; 
-		});		
+		importwin = null; 
 	});
 
 	showSplashWindow();
@@ -180,6 +182,8 @@ ipcMain.on('show-favorites', () => {
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, 
 		webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
+	favoritesWindow.webContents.session.clearCache(() => {});		
+	favoritesWindow.webContents.session.clearStorageData();
 	favoritesWindow.loadURL(`file://${__dirname}/lmt/favorites-list.html`);
 	favoritesWindow.on('closed', () => { 
 		favoritesWindow = null; 
@@ -277,10 +281,10 @@ ipcMain.on('play-video', (event, arg) => {
 			width: 368, height: 640, resizable: true, darkTheme:true, autoHideMenuBar:false, show:true, skipTaskbar: false, backgroundColor: '#4a4d4e',
 			disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
 		});
+		playerWindow.webContents.session.clearCache(() => {});		
+		playerWindow.webContents.session.clearStorageData();
 		playerWindow.on('closed', () => { 
-			playerWindow.webContents.session.clearCache(() => {
-				playerWindow = null; 
-			});		
+			playerWindow = null; 
 		});		
 	}
 	playerWindow.loadURL(`file://${__dirname}/lmt/player.html#`+arg.url);
@@ -356,8 +360,9 @@ function getMenuTemplate () {
 			role: 'window',
 			submenu: [
 				{role: 'minimize'},
-				{role: 'close'}
-
+				{role: 'close'},
+				{type: 'separator'},
+				{role: 'toggledevtools'}
 			]
 		},
 		{
