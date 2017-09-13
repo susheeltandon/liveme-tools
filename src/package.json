@@ -1,8 +1,8 @@
 {
   "name": "LiveMeTools",
   "title": "LiveMe Tools",
-  "version": "5.0.6",
-  "minversion": "5.0.6",
+  "version": "5.0.7",
+  "minversion": "5.0.7",
   "description": "A tool designed to help in searching and viewing of LiveMe broadcasts.",
   "main": "index.js",
   "author": {
@@ -51,7 +51,7 @@
     "mac": {
       "category": "public.app-category.video",
       "target": [
-        "dmg"
+        "dir"
       ],
       "identity": null,
       "icon": "build/appicon.icns"
@@ -77,6 +77,7 @@
     "start": "./node_modules/.bin/electron . --enable-logging",
     "dev": "NODE_ENV='development' npm run start",
     "dist-win": "build -w --x64 --ia32",
+    "dist-win64": "build -w --x64",
     "dist-linux": "build -l --x64 --ia32",
     "dist-mac": "build -m --x64",
     "dist": "rm -rd dist/* && npm run dist-mac && npm run dist-linux && npm run dist-win"
