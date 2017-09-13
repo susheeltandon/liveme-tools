@@ -8,6 +8,7 @@ const path = require('path'),
       ffmpeg = require('fluent-ffmpeg'),
       m3u8stream = require('../m3u8stream'),
       fs = require('fs-extra'),
+      shell = require('shelljs'),
       eventEmitter = new(require('events').EventEmitter)();
 
 var appSettings = null,
@@ -103,22 +104,13 @@ module.exports = {
     init: function(settings) {
         appSettings = settings;
 
-        is_ffmpeg_available = true;
+        is_ffmpeg_available = shell.which('ffmpeg').length > 5;
 
-        /*
-        BROKEN ON MAC - FFMPEG is in path and this fails but doing a download works.
-        Also fails if FFMPEG is right next to it.
-
-        new Promise((resolve, reject) => {
-            ffmpeg.getAvailableCodecs((err, codecs) => {
-                if (err) {
-                    is_ffmpeg_available = false;
-                } else {
-                    is_ffmpeg_available = true;
-                }
-            });
-        });
-        */
+        if (shell.which('ffmpeg').length < 6) {
+            // Invoke FFMPEG downloader
+            const ffmpeg = require('@ffmpeg-installer/ffmpeg');
+            is_ffmpeg_available = ffmpeg.path.length > 5;
+        }
     },
 
     /*
@@ -255,7 +247,8 @@ function processItem(item) {
                 .outputOptions([
                     '-c copy',
                     '-bsf:a aac_adtstoasc',
-                    '-vsync 2'
+                    '-vsync 2',
+                    '-movflags faststart'
                 ])
                 .output(localFilename.replace(".ts", ".mp4"))
                 .on('end', function(stdout, stderr) {
