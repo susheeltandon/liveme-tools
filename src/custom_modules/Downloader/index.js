@@ -6,7 +6,7 @@ const { app, ipcMain } = require('electron');
 
 const path = require('path'),
       ffmpeg = require('fluent-ffmpeg'),
-      m3u8stream = require('../m3u8stream'),
+      //m3u8stream = require('../m3u8stream'),
       fs = require('fs-extra'),
       shell = require('shelljs'),
       eventEmitter = new(require('events').EventEmitter)();
@@ -221,6 +221,11 @@ function processItem(item) {
         let localFilename = getLocalFilename(item);
         let remoteFilename = item.video.url;
 
+        /*
+
+            MORE PROBLEMS ARE BEING DISCOVERED USING THE INTERNAL VS FFMPEG SO
+            NOW DISABLING IT AND USING ONLY FFMPEG TO AVOID 99.9% OF ALL PROBLEMS.
+
         if (downloadEngine == 'internal') {
             eventEmitter.emit('start', { id: item.video.id, url: item.video.url });
             
@@ -243,6 +248,7 @@ function processItem(item) {
                 }
             }).pipe(fs.createWriteStream(localFilename));
         } else if (downloadEngine == 'ffmpeg') {
+        */
             ffmpeg(remoteFilename)
                 .outputOptions([
                     '-c copy',
@@ -270,7 +276,7 @@ function processItem(item) {
                     resolve();
                 })
                 .run();
-        }
+        //}
     });
 }
 
