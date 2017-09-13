@@ -69,8 +69,7 @@ function createWindow(){
 	mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
 	mainwin.on('closed', () => { 
 
-		const session = mainwin.webContents.session;
-		session.clearCache(() => {
+		mainwin.webContents.session.clearCache(() => {
 			mainwin = null; 
 			
 			if (queuewin != null) {
@@ -93,8 +92,7 @@ function createWindow(){
 
 	importwin.loadURL(`file://${__dirname}/lmt/importlist.html`);
 	importwin.on('closed', () => { 
-		const importsession = importwin.webContents.session;
-		importsession.clearCache(() => {
+		importwin.webContents.session.clearCache(() => {
 			importwin = null; 
 		});		
 	});
@@ -123,10 +121,8 @@ function createWindow(){
 
 	Downloader.events.on('show-queue', () => {
 		if (queuewin == null) { return; }
-		queuewin.show(); 	
+		queuewin.showInactive(); 	
 	});
-
-
 
 	global.Favorites = Favorites;
 	global.Downloader = Downloader;
@@ -282,8 +278,7 @@ ipcMain.on('play-video', (event, arg) => {
 			disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
 		});
 		playerWindow.on('closed', () => { 
-			const playersession = playerWindow.webContents.session;
-			playersession.clearCache(() => {
+			playerWindow.webContents.session.clearCache(() => {
 				playerWindow = null; 
 			});		
 		});		
