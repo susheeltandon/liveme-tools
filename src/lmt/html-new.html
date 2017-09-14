@@ -17,7 +17,7 @@
 	<body>
 		<header class="fixed">
 			<div class="controls left">
-				<div class="menu" onClick="$('#main-sidebar').sidebar('toggle')">
+				<div class="menu" onClick="$('#main-sidebar').sidebar('setting', 'transition', 'overlay', 'duration', '100').sidebar('toggle')">
 					&#9776;
 				</div>
 			</div>
@@ -31,7 +31,7 @@
 
 		<div id="main-sidebar" class="ui left sidebar inverted vertical menu">
 			<div class="item">
-				<h3 class="ui icon header">
+				<h3 class="ui center aligned icon header">
 					<i class="cubes icon"></i>
 					<div class="content">
 						LiveMe Tools
@@ -39,17 +39,27 @@
 					</div>
 				</h3>
 			</div>
-			<a class="item" onClick="">LiveMeOMG</a>
-			<a class="item" onClick="">Search LiveMe</a>
+			<a class="item" onClick="">
+				<i class="home icon"></i>
+				Home
+			</a>
 			<hr>
-			<a class="item" onClick="">LiveMeOMG</a>
-			<a class="item" onClick="">LiveMeOMG</a>
-			<a class="item" onClick="">LiveMeOMG</a>
-			<a class="item" onClick="">LiveMeOMG</a>
+r			<a class="item" onClick="">Open Favorites</a>
+			<hr>
+			<a class="item" onClick="">Toggle Download Queue</a>
+			<hr>
+			<a class="item" onClick="">LiveMe Tools Github Page</a>
+			<a class="item" onClick="">Open an Issue Ticket</a>
+			<hr>
+			<a class="item" onClick="">Toggle Developers Tools</a>
+			<hr>
+			<a class="item" onClick="">Settings</a>
+			<hr>
+			<a class="item" onClick="closeApp()">Quit</a>
 		</div>
 
 		<div class="ui container" id="main">
-		
+			This is some dummy content.
 		</div>
 
 
