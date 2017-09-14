@@ -6,7 +6,6 @@ const { app, ipcMain } = require('electron');
 
 const path = require('path'),
       ffmpeg = require('fluent-ffmpeg'),
-      //m3u8stream = require('../m3u8stream'),
       fs = require('fs-extra'),
       shell = require('shelljs'),
       eventEmitter = new(require('events').EventEmitter)();
@@ -103,13 +102,7 @@ module.exports = {
 
     init: function(settings) {
         appSettings = settings;
-
-        //var t = shell.which('ffmpeg');
-        //is_ffmpeg_available = true; //t.length > 5;
-
-        //const ffmpeg = require('@ffmpeg-installer/ffmpeg');
         is_ffmpeg_available = true;
-
     },
 
     /*
