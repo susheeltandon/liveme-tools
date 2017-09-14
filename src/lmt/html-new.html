@@ -17,7 +17,7 @@
 	<body>
 		<header class="fixed">
 			<div class="controls left">
-				<div class="menu" onClick="toggleSidebar()">
+				<div class="menu" onClick="$('#main-sidebar').sidebar('toggle')">
 					&#9776;
 				</div>
 			</div>
@@ -29,7 +29,16 @@
 			</div>
 		</header>
 
-		<div class="ui left sidebar inverted vertical menu">
+		<div id="main-sidebar" class="ui left sidebar inverted vertical menu">
+			<div class="item">
+				<h3 class="ui icon header">
+					<i class="cubes icon"></i>
+					<div class="content">
+						LiveMe Tools
+						<div class="sub header" id="version">v6.0.0</div>
+					</div>
+				</h3>
+			</div>
 			<a class="item" onClick="">LiveMeOMG</a>
 			<a class="item" onClick="">Search LiveMe</a>
 			<hr>
