@@ -45,24 +45,24 @@ function createWindow(){
 		Create Windows
 	*/
 	mainwin=new BrowserWindow({
-		icon: __dirname + '/appicon.ico', width:980, height:600, minWidth:980, minHeight:600, darkTheme:true, autoHideMenuBar:false,
-		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, vibrancy:'dark', backgroundColor: '#4a4d4e',
+		icon: __dirname + '/appicon.ico', width:1100, height:700, minWidth:960, minHeight:540, darkTheme:true, autoHideMenuBar:false,
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:true, frame:false, vibrancy:'dark', backgroundColor: '#000000',
 		webPreferences:{ webSecurity:false, textAreasAreResizable:false, plugins:true }
 	});
 
 	queuewin=new BrowserWindow({
 		width: 640, height: 400, resizable:true, minWidth:640, maxWidth: 640, minHeight: 160, maxHeight: 1600, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false,
-		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, backgroundColor: '#4a4d4e',
+		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, backgroundColor: '#000000',
 		webPreferences:{ webSecurity:false, plugins:true, devTools:true }
 	});
 
 	chatWindow = new BrowserWindow({
-		width: 320, height: 760, resizable: true, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false, backgroundColor: '#4a4d4e',
+		width: 320, height: 760, resizable: true, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false, backgroundColor: '#000000',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false
 	});
 	
 	importwin = new BrowserWindow({
-		width: 320, height: 160, resizable: false, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false, backgroundColor: '#4a4d4e',
+		width: 320, height: 160, resizable: false, darkTheme:true, autoHideMenuBar:false, show: false, skipTaskbar: false, backgroundColor: '#000000',
 		disableAutoHideCursor:true, titleBarStyle: 'default', fullscreen:false, maximizable:false, frame:false, child: true, parent: mainwin
 	});
 
