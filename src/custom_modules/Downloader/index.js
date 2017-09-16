@@ -7,7 +7,6 @@ const { app, ipcMain } = require('electron');
 const path = require('path'),
     ffmpeg = require('fluent-ffmpeg'),
     fs = require('fs-extra'),
-    shell = require('shelljs'),
     eventEmitter = new (require('events').EventEmitter)();
 
 var appSettings = null,
@@ -102,6 +101,12 @@ module.exports = {
 
     init: function (settings) {
         appSettings = settings;
+
+        if (process.platform == 'win32') {
+            ffmpeg.setFfmpegPath('resources/build/ffmpeg.exe');
+        } else if (process.platform == 'darwin') {
+            ffmpeg.setFfmpegPath('resources/build/ffmpeg.macos');
+        } // If we're on linux use the PATH default
     },
 
     /*
