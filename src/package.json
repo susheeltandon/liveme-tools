@@ -52,13 +52,15 @@
         "dir"
       ],
       "identity": null,
-      "icon": "build/appicon.icns"
+      "icon": "build/appicon.icns",
+      "extraResources": [ "build/ffmpeg.macos" ]
     },
     "win": {
       "target": [
         "dir"
       ],
-      "icon": "build/appicon.ico"
+      "icon": "build/appicon.ico",
+      "extraResources": [ "build/ffmpeg.exe" ]
     },
     "linux": {
       "target": [
