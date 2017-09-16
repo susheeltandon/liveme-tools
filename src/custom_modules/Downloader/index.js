@@ -102,8 +102,6 @@ module.exports = {
 
     init: function (settings) {
         appSettings = settings;
-
-        ffmpeg.setFfmpegPath('build/ffmpeg.exe'); // Temporary
     },
 
     /*
@@ -223,7 +221,6 @@ function processItem(item) {
                 '-movflags faststart'
             ])
             .on('end', function (stdout, stderr) {
-                console.log('ended', stdout, stderr);
                 if (appSettings.get('downloads.history')) {
                     download_history.push(item.video.id);
                 }
@@ -233,15 +230,12 @@ function processItem(item) {
                 resolve();
             })
             .on('progress', function (progress) {
-                console.log('progress', progress);
                 eventEmitter.emit('progress', { id: item.video.id, url: item.video.url, value: progress.percent });
             })
             .on('start', function (c) {
-                console.log('started');
                 eventEmitter.emit('start', { id: item.video.id, url: item.video.url });
             })
             .on('error', function (err, stdout, stderr) {
-                console.error(err, stdout, stderr);
                 eventEmitter.emit('fail', { id: item.video.id });
                 running_instance = null;
                 resolve();
