@@ -5,6 +5,7 @@
 const { app, ipcMain } = require('electron');
 
 const path = require('path'),
+    ffmpegPath = require('@ffmpeg-installer/ffmpeg'),
     ffmpeg = require('fluent-ffmpeg'),
     fs = require('fs-extra'),
     shell = require('shelljs'),
@@ -102,6 +103,8 @@ module.exports = {
 
     init: function (settings) {
         appSettings = settings;
+        // executables can't be packed into the asar, but ffmpeg-installer reports it's location as packed
+        ffmpeg.setFfmpegPath(ffmpegPath.path.replace("app.asar", "app.asar.unpacked"));
     },
 
     /*

@@ -15,6 +15,7 @@
     "electron-builder": "^19.28.4"
   },
   "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.0.12",
     "async": "^2.5.0",
     "axios": "^0.16.2",
     "electron-is-dev": "^0.3.0",
