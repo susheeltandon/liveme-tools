@@ -93,8 +93,8 @@
 			function addSingleURL() {
 				var u = $('#url').val();
 
-				$('#overlay').fadeOut(200);
-				$('#prompt1').fadeOut(200);
+				$('#overlay').hide();
+				$('#prompt1').hide();
 
 				if (u != null) {
 					Downloader.add({
@@ -114,18 +114,18 @@
 			}
 
 			function showURLPrompt() {
-				$('#overlay').fadeIn(200);
-				$('#prompt1').fadeIn(200);
+				$('#overlay').show();
+				$('#prompt1').show().focus();
 			}
 
 			function hideURLPrompt() {
-				$('#overlay').fadeOut(200);
-				$('#prompt1').fadeOut(200);
+				$('#overlay').hide();
+				$('#prompt1').hide();
 			}
 
 			function emptyQueue() {
-				$('#overlay').fadeIn(200);
-				$('#prompt2').fadeIn(200);
+				$('#overlay').show();
+				$('#prompt2').show();
 			}
 
 			function emptyQueueYes() {
@@ -134,8 +134,8 @@
 			}
 
 			function hideEmptyPrompt() {
-				$('#overlay').fadeOut(200);
-				$('#prompt2').fadeOut(200);
+				$('#overlay').hide(200);
+				$('#prompt2').hide(200);
 			}
 		</script>
 `
