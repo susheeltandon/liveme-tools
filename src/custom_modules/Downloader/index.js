@@ -7,6 +7,7 @@ const { app, ipcMain } = require('electron');
 const path = require('path'),
     ffmpeg = require('fluent-ffmpeg'),
     fs = require('fs-extra'),
+    isDev = require('electron-is-dev'),
     eventEmitter = new (require('events').EventEmitter)();
 
 var appSettings = null,
@@ -103,11 +104,12 @@ module.exports = {
         appSettings = settings;
 
         if (process.platform == 'win32') {
-            ffmpeg.setFfmpegPath('resources/ffmpeg.exe');
+            ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.exe');
         } else if (process.platform == 'darwin') {
-            // macOS is Case-Sensitive when it comes to using files inside of the apps.
-            ffmpeg.setFfmpegPath('Resources/ffmpeg');
-        } // If we're on linux use the PATH default
+            ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.macos');
+        } else {
+            ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.linux');
+        }
     },
 
     /*
@@ -242,6 +244,8 @@ function processItem(item) {
                 eventEmitter.emit('start', { id: item.video.id, url: item.video.url });
             })
             .on('error', function (err, stdout, stderr) {
+                console.log(err);
+                console.log(stderr);
                 eventEmitter.emit('fail', { id: item.video.id });
                 running_instance = null;
                 resolve();
