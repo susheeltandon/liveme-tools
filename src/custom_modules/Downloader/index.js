@@ -103,9 +103,10 @@ module.exports = {
         appSettings = settings;
 
         if (process.platform == 'win32') {
-            ffmpeg.setFfmpegPath('resources/build/ffmpeg.exe');
+            ffmpeg.setFfmpegPath('resources/ffmpeg.exe');
         } else if (process.platform == 'darwin') {
-            ffmpeg.setFfmpegPath('resources/build/ffmpeg.macos');
+            // macOS is Case-Sensitive when it comes to using files inside of the apps.
+            ffmpeg.setFfmpegPath('Resources/ffmpeg');
         } // If we're on linux use the PATH default
     },
 
