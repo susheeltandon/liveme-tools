@@ -18,6 +18,9 @@
 			function doFetch() {
 			    var e = window.location.href.split("?")[1].split("#");
 			    userID = e[0];
+                
+                document.title = `${e[2]} - Following`;
+                $('#title').text(`${e[2]} - Following`);
 			    
 			    max = e[1], $.ajax({
 			        url: "http://live.ksmobile.net/follow/getfollowinglistship",
@@ -69,7 +72,7 @@
 	</head>
 	<body>
 		<header class="small">
-			<h4>Following</h4>
+			<h4 id="title">Following</h4>
 			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="closeApp()">
 		</header>
 		<div id="small_user_list"></div>
