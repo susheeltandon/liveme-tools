@@ -16,7 +16,11 @@
 				}, 3000);
 				setTimeout(function(){
 					window.close();
-				}, 5000);
+                }, 5000);
+                
+                $('body').on('click', () => {
+                    window.close();
+                });
 			})
 		</script>
 
