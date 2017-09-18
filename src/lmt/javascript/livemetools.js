@@ -78,7 +78,8 @@ $(function(){
 
 	ipcRenderer.on('do-shutdown' , function(event , data) { 
 		Favorites.forceSave();
-		Downloads.forceSave();
+        Downloads.forceSave();
+        Downloads.killActiveDownload();
 	});
 
 	//Favorites.load();

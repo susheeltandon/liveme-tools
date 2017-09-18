@@ -5,17 +5,17 @@
 const { app, ipcMain } = require('electron');
 
 const path = require('path'),
-      ffmpeg = require('fluent-ffmpeg'),
-      fs = require('fs-extra'),
-      shell = require('shelljs'),
-      eventEmitter = new(require('events').EventEmitter)();
+    ffmpeg = require('fluent-ffmpeg'),
+    fs = require('fs-extra'),
+    isDev = require('electron-is-dev'),
+    eventEmitter = new (require('events').EventEmitter)();
 
 var appSettings = null,
     download_queue = [],
     download_history = [],
     can_run = true,
     is_running = false,
-    is_ffmpeg_available = false;
+    running_instance = null;
 
 module.exports = {
     events: eventEmitter,
@@ -33,15 +33,15 @@ module.exports = {
             url: 'http://xyz.m3u8'
         }
     */
-    add: function(obj) {
+    add: function (obj) {
         if (download_queue.length == 0) {
             eventEmitter.emit('show-queue');
         }
-        
+
         download_queue.push(obj);
-        eventEmitter.emit('add', { id: obj.video.id, value: obj.video.url});
+        eventEmitter.emit('add', { id: obj.video.id, value: obj.video.url });
         saveQueue();
-        
+
         if (!is_running && can_run) {
             runDownloader();
         }
@@ -50,7 +50,7 @@ module.exports = {
     /*
         Removes an item from the queue
     */
-    remove: function(vid) {
+    remove: function (vid) {
         let index = -1;
 
         for (i = 0; i < download_queue.length; i++) {
@@ -66,14 +66,14 @@ module.exports = {
             eventEmitter.emit('remove', { id: vid });
             return true;
         }
-        
+
         return false;
     },
-    
+
     /*
         Starts/Resumes downloading
     */
-    start: function() {
+    start: function () {
         if (!is_running && can_run) {
             runDownloader();
         }
@@ -82,7 +82,7 @@ module.exports = {
     /*
         Stops downloading any new files after the one(s) it's downloading now, until told to start again
     */
-    pause: function() {
+    pause: function () {
         can_run = false;
         eventEmitter.emit('pause');
     },
@@ -91,7 +91,7 @@ module.exports = {
         Resumes downloading
     */
 
-    resume: function() {
+    resume: function () {
         can_run = true;
         eventEmitter.emit('resume');
 
@@ -100,15 +100,22 @@ module.exports = {
         }
     },
 
-    init: function(settings) {
+    init: function (settings) {
         appSettings = settings;
-        is_ffmpeg_available = true;
+
+        if (process.platform == 'win32') {
+            ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.exe');
+        } else if (process.platform == 'darwin') {
+            ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.macos');
+        } else {
+            ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.linux');
+        }
     },
 
     /*
         Called on startup
     */
-    load: function() {
+    load: function () {
         loadQueue();
         loadHistory();
     },
@@ -116,44 +123,46 @@ module.exports = {
     /*
         Called on shutdown
     */
-    forceSave: function() {
+    forceSave: function () {
         saveQueue();
         saveHistory();
     },
 
-    isRunning: function() {
+    isRunning: function () {
         return is_running;
     },
 
-    isPaused: function() {
+    isPaused: function () {
         return !can_run; // If it can't run, it is paused
     },
 
     /*
         Checks if a video is in the download history
     */
-    hasBeenDownloaded: function(videoid) {
+    hasBeenDownloaded: function (videoid) {
         return download_history.indexOf(videoid) != -1;
     },
 
-    purgeHistory: function() {
+    purgeHistory: function () {
         fs.removeSync(path.join(app.getPath('appData'), app.getName(), 'downloadHistory.json'));
         download_history = [];
     },
 
-    purgeQueue: function() {
+    purgeQueue: function () {
         download_queue = [];
         saveQueue();
         eventEmitter.emit('clear-queue');
     },
 
-    isFfmpegAvailable: function() {
-        return is_ffmpeg_available;
+    killActiveDownload: function () {
+        if (running_instance) {
+            running_instance.kill();
+        }
     }
 };
 
 function loadQueue() {
-    fs.readFile(path.join(app.getPath('appData'), app.getName(), 'downloadQueue.json'), 'utf8', function(err, data) {
+    fs.readFile(path.join(app.getPath('appData'), app.getName(), 'downloadQueue.json'), 'utf8', function (err, data) {
         if (err) {
             download_queue = [];
         } else {
@@ -163,7 +172,7 @@ function loadQueue() {
                 download_queue = [];
             }
         }
-        
+
         if (download_queue.length > 0) {
             for (i = 0; i < download_queue.length; i++) {
                 eventEmitter.emit('add', { id: download_queue[i].video.id, value: download_queue[i].video.url });
@@ -175,7 +184,7 @@ function loadQueue() {
 }
 
 function saveQueue() {
-    fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'downloadQueue.json'), JSON.stringify(download_queue), 'utf8', () => {});
+    fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'downloadQueue.json'), JSON.stringify(download_queue), 'utf8', () => { });
 }
 
 function loadHistory() {
@@ -183,7 +192,7 @@ function loadHistory() {
         return;
     }
 
-    fs.readFile(path.join(app.getPath('appData'), app.getName(), 'downloadHistory.json'), 'utf8', function(err, data) {
+    fs.readFile(path.join(app.getPath('appData'), app.getName(), 'downloadHistory.json'), 'utf8', function (err, data) {
         if (err) {
             download_history = [];
         } else {
@@ -201,7 +210,7 @@ function saveHistory() {
         return;
     }
 
-    fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'downloadHistory.json'), JSON.stringify(download_history), 'utf8', () => {});
+    fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'downloadHistory.json'), JSON.stringify(download_history), 'utf8', () => { });
 }
 
 /*
@@ -209,66 +218,39 @@ function saveHistory() {
 */
 function processItem(item) {
     return new Promise((resolve, reject) => {
-        let downloadEngine = appSettings.get('downloads.engine');
         let localFilename = getLocalFilename(item);
         let remoteFilename = item.video.url;
 
-        /*
-
-            MORE PROBLEMS ARE BEING DISCOVERED USING THE INTERNAL VS FFMPEG SO
-            NOW DISABLING IT AND USING ONLY FFMPEG TO AVOID 99.9% OF ALL PROBLEMS.
-
-        if (downloadEngine == 'internal') {
-            eventEmitter.emit('start', { id: item.video.id, url: item.video.url });
-            
-            m3u8stream(remoteFilename, {
-                on_complete: function(e) {
-                    if (appSettings.get('downloads.history')) {
-                        download_history.push(item.video.id);
-                    }
-
-                    eventEmitter.emit('finish', { id: item.video.id });
-                    resolve();
-                },
-                on_error: function(e) {
-                    eventEmitter.emit('fail', { id: item.video.id });
-                    resolve();
-                },
-                on_progress: function(e) {
-                    let percent = Math.round((e.current / e.total) * 100);
-                    eventEmitter.emit('progress', { id: item.video.id, url: item.video.url, value: percent });
+        running_instance = ffmpeg(remoteFilename)
+            .outputOptions([
+                '-c copy',
+                '-bsf:a aac_adtstoasc',
+                '-vsync 2',
+                '-movflags faststart'
+            ])
+            .on('end', function (stdout, stderr) {
+                if (appSettings.get('downloads.history')) {
+                    download_history.push(item.video.id);
                 }
-            }).pipe(fs.createWriteStream(localFilename));
-        } else if (downloadEngine == 'ffmpeg') {
-        */
-            ffmpeg(remoteFilename)
-                .outputOptions([
-                    '-c copy',
-                    '-bsf:a aac_adtstoasc',
-                    '-vsync 2',
-                    '-movflags faststart'
-                ])
-                .output(localFilename.replace(".ts", ".mp4"))
-                .on('end', function(stdout, stderr) {
-                    if (appSettings.get('downloads.history')) {
-                        download_history.push(item.video.id);
-                    }
 
-                    eventEmitter.emit('finish', { id: item.video.id });
-                    resolve();
-                })
-                .on('progress', function(progress) {
-                    eventEmitter.emit('progress', { id: item.video.id, url: item.video.url, value: progress.percent });
-                })
-                .on('start', function(c) {
-                    eventEmitter.emit('start', { id: item.video.id, url: item.video.url });
-                })
-                .on('error', function(err, stdout, etderr) {
-                    eventEmitter.emit('fail', { id: item.video.id });
-                    resolve();
-                })
-                .run();
-        //}
+                eventEmitter.emit('finish', { id: item.video.id });
+                running_instance = null;
+                resolve();
+            })
+            .on('progress', function (progress) {
+                eventEmitter.emit('progress', { id: item.video.id, url: item.video.url, value: progress.percent });
+            })
+            .on('start', function (c) {
+                eventEmitter.emit('start', { id: item.video.id, url: item.video.url });
+            })
+            .on('error', function (err, stdout, stderr) {
+                console.log(err);
+                console.log(stderr);
+                eventEmitter.emit('fail', { id: item.video.id });
+                running_instance = null;
+                resolve();
+            })
+            .save(localFilename.replace(".ts", ".mp4"));
     });
 }
 
@@ -276,13 +258,6 @@ function processItem(item) {
     Starts processing the download queue until it's paused or empty
 */
 async function runDownloader() {
-    if (!is_ffmpeg_available && appSettings.get('downloads.engine') == 'ffmpeg') {
-        eventEmitter.emit('ffmpeg-danger');
-        can_run = false;
-        eventEmitter.emit('pause');
-        return;
-    }
-
     while (download_queue.length > 0 && can_run) {
         let item = download_queue.shift();
         is_running = true;
@@ -306,12 +281,12 @@ function getLocalFilename(item) {
         fullPath = defaultPath;
     } else {
         let finalname = appSettings.get('downloads.filetemplate')
-                                    .replace(/%%username%%/g, item.user.name)
-                                    .replace(/%%userid%%/g, item.user.id)
-                                    //.replace(/%%usercountry%%/g, user.country)
-                                    .replace(/%%videoid%%/g, item.video.id)
-                                    .replace(/%%videotitle%%/g, item.video.title ? item.video.title : 'untitled')
-                                    .replace(/%%videotime%%/g, item.video.time);
+            .replace(/%%username%%/g, item.user.name)
+            .replace(/%%userid%%/g, item.user.id)
+            //.replace(/%%usercountry%%/g, user.country)
+            .replace(/%%videoid%%/g, item.video.id)
+            .replace(/%%videotitle%%/g, item.video.title ? item.video.title : 'untitled')
+            .replace(/%%videotime%%/g, item.video.time);
 
         if (!finalname || finalname == "") {
             fullPath = defaultPath;

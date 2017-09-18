@@ -115,7 +115,7 @@ function createWindow(){
 
 	setTimeout(function(){
 		importwin.hide();
-	}, 200);
+	}, 100);
 
 	Favorites.load();
 	Downloader.init(appSettings);
