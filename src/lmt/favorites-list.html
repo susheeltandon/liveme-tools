@@ -8,23 +8,20 @@
 		</script>
 
 		<link rel="stylesheet" href="style/style.css">
-
-		<script src="javascript/jquery-2.2.4.min.js"></script>
+		<script src="javascript/jquery-3.2.1.min.js"></script>
 		<script src="javascript/favorites.js"></script>
 
 	</head>
 
 	<body onContextMenu="return false;">
-		<header class="small">
-			<h4>Favorites</h4>
-			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="closeWindow()">
-		</header>
-		<div id="favorites_header">
-			<input type="button" value="Update Users" onClick="updateList()" title="Update all user icons and nicknames in case of changes.">
+		<toolbar>
+			<input type="button" value="Update" onClick="updateList()" title="Update all user icons and nicknames in case of changes.">
 			<input type="button" value="Export" onClick="exportList()" title="Exports all favorites as a User ID list.">
-		</div>
-		<div id="small_user_list" class="offset">
-			<div style="margin-top: 260px; text-align: center; font-size: 12pt; font-style: italic; font-weight: 300; color: rgba(255,255,255,0.4);">Loading, please wait...</div>
-		</div>
+		</toolbar>
+		<main>
+			<div id="small_user_list" class="list">
+				<div style="margin-top: 260px; text-align: center; font-size: 12pt; font-style: italic; font-weight: 300; color: rgba(255,255,255,0.4);">Loading, please wait...</div>
+			</div>
+		</main>
 	</body>	
 </html>
