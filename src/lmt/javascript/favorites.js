@@ -22,7 +22,7 @@ $(function(){
 	});
 
 	Favorites.events.on('status', (m) => {
-		$('#small_user_list').html(`<div style="margin-top: 260px; text-align: center; font-size: 12pt; font-style: italic; font-weight: 300; color: rgba(255,255,255,0.4);">${m}</div>`);
+		$('#small_user_list').html(`<div class="empty">${m}</div>`);
 	});
 
 	setTimeout(function(){
