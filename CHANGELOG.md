@@ -1,5 +1,14 @@
 ## CHANGELOG
 
+### 6.x.x Releases
+
+#### 2017-09-00 - v6.0.0
+**Added:**
+- Migrated to using LiveMe API module 
+
+**Fixed:**
+- 
+
 ### 5.x.x Releases
 
 #### 2017-09-13 - v5.0.6
