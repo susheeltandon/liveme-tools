@@ -31,7 +31,8 @@ let mainwin = null,
     playerWindow = null,
     favoritesWindow = null,
     chatWindow = null,
-    importwin = null;
+    importwin = null,
+    aboutwin = null;
 
 function createWindow() {
 	/*
@@ -140,30 +141,6 @@ function createWindow() {
         })
         .loadURL(`file://${__dirname}/lmt/importlist.html`);
 
-    let splash = new BrowserWindow({
-        width: 600,
-        height: 180,
-        resizable: false,
-        darkTheme: true,
-        autoHideMenuBar: true,
-        show: false,
-        skipTaskbar: true,
-        disableAutoHideCursor: true,
-        titleBarStyle: 'default',
-        fullscreen: false,
-        maximizable: false,
-        frame: false,
-        movable: false,
-        transparent: true,
-        parent: mainwin
-    });
-    
-    splash
-        .once('ready-to-show', () => {
-            splash.show();
-        })
-        .loadURL(`file://${__dirname}/lmt/splash.html`);
-
 	/*
 		Only use custom menus if app is compiled, otherwise leave menus alone during development testing.
 	*/
@@ -215,6 +192,43 @@ app
             createWindow();
         }
     });
+
+/*
+    Splash/About Window
+*/
+function showSplash() {
+    if (aboutwin == null) {
+        aboutwin = new BrowserWindow({
+            width: 600,
+            height: 180,
+            resizable: false,
+            darkTheme: true,
+            autoHideMenuBar: true,
+            show: false,
+            skipTaskbar: true,
+            disableAutoHideCursor: true,
+            titleBarStyle: 'default',
+            fullscreen: false,
+            maximizable: false,
+            frame: false,
+            movable: false,
+            transparent: true,
+            parent: mainwin
+        });
+
+        aboutwin.once('ready-to-show', () => {
+            aboutwin.show();
+        })
+    }
+
+    aboutwin.loadURL(`file://${__dirname}/lmt/splash.html`);
+
+}
+
+
+
+
+
 
 /*
 	Favorites Related
@@ -418,31 +432,47 @@ ipcMain.on('open-chat', (event, arg) => {
 });
 
 
+
 /*
-	Download Queue
+
+    Queue Window
+
+	show-queue is issued when only the first download is added to the queue
 */
 ipcMain.on('show-queue', () => {
     if (queuewin.isMinimized()) {
         queuewin.restore();
     }
 });
-
-ipcMain.on('toggle-queue', () => {
+function toggleQueueWindow() {
     if (queuewin.isMinimized()) {
         queuewin.restore();
     } else {
         queuewin.minimize();
     }
-});
+};
+
+
 
 /*
-	History relay
+	History Window
+
 */
 
 ipcMain.on('history-delete', (event, arg) => {
     mainwin.send('history-delete', {});
 });
 
+
+
+
+
+
+/*
+    
+    Main Window/macOS Menubar menu template
+
+*/
 function getMenuTemplate() {
     var template = [
         {
@@ -491,7 +521,10 @@ function getMenuTemplate() {
         template.unshift({
             label: app.getName(),
             submenu: [
-                { role: 'about' },
+                {
+                    label: 'About ' + app.getName(),
+                    click: () => showSplash()  
+                },
                 { type: 'separator' },
                 { role: 'services', submenu: [] },
                 { type: 'separator' },
