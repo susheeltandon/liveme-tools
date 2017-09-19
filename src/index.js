@@ -97,7 +97,7 @@ function createWindow() {
         maxHeight: 1600,
         darkTheme: true,
         autoHideMenuBar: false,
-        show: false,
+        show: true,
         skipTaskbar: false,
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
@@ -119,7 +119,8 @@ function createWindow() {
         .on('closed', () => {
             queuewin = null;
         })
-        .loadURL(`file://${__dirname}/lmt/queue.html`);
+        .loadURL(`file://${__dirname}/lmt/queue.html`)
+        .minimize();
 
 
     /*
