@@ -7,7 +7,7 @@
 		</script>
 
 		<link rel="stylesheet" href="style/style.css">
-		<script src="javascript/jquery-2.2.4.min.js"></script>
+		<script src="javascript/jquery-3.2.1.min.js"></script>
 		<script src="javascript/livemetools.magic.js"></script>
 		<script src="javascript/livemetools.js"></script>
 
@@ -15,11 +15,8 @@
 
 	<body>
 
-		<header>
-			<img class="menu-icon" src="images/ic_menu_white_24px.svg" onClick="showMainMenu()" title="Show Main Menu">
-			<h1 class="logo">LiveMe Tools<small><!-- version will be written here by javascript --></small></h1>
-
-			<div class="search">
+		<toolbar>
+			<div class="input has-left-select has-right-button">
 				<div class="select">
 					<select id="type" onChange="onTypeChange()">
 						<option value="user-lookup">UserID =</option>
@@ -29,15 +26,18 @@
 						<option value="hashtag">Has Hashtag</option>
 					</select>
 				</div>
-				<input type="search" id="query" value="" placeholder="Search" onkeypress="enterOnSearch(event)">
-				<input type="text" id="maxlevel" value="" placeholder="Max Level">
-				<input type="button" value="Search" onClick="beginSearch()">
-			</div>
-			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="closeApp()" title="Close">
-		</header>
+				<input type="text" id="query" value="" placeholder="Search" onkeypress="enterOnSearch(event)">
+				<input type="button" class="icon search-icon" onClick="beginSearch()" title="Search for Content">
+			</div>			
+		</toolbar>		
 
-		<div id="main"></div>
-		<div id="overlay"><div class="status">-</div></div>
+		<overlay>
+			<div class="status"></div>
+		</overlay>
+		<panel>
+			<div class="user-panel"></div>
+		</panel>
+		<main class="offset48" id="main"></main>
 
 	</body>
 </html>
