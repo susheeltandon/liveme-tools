@@ -269,8 +269,6 @@ ipcMain.on('show-favorites', () => {
         .loadURL(`file://${__dirname}/lmt/favorites-list.html`);
 });
 
-
-
 /*
 	Import Window
 */
@@ -282,9 +280,6 @@ ipcMain.on('show-import-win', (event, arg) => {
 ipcMain.on('hide-import-win', () => {
     importwin.hide();
 });
-
-
-
 
 /*
 	Settings Related
@@ -317,10 +312,13 @@ ipcMain.on('show-settings', () => {
 });
 
 /*
-	Search Related
+    Search Related
+    ??
 */
 
-ipcMain.on('submit-search', (event, arg) => { mainwin.webContents.send('do-search', { userid: arg.userid }); });
+ipcMain.on('submit-search', (event, arg) => {
+    mainwin.webContents.send('do-search', { userid: arg.userid });
+});
 
 ipcMain.on('livemesearch', (event, arg) => {
     if (arg.type == 'search') {
@@ -334,56 +332,67 @@ ipcMain.on('livemesearch', (event, arg) => {
     }
 });
 
-
-
 /*
 	Popup Windows (Followings/Fans)
 */
 ipcMain.on('open-window', (event, arg) => {
-    var win = new BrowserWindow({
-        width: 320, height: 720, resizable: false, darkTheme: true, autoHideMenuBar: false, skipTaskbar: false, backgroundColor: '#4a4d4e',
-        disableAutoHideCursor: true, titleBarStyle: 'default', fullscreen: false, maximizable: false, frame: false
+    let win = new BrowserWindow({
+        width: 320,
+        height: 720,
+        resizable: false,
+        darkTheme: true,
+        autoHideMenuBar: false,
+        skipTaskbar: false,
+        backgroundColor: '#4a4d4e',
+        disableAutoHideCursor: true,
+        titleBarStyle: 'default',
+        fullscreen: false,
+        maximizable: false,
+        frame: false,
+        show: false
     });
-    win.setMenu(null);
-    win.loadURL(`file://${__dirname}/lmt/` + arg.url);
-    win.show();
-    //win.once('ready-to-show', () => { win.show(); });
+
+    win.once('ready-to-show', () => {
+        win.show();
+    }).loadURL(`file://${__dirname}/lmt/` + arg.url);
 });
-
-
 
 /*
 	Video Player Related
-
-	Note:  	Tried using Quicktime Player on MacOS but it would resize and stop constantly due to playlists
-			Was successful doing a couple tests with Windows Media Player on Windows
-			Thought of allowing user to choose in future version, just need to implement UI and handle it here
-
-	For now, its an HLS video player in a web browser window...
 */
 ipcMain.on('play-video', (event, arg) => {
     if (playerWindow == null) {
         playerWindow = new BrowserWindow({
-            width: 368, height: 640, resizable: true, darkTheme: true, autoHideMenuBar: false, show: true, skipTaskbar: false, backgroundColor: '#4a4d4e',
-            disableAutoHideCursor: true, titleBarStyle: 'default', fullscreen: false, maximizable: false, frame: false
+            width: 368,
+            height: 640,
+            resizable: true,
+            darkTheme: true,
+            autoHideMenuBar: false,
+            show: false,
+            skipTaskbar: false,
+            backgroundColor: '#4a4d4e',
+            disableAutoHideCursor: true,
+            titleBarStyle: 'default',
+            fullscreen: false,
+            maximizable: false,
+            frame: false
         });
-        playerWindow.webContents.session.clearCache(() => { });
-        playerWindow.webContents.session.clearStorageData();
-        playerWindow.on('closed', () => {
-            playerWindow = null;
-        });
-    }
-    playerWindow.loadURL(`file://${__dirname}/lmt/player.html#` + arg.url);
 
+        playerWindow
+            .once('ready-to-show', () => {
+                playerWindow.show();
+            })
+            .on('closed', () => {
+                playerWindow = null;
+            });
+    }
+
+    playerWindow.loadURL(`file://${__dirname}/lmt/player.html#` + arg.url);
 });
+
 ipcMain.on('hide-player', (event, arg) => {
     playerWindow.close();
 });
-
-
-
-
-
 
 /* 
 	Chat Window 
@@ -392,27 +401,25 @@ ipcMain.on('open-chat', (event, arg) => {
     chatWindow.showInactive();
     chatWindow.webContents.send('set-chat', { url: arg.url, startTime: arg.startTime, nickname: arg.nickname });
 });
-ipcMain.on('hide-chat', () => { chatWindow.hide(); });
 
-
-
-
-
-
+ipcMain.on('hide-chat', () => {
+    chatWindow.hide();
+});
 
 /*
 	Download Queue
 */
 ipcMain.on('show-queue', () => {
-    if (queuewin == null) { return; }
-    queuewin.show();
+    if (queuewin != null) {
+        queuewin.show();
+    }
 });
 
 ipcMain.on('hide-queue', () => {
-    if (queuewin == null) { return; }
-    queuewin.hide();
+    if (queuewin != null) {
+        queuewin.hide();
+    }
 });
-
 
 /*
 	History relay
@@ -422,12 +429,7 @@ ipcMain.on('history-delete', (event, arg) => {
     mainwin.send('history-delete', {});
 });
 
-
-
-
-
 function getMenuTemplate() {
-
     var template = [
         {
             label: 'Edit',
@@ -466,7 +468,6 @@ function getMenuTemplate() {
         }
     ];
 
-
     if (process.platform === 'darwin') {
         template.unshift({
             label: app.getName(),
@@ -494,29 +495,38 @@ function getMenuTemplate() {
         })
     }
 
-
-
     return template
 }
 
 
 function CheckForUpgrade() {
-
     var r = new Date().getTime();
+
     request({ url: 'https://raw.githubusercontent.com/thecoder75/liveme-tools/master/src/package.json?random=' + r, timeout: 15000 }, function (err, response, body) {
         var js = JSON.parse(body), nv = parseFloat(js.minversion.replace('.', '')), ov = parseFloat(app.getVersion().replace('.', '')), isCurrent = nv > ov;
 
         if (nv > ov) {
-            var win = new BrowserWindow({
-                width: 400, height: 244, resizable: false, darkTheme: true, autoHideMenuBar: false, skipTaskbar: false, backgroundColor: '#4a4d4e',
-                disableAutoHideCursor: true, titleBarStyle: 'default', fullscreen: false, maximizable: false, frame: false
+            let win = new BrowserWindow({
+                width: 400,
+                height: 244,
+                resizable: false,
+                darkTheme: true,
+                autoHideMenuBar: false,
+                skipTaskbar: false,
+                backgroundColor: '#4a4d4e',
+                disableAutoHideCursor: true,
+                titleBarStyle: 'default',
+                fullscreen: false,
+                maximizable: false,
+                frame: false,
+                show: false
             });
-            win.loadURL(`file://${__dirname}/lmt/upgrade.html`);
-            win.show();
+
+            win.once('ready-to-show', () => {
+                win.show();
+            }).loadURL(`file://${__dirname}/lmt/upgrade.html`);
         }
-
     });
-
 }
 
 
