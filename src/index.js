@@ -115,29 +115,6 @@ function createWindow() {
         })
         .loadURL(`file://${__dirname}/lmt/queue.html`);
 
-    chatWindow = new BrowserWindow({
-        width: 320,
-        height: 760,
-        resizable: true,
-        darkTheme: true,
-        autoHideMenuBar: false,
-        show: false,
-        skipTaskbar: false,
-        backgroundColor: '#000000',
-        disableAutoHideCursor: true,
-        titleBarStyle: 'default',
-        fullscreen: false,
-        maximizable: false,
-        closable: true,
-        frame: true
-    });
-
-    chatWindow
-        .on('closed', () => {
-            chatWindow = null;
-        })
-        .loadURL(`file://${__dirname}/lmt/chat.html`);
-
     importwin = new BrowserWindow({
         width: 320,
         height: 160,
@@ -320,7 +297,8 @@ ipcMain.on('show-settings', () => {
 
 /*
     Search Related
-    ??
+    ?? - Called from Following/Fans/Favorites windows when an entry is clicked.  Will 
+    need to clean up and standardize as a single command
 */
 
 ipcMain.on('submit-search', (event, arg) => {
@@ -373,9 +351,11 @@ ipcMain.on('play-video', (event, arg) => {
         playerWindow = new BrowserWindow({
             width: 368,
             height: 640,
+            minWidth: 184,
+            minHeight: 320,
             resizable: true,
             darkTheme: true,
-            autoHideMenuBar: false,
+            autoHideMenuBar: true,
             show: false,
             skipTaskbar: false,
             backgroundColor: '#4a4d4e',
@@ -399,21 +379,44 @@ ipcMain.on('play-video', (event, arg) => {
     playerWindow.loadURL(`file://${__dirname}/lmt/player.html#` + arg.url);
 });
 
-ipcMain.on('hide-player', (event, arg) => {
-    playerWindow.close();
-});
-
 /* 
 	Chat Window 
 */
 ipcMain.on('open-chat', (event, arg) => {
+    chatWindow = new BrowserWindow({
+        width: 320,
+        height: 480,
+        minWidth: 320,
+        maxWidth: 320,
+        minHeight: 240,
+        maxHeight: 1600,
+        resizable: true,
+        darkTheme: true,
+        autoHideMenuBar: false,
+        show: false,
+        skipTaskbar: false,
+        backgroundColor: '#000000',
+        disableAutoHideCursor: true,
+        titleBarStyle: 'default',
+        fullscreen: false,
+        minimizable: false,
+        maximizable: false,
+        closable: true,
+        frame: true
+    });
+
+    chatWindow
+        .on('closed', () => {
+            chatWindow = null;
+        })
+        .loadURL(`file://${__dirname}/lmt/chat.html`);
+
     chatWindow.showInactive();
-    chatWindow.webContents.send('set-chat', { url: arg.url, startTime: arg.startTime, nickname: arg.nickname });
+    chatWindow.once('ready-to-show', () => {
+        chatWindow.webContents.send('set-chat', { url: arg.url, startTime: arg.startTime, nickname: arg.nickname });    
+    });    
 });
 
-ipcMain.on('hide-chat', () => {
-    chatWindow.hide();
-});
 
 /*
 	Download Queue
@@ -424,8 +427,10 @@ ipcMain.on('show-queue', () => {
     }
 });
 
-ipcMain.on('hide-queue', () => {
-    if (queuewin.isMinimized() == false) {
+ipcMain.on('toggle-queue', () => {
+    if (queuewin.isMinimized()) {
+        queuewin.restore();
+    } else {
         queuewin.minimize();
     }
 });
@@ -459,7 +464,12 @@ function getMenuTemplate() {
                 { role: 'minimize' },
                 { role: 'close' },
                 { type: 'separator' },
-                { role: 'toggledevtools' }
+                { role: 'toggledevtools' },
+                { type: 'separator' },
+                {
+                    label: 'Toggle Queue Window',
+                    click: () => toggleQueueWindow()
+                }
             ]
         },
         {
