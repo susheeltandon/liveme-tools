@@ -9,7 +9,7 @@
 
 */
 
-const 	{ electron, BrowserWindow, remote, ipcRenderer, shell } = require('electron'),
+const 	{ electron, BrowserWindow, remote, ipcRenderer, shell, clipboard } = require('electron'),
 		fs = require('fs'), path = require('path'), 
 		appSettings = remote.require('electron-settings'),
 		Favorites = remote.getGlobal('Favorites'),
@@ -19,53 +19,9 @@ var isSearching = false, favorites_list = [], debounced = false, current_user = 
 
 $(function(){
 
-	$('header h1 small').html(remote.app.getVersion());
+	document.title = remote.app.getName() + ' v' + remote.app.getVersion();
 
 	onTypeChange();
-
-	// Custom popup menu for text fields
-	const InputMenu = remote.Menu.buildFromTemplate([{
-	        label: 'Cut Text',
-	        role: 'cut',
-	    }, {
-	        label: 'Copy Text',
-	        role: 'copy',
-	    }, {
-	        label: 'Paste Text',
-	        role: 'paste',
-	    }, {
-	        type: 'separator',
-	    }, {
-	        label: 'Select All Text',
-	        role: 'selectall',
-	    },
-	]);
-
-	const InputMenu2 = remote.Menu.buildFromTemplate([{
-	        label: 'Copy Link',
-	        role: 'copy',
-	    }
-	]);
-
-
-	document.body.addEventListener('contextmenu', (e) => {
-	    e.preventDefault();
-	    e.stopPropagation();
-
-	    let node = e.target;
-
-	    while (node) {
-	        if (node.nodeName.match(/^(input|textarea)$/i) || node.isContentEditable) {
-	            InputMenu.popup(remote.getCurrentWindow());
-	            break;
-	        }
-	        if (node.nodeName.match(/^(a)$/i)) {
-	            InputMenu2.popup(remote.getCurrentWindow());
-	            break;
-	        }
-	        node = node.parentNode;
-	    }
-	});	
 
 	// Remote search calls
 	ipcRenderer.on('do-search' , function(event , data) { 
@@ -85,6 +41,8 @@ $(function(){
 	//Favorites.load();
 	Downloads.load();
 });
+
+
 
 function showMainMenu() {
 
@@ -174,6 +132,7 @@ function showMainMenu() {
 
 }
 
+function copyToClipboard(i) { clipboard.writeText(i); }
 function cancelAction() { cancelLMTweb = true; }
 
 function showSettings() { ipcRenderer.send('show-settings'); }
@@ -329,8 +288,8 @@ function beginSearch2() {
 	if (isSearching) { return; }
 
 	isSearching = true;
-	$('#overlay').show();
-	$('#main').html('');
+	$('overlay').show();
+	$('main').html('');
 	
 	if ($('#type').val() == 'url-lookup') {
 		var q = '', u=$('#query').val(), t=u.split('/');
@@ -381,11 +340,20 @@ function beginSearch2() {
 				}
 			}
 		} else {
-			$('#main').html('<div class="emptylist">Unsupported URL detected.</div>');
+			
+			
+			/*
+
+				!! NEED TO MAKE BETTER ERROR BOX !!
+
+			*/
+			$('main').html('<div class="list">Unsupported URL detected.</div>');
+
+
 		}
 
 		isSearching = false;
-		$('#overlay').hide();
+		$('overlay').hide();
 		
 	}
 
@@ -394,27 +362,27 @@ function beginSearch2() {
 	if ($('#type').val() == 'search') {
 		searchkeyword($('#query').val(), function(e) {
 			isSearching = false;
-			$('#main').html('<div id="results" class="panel"></div>'); 
+			$('main').html('<div id="results" class="list"></div>'); 
 			renderSearchResults(e);
-			$('#overlay').hide();
+			$('overlay').hide();
 		});
 	} else if ($('#type').val() == 'hashtag') {
 		search_hashtag($('#query').val(), function(e) {
 			isSearching = false;
-			$('#main').html('<div id="videolist_full" class="panel"></div>'); 
+			$('main').html('<div id="videolist_full" class="panel"></div>'); 
 			renderHashtagResults(e);
-			$('#overlay').hide();
+			$('overlay').hide();
 		});
 	} else {
 		getuservideos($('#query').val(), function(e){
 			isSearching = false;
 			if ((typeof e.userinfo.userid === "undefined") || (e.userinfo.userid == 0)) {
-				$('#main').html('<div class="emptylist">Search returned nothing.</div>');
+				$('main').html('<div class="emptylist">Search returned nothing.</div>');
 			} else {
-				$('#main').html('<div id="userinfo" class="panel"></div><div id="videolist" class="panel"></div>'); 
+				$('main').html('<div id="videolist" class="panel"></div>'); 
 				renderUserLookup(e);
 			}
-			$('#overlay').hide();
+			$('overlay').hide();
 		});
 	}	
 
@@ -482,7 +450,9 @@ function openChat(u, t, a) {
 
 function renderUserLookup(e) {
 
-	$('#videolist').html('');
+	$('panel').show();
+	$('#main').addClass('with-panel').html('<div id="videolist" class="list"></div>');
+
 
 	if (typeof e === "undefined") {
 		$('#videolist').html('<div class="emptylist">Search returned no data, account may be closed.</div>');
@@ -502,16 +472,36 @@ function renderUserLookup(e) {
 			nickname: e.userinfo.username
 		};
 
-		$('#userinfo').html(`
-				<img src="${e.userinfo.usericon}" class="avatar" onerror="this.src='images/blank.png'"><br>
-				<h3 class="name">${e.userinfo.username}</h3>
-				<label>User ID:</label><input type="text" id="useridtf" value="${e.userinfo.userid}" disabled="disabled">
-				<h4>Level: ${e.userinfo.level}</h4>
-				<input type="button" value="Favorite" onClick="toggleFavorite()" id="favorites_button">
-				<br><br>
-				<input type="button" value="Following ${e.userinfo.following}" onClick="showFollowing('${e.userinfo.userid}', ${e.userinfo.following}, '${e.userinfo.username}')">
-				<input type="button" value="${e.userinfo.fans} Fans" onClick="showFans('${e.userinfo.userid}', ${e.userinfo.following}, '${e.userinfo.username}')">
-				<input type="hidden" id="sex" value="${e.userinfo.sex}">
+		$('.user-panel').html(`
+			<img class="avatar" src="${e.userinfo.usericon}" onerror="this.src='images/blank.png'">
+			<div class="meta">
+				<div>
+					<span>Username:</span>
+					${e.userinfo.username}
+				</div>
+				<div>
+					<span>User ID:</span>
+					<input type="text" id="useridtf" value="${e.userinfo.userid}" disabled="disabled">
+				</div>
+				<div>
+					<span>Level:</span>
+					${e.userinfo.level}
+				</div>
+				<div>
+					<br><br>
+					<input type="button" class="toggle tiny tiny-100" value="Favorite" onClick="toggleFavorite()" id="favorites_button">
+					<br><br><br>
+				</div>
+				<div>
+					<span>Following:</span>
+					<input type="button" class="tiny tiny-100" value="${e.userinfo.following}" onClick="showFollowing('${e.userinfo.userid}', ${e.userinfo.following}, '${e.userinfo.username}')">
+				</div>
+				<div>
+					<span>Fans:</span>
+					<input type="button" class="tiny tiny-100" value="${e.userinfo.fans}" onClick="showFans('${e.userinfo.userid}', ${e.userinfo.following}, '${e.userinfo.username}')">
+				</div>
+			</div>
+			<input type="hidden" id="sex" value="${e.userinfo.sex}">
 		`);
 
 		setTimeout(function(){
@@ -546,29 +536,65 @@ function renderUserLookup(e) {
 			var downloaded = Downloads.hasBeenDownloaded(e.videos[i].videoid) ? 'downloaded' : '';
 
 			var h = `
-				<div class="video_entry ${highlight} ${downloaded}">
-					<input class="vdoid" type="text" value="${e.videos[i].videoid}"><input class="url" type="text" value="${e.videos[i].url}">
-					<span class="vid">ID:</span>
-					<span class="uid">URL:</span>
-					<h4 class="date">${ds}</h4>
-					<h4 class="title">${deleted}${e.videos[i].title}</h4>
-					<div class="counts">
-						<label>Length:</label><span>${length}</span>
-						<label>Views:</label><span>${e.videos[i].plays}</span>
-						<label>Likes:</label><span>${e.videos[i].likes}</span>
-						<label>Shares:</label><span>${e.videos[i].shares}</span>
-						<label>Country:</label><span>${e.videos[i].location.country}</span>
-					</div>
-					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e.videos[i].url}')" title="Play Video">
+				<div class="item ${highlight} ${downloaded}">
+					<div class="header">${deleted}${e.videos[i].title}</div>
+					<div class="content">
+						<div class="meta">
+							<div class="width150">
+								<span>Posted on:</span>
+								${ds}
+							</div>
+							<div class="width100">
+								<span>Length:</span>
+								${length}
+							</div>
+							<div class="width100">
+								<span>Views:</span>
+								${e.videos[i].plays}
+							</div>
+							<div class="width100">
+								<span>Likes:</span>
+								${e.videos[i].likes}
+							</div>
+							<div class="width100">
+								<span>Shares:</span>
+								${e.videos[i].shares}
+							</div>
+							<div class="width60">
+								<span>Country</span>
+								${e.videos[i].location.country}
+							</div>
+							<div class="width300 align-right">
+								<a class="button icon icon-play" onClick="playVideo('${e.videos[i].url}')" title="Play Video"></a>
 				`;
 			if (e.videos[i].url.indexOf('liveplay') < 0 && e.videos[i].url.indexOf('hlslive') < 0) {
 				h += `
-					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e.videos[i].msgfile}', '${e.videos[i].dt}', '${e.userinfo.username}')" title="View Message History">
-					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userinfo.userid}', '${e.userinfo.username}', '${e.videos[i].videoid}', '${e.videos[i].title.replace("'", "")}', '${e.videos[i].dt}', '${e.videos[i].url}')" title="Download Video">
+								<a class="button icon icon-chat" onClick="openChat('${e.videos[i].msgfile}', '${e.videos[i].dt}', '${e.userinfo.username}')" title="View Message History"></a>
+								<a class="button icon icon-download" onClick="downloadVideo('${e.userinfo.userid}', '${e.userinfo.username}', '${e.videos[i].videoid}', '${e.videos[i].title.replace("'", "")}', '${e.videos[i].dt}', '${e.videos[i].url}')" title="Download Replay"></a>
 				`;
 			}
 				
 			h += `
+							</div>
+						</div>
+					</div>
+					<div class="footer">
+						<div class="width200">
+							<span>Video ID:</span>
+							<div class="input has-right-button">
+								<input type="text" value="${e.videos[i].videoid}">
+								<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${e.videos[i].videoid}')" title="Copy to Clipboard">
+							</div>
+						</div>
+						<div class="spacer">&nbsp;</div>
+						<div class="width700">
+							<span>Video URL:</span>
+							<div class="input has-right-button">
+								<input type="text" value="${e.videos[i].url}">
+								<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${e.videos[i].url}')" title="Copy to Clipboard">
+							</div>
+						</div>
+					</div>
 				</div>
 			`;
 
@@ -579,29 +605,46 @@ function renderUserLookup(e) {
 }
 
 function renderSearchResults(e) {
-	$('#main').html('<div id="userlist"></div>');
+	$('main').html('<div id="userlist" class="list"></div>');
 
 	if (typeof(e) == "undefined") {
 		return;
 	}
 
 	if (e.length < 1) {
-		$('#main').html('<div class="emptylist">No users were found on LiveMe.</div>');
+		$('main').html('<div class="emptylist">No users were found on LiveMe.</div>');
 		return;
 	}
 
 	for(i = 0; i < e.length; i++) {
 		if (e[i].userid > 0) {
 			$('#userlist').append(`
-				<div class="user_entry ${e[i].sex}">
-					<img class="avatar" src="${e[i].face}" onerror="this.src='images/blank.png'">
-					<h4>${e[i].nickname}</h4>
-					<div class="userid">UserID:</div>
-					<div class="level">Level: <span>${e[i].level}</span></div>
-					
-					<input type="button" class="fans" value="${e[i].fans} Fans" onClick="showFans('${e[i].userid}', '${e[i].fans}', '${e[i].nickname}')">
-					<input type="button" class="followings" value="Following ${e[i].followings}" onClick="showFollowing('${e[i].userid}', ${e[i].followings}, '${e[i].nickname}')">
-					<input type="button" class="user" value="${e[i].userid}" onClick="showUser('${e[i].userid}')">
+
+				<div class="item">
+					<div class="avatar">
+						<img src="${e[i].face}" onerror="this.src='images/blank.png'">
+					</div>
+					<div class="content">
+						<div class="header">${e[i].nickname}</div>
+						<div class="meta">
+							<div class="width100">
+								<span>Level:</span>
+								${e[i].level}
+							</div>
+							<div class="width200">
+								<span>User ID:</span>
+								<input type="button" class="tiny tiny-160" value="${e[i].userid}" onClick="showUser('${e[i].userid}')">
+							</div>
+							<div class="width100">
+								<span>Fans:</span>
+								<input type="button" class="tiny tiny-100" value="${e[i].fans}" onClick="showFans('${e[i].userid}', '${e[i].fans}', '${e[i].nickname}')">
+							</div>
+							<div class="width100">
+								<span>Following:</span>
+								<input type="button" class="tiny tiny-100" value="${e[i].followings}" onClick="showFollowing('${e[i].userid}', ${e[i].followings}, '${e[i].nickname}')">								
+							</div>
+						</div>
+					</div>
 				</div>
 			`);
 		}
@@ -610,14 +653,14 @@ function renderSearchResults(e) {
 
 function renderHashtagResults(e) {
 
-	$('#main').html('<div id="videolist_full"></div>');
+	$('main').html('<div id="videolist" class="list"></div>');
 
 	if (typeof(e) == "undefined") {
 		return;
 	}
 
 	if (e.length < 1) {
-		$('#main').html('<div class="emptylist">No videos were found on LiveMe matching the specified hashtag.</div>');
+		$('main').html('<div class="emptylist">No videos were found on LiveMe matching the specified hashtag.</div>');
 		return;
 	}
 
@@ -636,33 +679,70 @@ function renderHashtagResults(e) {
 			var downloaded = Downloads.hasBeenDownloaded(e[i].vdoid) ? 'downloaded' : '';
 
 			var h = `
-				<div class="video_entry ${highlight} ${downloaded}">
-					<input class="vdoid" type="text" value="${e[i].vdoid}"><input class="url" type="text" value="${e[i].videosource}">
-					<span class="vid">ID:</span>
-					<span class="uid">URL:</span>
-					<h4 class="date">${ds}</h4>
-					<h4 class="title"><span onClick="showUser('${e[i].userid}')">${e[i].uname}</span> - ${deleted}${e[i].title}</h4>
-					<div class="counts">
-						<label>Length:</label><span>${length}</span>
-						<label>Views:</label><span>${e[i].playnumber}</span>
-						<label>Likes:</label><span>${e[i].likenum}</span>
-						<label>Shares:</label><span>${e[i].sharenum}</span>
-						<label>Country:</label><span>${e[i].countryCode}</span>
-					</div>
-					<img class="watch" src="images/ic_play_circle_outline_white_24px.svg" onClick="playVideo('${e[i].videosource}')" title="Play Video">
+
+				<div class="item ${highlight} ${downloaded}">
+					<div class="header">${deleted}${e[i].title}</div>
+					<div class="content">
+						<div class="meta">
+							<div class="width150">
+								<span>Posted on:</span>
+								${ds}
+							</div>
+							<div class="width100">
+								<span>Length:</span>
+								${length}
+							</div>
+							<div class="width100">
+								<span>Views:</span>
+								${e[i].playnumber}
+							</div>
+							<div class="width100">
+								<span>Likes:</span>
+								${e[i].likenum}
+							</div>
+							<div class="width100">
+								<span>Shares:</span>
+								${e[i].sharenum}
+							</div>
+							<div class="width60">
+								<span>Country</span>
+								${e[i].countryCode}
+							</div>
+							<div class="width300 align-right">
+								<a class="button icon icon-play" onClick="playVideo('${e[i].videosource}')" title="Play Video"></a>
 				`;
 			if (e[i].videosource.indexOf('liveplay') < 0 && e[i].videosource.indexOf('hlslive') < 0) {
 				h += `
-					<img class="chat" src="images/ic_chat_white_24px.svg" onClick="openChat('${e[i].msgfile}', '${e[i].vtime}', '${e.uname}')" title="View Message History">
-					<img class="download" src="images/ic_file_download_white_24px.svg" onClick="downloadVideo('${e.userid}', '${e.uname}', '${e[i].vdoid}', '${e[i].title.replace("'", "")}', '${e[i].vtime}', '${e[i].videosource}')" title="Download Video">
+								<a class="button icon icon-chat" onClick="openChat('${e[i].msgfile}', '${e[i].vt}', '${e.uname}')" title="View Message History"></a>
+								<a class="button icon icon-download" onClick="downloadVideo('${e.userid}', '${e.uname}', '${e[i].vdoid}', '${e[i].title.replace("'", "")}', '${e[i].vt}', '${e[i].videosource}')" title="Download Replay"></a>
 				`;
 			}
 				
 			h += `
+							</div>
+						</div>
+					</div>
+					<div class="footer">
+						<div class="width200">
+							<span>Video ID:</span>
+							<div class="input has-right-button">
+								<input type="text" value="${e[i].vdoid}">
+								<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${e[i].vdoid}')" title="Copy to Clipboard">
+							</div>
+						</div>
+						<div class="spacer">&nbsp;</div>
+						<div class="width700">
+							<span>Video URL:</span>
+							<div class="input has-right-button">
+								<input type="text" value="${e[i].videosource}">
+								<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${e[i].videosource}')" title="Copy to Clipboard">
+							</div>
+						</div>
+					</div>
 				</div>
 			`;
 
-			$('#videolist_full').append(h);
+			$('#videolist').append(h);
 		}
 	}
 
