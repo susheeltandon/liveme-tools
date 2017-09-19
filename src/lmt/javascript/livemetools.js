@@ -347,7 +347,7 @@ function beginSearch2() {
 				!! NEED TO MAKE BETTER ERROR BOX !!
 
 			*/
-			$('main').html('<div class="list">Unsupported URL detected.</div>');
+			$('main').html('<div class="list"><div class="empty">Unsupported URL detected.</div></div>');
 
 
 		}
@@ -377,7 +377,7 @@ function beginSearch2() {
 		getuservideos($('#query').val(), function(e){
 			isSearching = false;
 			if ((typeof e.userinfo.userid === "undefined") || (e.userinfo.userid == 0)) {
-				$('main').html('<div class="emptylist">Search returned nothing.</div>');
+				$('main').html('<div class="list"><div class="empty">Search returned nothing.</div></div>');
 			} else {
 				$('main').html('<div id="videolist" class="panel"></div>'); 
 				renderUserLookup(e);
@@ -455,12 +455,12 @@ function renderUserLookup(e) {
 
 
 	if (typeof e === "undefined") {
-		$('#videolist').html('<div class="emptylist">Search returned no data, account may be closed.</div>');
+		$('.list').html('<div class="empty">Search returned no data, account may be closed.</div>');
 		return;
 	}
 
 	if (e.userinfo.userid == 0) {
-		$('#videolist').html('<div class="emptylist">Search returned no data, account may be closed.</div>');
+		$('.list').html('<div class="empty">Search returned no data, account may be closed.</div>');
 		return;
 	}
 
@@ -513,12 +513,12 @@ function renderUserLookup(e) {
 	}
 
 	if (typeof e.videos === undefined) {
-		$('#videolist').html('<div class="emptylist">No videos entries for this user account found.</div>');
+		$('#videolist').html('<div class="empty">No videos entries for this user account found.</div>');
 		return;
 	}
 
 	if (e.videos.length == 0) {
-		$('#videolist').html('<div class="emptylist">No videos entries for this user account found.</div>');
+		$('#videolist').html('<div class="empty">No videos entries for this user account found.</div>');
 		return;
 	}
 
@@ -612,7 +612,7 @@ function renderSearchResults(e) {
 	}
 
 	if (e.length < 1) {
-		$('main').html('<div class="emptylist">No users were found on LiveMe.</div>');
+		$('.list').html('<div class="empty">No users were found on LiveMe.</div>');
 		return;
 	}
 
@@ -660,7 +660,7 @@ function renderHashtagResults(e) {
 	}
 
 	if (e.length < 1) {
-		$('main').html('<div class="emptylist">No videos were found on LiveMe matching the specified hashtag.</div>');
+		$('.list').html('<div class="empty">No videos were found on LiveMe matching the specified hashtag.</div>');
 		return;
 	}
 
