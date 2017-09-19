@@ -53,15 +53,16 @@ function createWindow() {
         icon: __dirname + '/appicon.ico',
         width: 1120,
         height: 720,
-        minWidth: 1120,
-        minHeight: 720,
+        minWidth: 900,
+        minHeight: 480,
         darkTheme: true,
         autoHideMenuBar: false,
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
         maximizable: true,
-        frame: false,
+        closable: true,
+        frame: true,
         vibrancy: 'dark',
         backgroundColor: '#000000',
         show: false,
@@ -87,7 +88,7 @@ function createWindow() {
         resizable: true,
         minWidth: 640,
         maxWidth: 640,
-        minHeight: 160,
+        minHeight: 200,
         maxHeight: 1600,
         darkTheme: true,
         autoHideMenuBar: false,
@@ -96,8 +97,10 @@ function createWindow() {
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
+        minimizable: true,
         maximizable: false,
-        frame: false,
+        closable: false,
+        frame: true,
         backgroundColor: '#000000',
         webPreferences: {
             webSecurity: false,
@@ -125,7 +128,8 @@ function createWindow() {
         titleBarStyle: 'default',
         fullscreen: false,
         maximizable: false,
-        frame: false
+        closable: true,
+        frame: true
     });
 
     chatWindow
@@ -147,7 +151,8 @@ function createWindow() {
         titleBarStyle: 'default',
         fullscreen: false,
         maximizable: false,
-        frame: false,
+        closable: true,
+        frame: true,
         child: true,
         parent: mainwin
     });
@@ -251,7 +256,8 @@ ipcMain.on('show-favorites', () => {
         titleBarStyle: 'default',
         fullscreen: false,
         maximizable: false,
-        frame: false,
+        closable: true,
+        frame: true,
         webPreferences: {
             webSecurity: false,
             plugins: true,
@@ -299,7 +305,8 @@ ipcMain.on('show-settings', () => {
         titleBarStyle: 'default',
         fullscreen: false,
         maximizable: false,
-        frame: false,
+        closable: true,
+        frame: true,
         parent: mainwin,
         modal: true
     });
@@ -348,7 +355,8 @@ ipcMain.on('open-window', (event, arg) => {
         titleBarStyle: 'default',
         fullscreen: false,
         maximizable: false,
-        frame: false,
+        closable: true,
+        frame: true,
         show: false
     });
 
@@ -375,7 +383,8 @@ ipcMain.on('play-video', (event, arg) => {
             titleBarStyle: 'default',
             fullscreen: false,
             maximizable: false,
-            frame: false
+            closable: true,
+            frame: true
         });
 
         playerWindow
@@ -410,14 +419,14 @@ ipcMain.on('hide-chat', () => {
 	Download Queue
 */
 ipcMain.on('show-queue', () => {
-    if (queuewin != null) {
-        queuewin.show();
+    if (queuewin.isMinimized()) {
+        queuewin.restore();
     }
 });
 
 ipcMain.on('hide-queue', () => {
-    if (queuewin != null) {
-        queuewin.hide();
+    if (queuewin.isMinimized() == false) {
+        queuewin.minimize();
     }
 });
 
@@ -518,7 +527,8 @@ function CheckForUpgrade() {
                 titleBarStyle: 'default',
                 fullscreen: false,
                 maximizable: false,
-                frame: false,
+                closable: true,
+                frame: true,
                 show: false
             });
 
