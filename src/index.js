@@ -52,10 +52,10 @@ function createWindow() {
 
     mainwin = new BrowserWindow({
         icon: __dirname + '/appicon.ico',
-        width: 1120,
-        height: 720,
-        minWidth: 900,
-        minHeight: 480,
+        width: 980,
+        height: 560,
+        minWidth: 980,
+        minHeight: 560,
         darkTheme: true,
         autoHideMenuBar: false,
         disableAutoHideCursor: true,
@@ -64,8 +64,8 @@ function createWindow() {
         maximizable: true,
         closable: true,
         frame: true,
-        vibrancy: 'dark',
-        backgroundColor: '#000000',
+        vibrancy: 'ultra-dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
         show: false,
         webPreferences: {
             webSecurity: false,
@@ -79,6 +79,10 @@ function createWindow() {
             mainwin.show();
         })
         .on('closed', () => {
+            // !! TEMPORARY !!
+            app.exit(0);
+
+
             app.quit();
         })
         .loadURL(`file://${__dirname}/lmt/index.html`);
@@ -102,7 +106,8 @@ function createWindow() {
         maximizable: false,
         closable: false,
         frame: true,
-        backgroundColor: '#000000',
+        vibrancy: 'ultra-dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
         webPreferences: {
             webSecurity: false,
             plugins: true,
@@ -116,6 +121,12 @@ function createWindow() {
         })
         .loadURL(`file://${__dirname}/lmt/queue.html`);
 
+
+    /*
+
+        !! NEED TO MOVE THIS TO ITS OWN COMMAND SOMEWHERE ELSE !!
+
+    */
     importwin = new BrowserWindow({
         width: 320,
         height: 160,
@@ -124,7 +135,8 @@ function createWindow() {
         autoHideMenuBar: false,
         show: false,
         skipTaskbar: false,
-        backgroundColor: '#000000',
+        vibrancy: 'ultra-dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
@@ -141,12 +153,11 @@ function createWindow() {
         })
         .loadURL(`file://${__dirname}/lmt/importlist.html`);
 
-	/*
-		Only use custom menus if app is compiled, otherwise leave menus alone during development testing.
-	*/
-    if (isDev == false) {
-        Menu.setApplicationMenu(Menu.buildFromTemplate(getMenuTemplate()));
-    }
+
+
+
+    // Build our custom menubar
+    Menu.setApplicationMenu(Menu.buildFromTemplate(getMenuTemplate()));
 
     setTimeout(function () {
         CheckForUpgrade();
@@ -184,11 +195,11 @@ if (shouldQuit) {
 app
     .on('ready', createWindow)
     .on('window-all-closed', () => {
-        mainwin.webContents.send('do-shutdown');
+        mainwin.webContent.send('do-shutdown');
         app.quit();
     })
     .on('activate', () => {
-        if (mainWin === null) {
+        if (mainwin === null) {
             createWindow();
         }
     });
@@ -209,6 +220,8 @@ function showSplash() {
             disableAutoHideCursor: true,
             titleBarStyle: 'default',
             fullscreen: false,
+            vibrancy: 'ultra-dark',
+            backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
             maximizable: false,
             frame: false,
             movable: false,
@@ -233,38 +246,41 @@ function showSplash() {
 /*
 	Favorites Related
 */
-ipcMain.on('show-favorites', () => {
-    favoritesWindow = new BrowserWindow({
-        width: 360,
-        height: 720,
-        resizable: false,
-        darkTheme: true,
-        autoHideMenuBar: false,
-        show: false,
-        skipTaskbar: false,
-        backgroundColor: '#4a4d4e',
-        disableAutoHideCursor: true,
-        titleBarStyle: 'default',
-        fullscreen: false,
-        maximizable: false,
-        closable: true,
-        frame: true,
-        webPreferences: {
-            webSecurity: false,
-            plugins: true,
-            devTools: true
-        }
-    });
+function openFavoritesWindow() {
+    if (favoritesWindow == null) {
+        favoritesWindow = new BrowserWindow({
+            width: 360,
+            height: 720,
+            resizable: false,
+            darkTheme: true,
+            autoHideMenuBar: false,
+            show: false,
+            skipTaskbar: false,
+            vibrancy: 'ultra-dark',
+            backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
+            disableAutoHideCursor: true,
+            titleBarStyle: 'default',
+            fullscreen: false,
+            maximizable: false,
+            closable: true,
+            frame: true,
+            webPreferences: {
+                webSecurity: false,
+                plugins: true,
+                devTools: true
+            }
+        });
 
-    favoritesWindow
-        .once('ready-to-show', () => {
-            favoritesWindow.show();
-        })
-        .on('closed', () => {
-            favoritesWindow = null;
-        })
-        .loadURL(`file://${__dirname}/lmt/favorites-list.html`);
-});
+        favoritesWindow
+            .once('ready-to-show', () => {
+                favoritesWindow.show();
+            })
+            .on('closed', () => {
+                favoritesWindow = null;
+            })
+            .loadURL(`file://${__dirname}/lmt/favorites-list.html`);
+    }
+};
 
 /*
 	Import Window
@@ -291,7 +307,8 @@ ipcMain.on('show-settings', () => {
         show: false,
         skipTaskbar: false,
         center: true,
-        backgroundColor: '#4a4d4e',
+        vibrancy: 'ultra-dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
@@ -342,7 +359,8 @@ ipcMain.on('open-window', (event, arg) => {
         darkTheme: true,
         autoHideMenuBar: false,
         skipTaskbar: false,
-        backgroundColor: '#4a4d4e',
+        vibrancy: 'ultra-dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
@@ -372,7 +390,8 @@ ipcMain.on('play-video', (event, arg) => {
             autoHideMenuBar: true,
             show: false,
             skipTaskbar: false,
-            backgroundColor: '#4a4d4e',
+            vibrancy: 'ultra-dark',
+            backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
             disableAutoHideCursor: true,
             titleBarStyle: 'default',
             fullscreen: false,
@@ -409,7 +428,8 @@ ipcMain.on('open-chat', (event, arg) => {
         autoHideMenuBar: false,
         show: false,
         skipTaskbar: false,
-        backgroundColor: '#000000',
+        vibrancy: 'ultra-dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
@@ -494,11 +514,22 @@ function getMenuTemplate() {
                 { role: 'minimize' },
                 { role: 'close' },
                 { type: 'separator' },
-                { role: 'toggledevtools' },
+                {
+                    label: 'Developer Tools',
+                    submenu: [
+                        { role: 'reload' },
+                        { role: 'forcereload' },
+                        { role: 'toggledevtools' }
+                    ]
+                },
                 { type: 'separator' },
                 {
                     label: 'Toggle Queue Window',
                     click: () => toggleQueueWindow()
+                },
+                {
+                    label: 'Open Favorites Window',
+                    click: () => openFavoritesWindow()
                 }
             ]
         },
