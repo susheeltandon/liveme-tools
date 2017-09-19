@@ -14,7 +14,12 @@
 
 			$(function() {
 				Downloader.events.on('add', (arg) => {
-					$('#queuelist').append(`<div class="entry" id="${arg.id}"><div class="title">${arg.value}</div><img class="remove" src="images/ic_cancel_white_24px.svg" onClick="remove('${arg.id}')"></div>`);
+					$('#queuelist').append(`
+						<div class="entry" id="${arg.id}">
+							<div class="title">${arg.value}</div>
+							<img class="remove" src="images/ic_cancel_white_24px.svg" onClick="remove('${arg.id}')">
+						</div>
+					`);
 				});
 
 				Downloader.events.on('fail', (arg) => {
@@ -140,13 +145,7 @@
 		</script>
 `
 	</head>
-	<body onContextMenu="return false;">
-
-		<header class="small">
-			<h4>Download Queue</h4>
-			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="hideQueue()">
-		</header>
-
+	<body>
 		<div id="overlay">&nbsp;</div>
 		<div id="prompt1" class="popup_prompt">
 			<div class="content">
