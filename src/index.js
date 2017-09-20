@@ -233,12 +233,14 @@ function showSplash() {
             parent: mainwin
         });
 
+        aboutwin.loadURL(`file://${__dirname}/lmt/splash.html`);
+
         aboutwin.once('ready-to-show', () => {
             aboutwin.show();
-        })
-    }
-
-    aboutwin.loadURL(`file://${__dirname}/lmt/splash.html`);
+        });
+    } else {
+        aboutwin.show();
+    }    
 
 }
 
