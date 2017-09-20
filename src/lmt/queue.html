@@ -15,13 +15,13 @@
 			$(function() {
 				Downloader.events.on('add', (arg) => {
 					$('#queuelist').append(`
-						<div class="item" id="${arg.id}">
+						<div class="item small" id="${arg.id}">
 							<div class="content">
-								<div class="meta">
-									<div class="width500 text-ellipsis">${arg.value}</div>
-									<div class="align-right">
-										<a class="button icon icon-delete" onClick="remote('${arg.id}')"></a>
-									</div>
+								<div style="display: inline-block; width: 572px; text-overflow: ellipsis; overflow: hidden; line-height: 28px">
+									${arg.value}
+								</div>
+								<div style="display: inline-block; text-align: right;">
+									<a class="button icon icon-remove float-right" onClick="remote('${arg.id}')"></a>
 								</div>
 							</div>
 						</div>
@@ -30,8 +30,8 @@
 
 				Downloader.events.on('fail', (arg) => {
 					$('#' + arg.id).addClass("error");
-					$('#queueheader .progress').css({ width: '0%' });
-					$('.active_url').empty();
+					$('.progress .bar').css({ width: '0%' });
+					$('.active_url').html('&nbsp;');
 
 					setTimeout(() => {
 						$('#' + arg.id).slideUp(400).remove();
@@ -45,21 +45,21 @@
 				});
 
 				Downloader.events.on('progress', (arg) => {
-					$('#queueheader .progress').css({ width: arg.value + '%' });
-					$('.active_url').html('<h5>Downloading:</h5>'+arg.url);
+					$('.progress .bar').css({ width: arg.value + '%' });
+					$('.active_url').html(arg.url);
 				});
 
 				Downloader.events.on('start', (arg) => {
 					$('#' + arg.id).remove();
-					$('#queueheader .progress').css({ width: '0%' });
-                    $('.active_url').html('<h5>Downloading:</h5>'+arg.url);
+					$('.progress .bar').css({ width: '0%' });
+                    $('.active_url').html(arg.url);
                     $('#cancelActiveButton').show();
 				});
 
 				Downloader.events.on('finish', (arg) => {
 					$('#' + arg.id).addClass("finished");
-					$('#queueheader .progress').css({ width: '0%' });
-					$('.active_url').empty();
+					$('.progress .bar').css({ width: '0%' });
+					$('.active_url').html('&nbsp;');
 
 					setTimeout(() => {
 						$('#' + arg.id).slideUp(400).remove();
@@ -154,16 +154,22 @@
 	<body>
 		<overlay></overlay>
 		<toolbar>
-			<a class="button icon icon-pause" onClick="pauseResume()"></a>
-
-			<img id="cancelActiveButton" style="display: none;" class="addurl" src="images/ic_cancel_white_24px.svg" onClick="killDownload()">
-			<div class="active_url"></div>
-			<div class="progress"></div>
-
+			<div class="section width48">
+				<a class="button icon icon-pause" onClick="pauseResume()"></a>
+			</div>
+			<div class="section with-progress-bar width520">
+				<label class="active_url">&nbsp;</label>
+				<div class="progress"><div class="bar"></div></div>				
+			</div>
+			<div class="section width48 align-right">
+				<a id="cancelActiveButton" class="button icon icon-cancel" style="display: none;" onClick="killDownload()"></a>
+			</div>
 		</toolbar>
+
 		<main class="offset48 with-footer">
 			<div id="queuelist" class="list"></div>
 		</main>
+
 		<footer class="align-right">
 			<input type="button" class="tiny" value="Add URL" class="tiny" onClick="showURLPrompt()">
 			<input type="button" class="tiny" value="Empty Queue" class="tiny" onClick="emptyQueue()">
@@ -173,7 +179,7 @@
 		<div id="prompt1" class="modal small">
 			<div class="content">
 				Enter the URL you would like to add to the download queue:
-				<input type="text" id="url" style="width: 440px; margin-top: 6px">
+				<input type="text" id="url" style="width: 425px; margin-top: 8px">
 
 				<div class="buttons">
 					<input type="button" value="Add URL" onClick="addSingleURL()">
