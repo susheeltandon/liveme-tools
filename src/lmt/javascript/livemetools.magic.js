@@ -50,7 +50,7 @@ function searchkeyword(k, cb) {
 	searchType = 1;
 	return_data = [];
 
-	$('#overlay .status').html('<progress></progress><br>Searching for usernames matching query...');
+	$('overlay .status').html('<progress></progress><br>Searching for usernames matching query...');
 	_dosearch(false);
 
 }
@@ -64,7 +64,7 @@ function search_hashtag(k, cb) {
 	searchType = 2;
 	return_data = [];
 
-	$('#overlay .status').html('<progress></progress><br>Searching for hashtags matching query...');
+	$('overlay .status').html('<progress></progress><br>Searching for hashtags matching query...');
 	_dosearch(false);
 
 }
@@ -72,7 +72,7 @@ function search_hashtag(k, cb) {
 
 function _dolookup() {
 
-	$('#overlay .status').html('<progress></progress><br>Looking up Video ID...');
+	$('overlay .status').html('<progress></progress><br>Looking up Video ID...');
 	$.ajax({
 		url: 'http://live.ksmobile.net/live/queryinfo',
 		data: {
@@ -106,7 +106,7 @@ function _dolookup() {
 
 function _dolookup1() {
 
-	$('#overlay .status').html('<progress></progress><br>Getting user info...');
+	$('overlay .status').html('<progress></progress><br>Getting user info...');
 	$.ajax({
 		url: 'http://live.ksmobile.net/user/getinfo',
 		data: {
@@ -164,7 +164,7 @@ function _dolookup2() {
 		return;
 	}
 
-	$('#overlay .status').html('<progress value="'+((page_index - 1) * PAGE_SIZE)+'" max="'+video_count+'" min="0"></progress><br>Getting details on '+video_count+' replays...<br><br><input type="button" value="Cancel" onClick="cancelAction()">');
+	$('overlay .status').html('<progress value="'+((page_index - 1) * PAGE_SIZE)+'" max="'+video_count+'" min="0"></progress><br>Getting details on '+video_count+' replays...<br><br><input type="button" value="Cancel" onClick="cancelAction()">');
 	$.ajax({
 		url: 'http://live.ksmobile.net/live/getreplayvideos',
 		data: {
@@ -223,7 +223,7 @@ function _dolookup2() {
 
 function _dolookup3() {
 
-	$('#overlay .status').html('<progress></progress><br>Finishing up...');
+	$('overlay .status').html('<progress></progress><br>Finishing up...');
 	
 	if (query_orig == null) {
 		callback_holder(return_data);
@@ -288,7 +288,7 @@ function _dolookup3() {
 function _dosearch(showOverlay=true) {
 
 	if (showOverlay) {
-		$('#overlay .status').html('<progress></progress><br>Found '+(return_data.length)+' matching query...');
+		$('overlay .status').html('<progress></progress><br>Found '+(return_data.length)+' matching query...');
 	}
 
 	$.ajax({
@@ -347,7 +347,7 @@ function _dosearch(showOverlay=true) {
 
 function _dosearch2() {
 
-	$('#overlay .status').html('<progress min="0" max="'+return_data.length+'" value="'+index+'"></progress><br>Getting info on '+return_data.length+' users...');
+	$('overlay .status').html('<progress min="0" max="'+return_data.length+'" value="'+index+'"></progress><br>Getting info on '+return_data.length+' users...');
 	$.ajax({
 		url: 'http://live.ksmobile.net/user/getinfo',
 		data: {
