@@ -479,9 +479,12 @@ function renderUserLookup(e) {
 					<span>Username:</span>
 					${e.userinfo.username}
 				</div>
-				<div>
+				<div class="align-center">
 					<span>User ID:</span>
-					<input type="text" id="useridtf" value="${e.userinfo.userid}" disabled="disabled">
+					<div class="input has-right-button width180">
+						<input type="text" id="useridtf" value="${e.userinfo.userid}" disabled="disabled">
+						<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${e.userinfo.userid}')" title="Copy to Clipboard">
+					</div>
 				</div>
 				<div>
 					<span>Level:</span>
@@ -582,7 +585,7 @@ function renderUserLookup(e) {
 						<div class="width200">
 							<span>Video ID:</span>
 							<div class="input has-right-button">
-								<input type="text" value="${e.videos[i].videoid}">
+								<input type="text" value="${e.videos[i].videoid}" disabled="disabled">
 								<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${e.videos[i].videoid}')" title="Copy to Clipboard">
 							</div>
 						</div>
@@ -590,7 +593,7 @@ function renderUserLookup(e) {
 						<div class="width700">
 							<span>Video URL:</span>
 							<div class="input has-right-button">
-								<input type="text" value="${e.videos[i].url}">
+								<input type="text" value="${e.videos[i].url}" disabled="disabled">
 								<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${e.videos[i].url}')" title="Copy to Clipboard">
 							</div>
 						</div>
@@ -726,7 +729,7 @@ function renderHashtagResults(e) {
 						<div class="width200">
 							<span>Video ID:</span>
 							<div class="input has-right-button">
-								<input type="text" value="${e[i].vdoid}">
+								<input type="text" value="${e[i].vdoid}" disabled="disabled">
 								<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${e[i].vdoid}')" title="Copy to Clipboard">
 							</div>
 						</div>
@@ -734,7 +737,7 @@ function renderHashtagResults(e) {
 						<div class="width700">
 							<span>Video URL:</span>
 							<div class="input has-right-button">
-								<input type="text" value="${e[i].videosource}">
+								<input type="text" value="${e[i].videosource}" disabled="disabled">
 								<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${e[i].videosource}')" title="Copy to Clipboard">
 							</div>
 						</div>
