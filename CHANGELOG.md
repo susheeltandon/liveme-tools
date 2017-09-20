@@ -5,6 +5,8 @@
 #### 2017-09-00 - v6.0.0
 **Added:**
 - Migrated to using LiveMe API module 
+- Whole new UI added
+- Added custom video player UI
 
 **Fixed:**
 - 
