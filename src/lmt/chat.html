@@ -12,18 +12,12 @@
     <script>
         const { remote, BrowserWindow, ipcRenderer } = require('electron'), api = require('liveme-api');
 
-        function closeApp() {
-            $('#message_history').empty();
-            $('#overlay').show();
-            ipcRenderer.send('hide-chat');
-        }
-
         $(function () {
             ipcRenderer.on('set-chat', (event, arg) => {
                 var startTime = parseInt(arg.startTime) * 1000;
                 var addedEntries = 0;
                 $('#message_history').empty();
-                $('#overlay').show();
+                $('overlay').show();
 
                 api.getChatHistoryForVideo(arg.url)
                     .then(messages => {
@@ -69,15 +63,12 @@
             });
         });
     </script>
-</head>
+    </head>
 
-<body>
-    <header class="small">
-        <h4>Message History</h4>
-        <img class="close-icon" src="images/ic_close_white_24px.svg" onClick="closeApp()">
-    </header>
-    <div id="message_history"></div>
-    <div id="overlay" style="top: 24px;"></div>
-</body>
+    <body>
+        <main>
+            <b>Chat is broken so it can be added to the video player window.</b>
+        </main>
+    </body>
 
 </html>
