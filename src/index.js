@@ -119,8 +119,11 @@ function createWindow() {
         .on('closed', () => {
             queuewin = null;
         })
-        .loadURL(`file://${__dirname}/lmt/queue.html`)
-        .minimize();
+        .loadURL(`file://${__dirname}/lmt/queue.html`);
+    
+    setTimeout(function(){
+        queuewin.minimize();
+    }, 100);
 
 
     /*
@@ -383,20 +386,19 @@ ipcMain.on('play-video', (event, arg) => {
     if (playerWindow == null) {
         playerWindow = new BrowserWindow({
             width: 368,
-            height: 640,
-            minWidth: 184,
-            minHeight: 320,
+            height: 664,
+            minWidth: 368,
+            minHeight: 664,
             resizable: true,
             darkTheme: true,
-            autoHideMenuBar: true,
+            autoHideMenuBar: false,
             show: false,
             skipTaskbar: false,
-            vibrancy: 'ultra-dark',
-            backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
+            backgroundColor: '#000000',
             disableAutoHideCursor: true,
             titleBarStyle: 'default',
             fullscreen: false,
-            maximizable: false,
+            maximizable: true,
             closable: true,
             frame: true
         });
