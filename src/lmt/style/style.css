@@ -47,100 +47,7 @@ p {
 }
 
 
-/*
-	Headerbar
-*/
-header {
-	display: block;
-	height: 40px;
-	line-height: 40px;
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 9999;
-	background-color: #303233;
-	box-shadow: 0px 1px 3px rgba(0,0,0,0.3);
-}
-header img {
-	display: block;
-	width: 16px;
-	height: 16px;
-	position: absolute;
-	top: 12px;
-	cursor: pointer;
-	opacity: 0.4;
-}
 
-header img.close-icon { right: 12px; }
-header img.menu-icon { left: 12px; }
-
-header img:hover {
-	opacity: 0.9;
-}
-
-header h1, header h4 {
-	display: inline-block;
-	font-size: 16pt;
-	font-weight: 300;
-	color: rgba(255,255,255,0.5);
-	margin: 0 24px 0 12px;
-	padding: 2px 0 0;
-	vertical-align: top;
-}
-header h1.logo { margin-left: 40px; }
-header h1 small {
-	font-size: 10pt;
-	font-weight: 400;
-	font-style: italic;
-	position: relative;
-	top: 4px;
-	left: 4px;
-}
-
-header .search {
-	position: absolute;
-	top: 0;
-	right: 64px;
-	display: block;
-	height: 40px;
-	vertical-align: top;
-}
-header .search input, header .search .select { margin-bottom: 5px; }
-header .search .select { width: 120px; }
-header .search input[type=search] { width: 460px; }
-header .search input[type=text] { width: 65px; text-align: center; }
-
-
-header.small {
-	line-height: 24px;
-	height: 24px;
-}
-header.small h1, header.small h4 {
-	display: block;
-	height: 24px;
-	line-height: 24px;
-	font-size: 11pt;
-	font-weight: 400;
-	letter-spacing: 0.04em;
-	width: calc(100% - 48px);
-	overflow: hidden;
-	text-overflow: ellipsis;	
-}
-header.small .close-icon {
-	top: 4px;
-	right: 4px;
-}
-
-header.small.transparent, header.small.transparent > * {
-	opacity: 0;
-}
-header.small.transparent:hover {
-	opacity: 1;
-}
-header.small.transparent:hover > * {
-	opacity: 1;
-}
 
 /*
 	Helper Stylings
@@ -148,7 +55,7 @@ header.small.transparent:hover > * {
 .align-left { text-align: left; }
 .align-center { text-align: center; }
 .align-right { text-align: right; }
-.text-ellipsis { text-overflow: ellipsis; }
+.text-ellipsis { display: inline-block; text-overflow: ellipsis; }
 
 /*
 	Main Data Area
@@ -199,6 +106,9 @@ overlay {
 }
 
 
+/*
+	Toolbar
+*/
 toolbar {
 	display: block;
 	position: absolute;
@@ -209,6 +119,10 @@ toolbar {
 	padding: 8px;
 }
 
+
+/*
+	Footer 
+*/
 footer {
 	display: block;
 	position: absolute;
@@ -219,6 +133,72 @@ footer {
 	line-height: 32px;
 	padding: 4px 8px;
 }
+
+
+
+/*
+	Video
+*/
+#videoplayer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: block;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.video_controls {
+	z-index: 2;
+	display: block;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	line-height: 40px;
+	height: 40px;
+	padding: 4px 8px;
+	background-color: rgba(0,0,0,0.0);
+	opacity: 0;
+	-webkit-transition: 0.2s;
+}
+
+.video_controls:hover {
+	opacity: 1.0;
+}
+
+.video_controls a.button {
+	width: 32px !important;
+	height: 32px !important;
+	opacity: 1 !important;
+	cursor: pointer;
+}
+
+.video_controls .progress {
+	display: block;
+	z-index: 3;
+	position: absolute;
+	left: 48px;
+	right: 16px;
+	bottom: 16px;
+	height: 8px;
+	background-color: rgba(0,0,0,0.25);
+	padding: 0px;
+	border-radius: 1px;
+	cursor: pointer;
+}
+.video_controls .progress > .bar {
+	display: block;
+	background-color: rgb(255,255,255);
+	height: 100%;
+	border-radius: 1px;
+	-webkit-transition: 0s;
+}
+
+
 
 
 /*
@@ -624,7 +604,7 @@ panel {
 	border-right-color: rgba(128,128,128,0.5);
 }
 overlay {
-	background-color: rgba(0,0,0,0.7);
+	background-color: rgba(0,0,0,0.85);
 }
 footer {
 	background-color: rgba(0,0,0,0.2);
@@ -720,10 +700,11 @@ a.button.icon {
 .icon-chat { background-image: url(../images/ic_chat_white_24px.svg); }
 .icon-copy { background-image: url(../images/ic_content_copy_white_18px.svg); }
 .icon-download { background-image: url(../images/ic_file_download_white_24px.svg); }
+.icon-media-pause { background-image: url(../images/ic_pause_white_18px.svg); }
+.icon-media-play { background-image: url(../images/ic_play_arrow_white_18px.svg); }
 .icon-pause { background-image: url(../images/ic_pause_circle_outline_white_24px.svg); }
 .icon-play { background-image: url(../images/ic_play_circle_outline_white_24px.svg); }
-.icon-remove { backbround-image: url(../images/ic_cancel_white_24px.svg); }
-
+.icon-remove { background-image: url(../images/ic_cancel_white_24px.svg); }
 
 
 
