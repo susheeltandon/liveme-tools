@@ -540,7 +540,7 @@ function renderUserLookup(e) {
 
 			var h = `
 				<div class="item ${highlight} ${downloaded}">
-					<div class="header">${deleted}${e.videos[i].title}</div>
+					<div class="header">${deleted}${e.videos[i].title}&nbsp;</div>
 					<div class="content">
 						<div class="meta">
 							<div class="width150">
@@ -628,7 +628,7 @@ function renderSearchResults(e) {
 						<img src="${e[i].face}" onerror="this.src='images/blank.png'">
 					</div>
 					<div class="content">
-						<div class="header">${e[i].nickname}</div>
+						<div class="header">${e[i].nickname}&nbsp;</div>
 						<div class="meta">
 							<div class="width100">
 								<span>Level:</span>
@@ -684,7 +684,7 @@ function renderHashtagResults(e) {
 			var h = `
 
 				<div class="item ${highlight} ${downloaded}">
-					<div class="header">${deleted}${e[i].title}</div>
+					<div class="header">${deleted}${e[i].title}&nbsp;</div>
 					<div class="content">
 						<div class="meta">
 							<div class="width150">
