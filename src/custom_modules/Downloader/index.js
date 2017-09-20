@@ -103,6 +103,7 @@ module.exports = {
     init: function (settings) {
         appSettings = settings;
 
+        /*
         if (process.platform == 'win32') {
             ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.exe');
         } else if (process.platform == 'darwin') {
@@ -110,6 +111,7 @@ module.exports = {
         } else {
             ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.linux');
         }
+        */
     },
 
     /*
