@@ -13,9 +13,10 @@ const 	{ electron, BrowserWindow, remote, ipcRenderer, shell, clipboard } = requ
 		fs = require('fs'), path = require('path'), 
 		appSettings = remote.require('electron-settings'),
 		Favorites = remote.getGlobal('Favorites'),
-		Downloads = remote.getGlobal('Downloader');
+		Downloads = remote.getGlobal('Downloader'),
+		LiveMe = require('liveme-api');
 
-var isSearching = false, favorites_list = [], debounced = false, current_user = {};
+var isSearching = false, favorites_list = [], debounced = false, current_user = {}, current_page = 0, MAX_PAGE_SIZE = 10;
 
 $(function(){
 
@@ -25,8 +26,6 @@ $(function(){
 
 	// Remote search calls
 	ipcRenderer.on('do-search' , function(event , data) { 
-		if (isSearching) return;
-
 		$('#query').val(data.userid);
 		$('#type').val('user-lookup');
 		beginSearch2();
@@ -48,7 +47,6 @@ $(function(){
 		$('overlay').hide();
 	});
 
-	//Favorites.load();
 	Downloads.load();
 });
 
@@ -59,11 +57,11 @@ function enterOnSearch(e) { if (e.keyCode == 13) beginSearch(); }
 function onTypeChange() {
 	var t=$('#type').val();
 	switch (t) {
-		case 'user-lookup': $('#query').attr('placeholder', 'Short or Long UserID'); $('#maxlevel').hide(); break;
-		case 'video-lookup': $('#query').attr('placeholder', 'Enter VideoID'); $('#maxlevel').hide(); break;
-		case 'url-lookup': $('#query').attr('placeholder', 'Enter URL'); $('#maxlevel').hide(); break;
-		case 'search': $('#query').attr('placeholder', 'Enter Partial or Full Username'); $('#maxlevel').show(); break;
-		case 'hashtag': $('#query').attr('placeholder', 'Enter a hashtag'); $('#maxlevel').hide(); break;
+		case 'user-lookup': $('#query').attr('placeholder', 'Short or Long UserID'); break;
+		case 'video-lookup': $('#query').attr('placeholder', 'Enter VideoID'); break;
+		case 'url-lookup': $('#query').attr('placeholder', 'Enter URL'); break;
+		case 'search': $('#query').attr('placeholder', 'Enter Partial or Full Username'); break;
+		case 'hashtag': $('#query').attr('placeholder', 'Enter a hashtag'); break;
 	}
 }
 
@@ -78,7 +76,6 @@ function toggleFavorite() {
 }
 
 function beginSearch() {
-	if (isSearching) { return; }
 
 	var u=$('#query').val(), isnum = /^\d+$/.test(u);
 
@@ -97,12 +94,13 @@ function beginSearch() {
 			$('#type').val('url-lookup');
 			onTypeChange();
 		}
-/*
 	} else if (u.indexOf('#') > -1) {
 		if ($('#type').val() != 'hashtag') {
 			$('#type').val('hashtag');
+			$('#query').val($('#query').val().replace('#', ''));
 			onTypeChange();
 		}
+/*		
 	} else {
 		if (($('#type').val() != 'search') || ($('#type').val() != 'hashtag')) {
 			$('#type').val('search');
@@ -114,7 +112,8 @@ function beginSearch() {
 }
 
 function beginSearch2() {
-	if (isSearching) { return; }
+
+	var videoid = '', userid = '';
 
 	isSearching = true;
 	$('overlay').show();
@@ -126,18 +125,14 @@ function beginSearch2() {
 		if (u.indexOf('/live/') > -1) {
 			$('#type').val('video-lookup');
 			$('#query').val(u[3]);
-			setTimeout(function(){
-				beginSearch2();
-			}, 100);
+			videoid = u[3];
 
 		} else if (t[t.length-1].indexOf('yolo') > -1) {
 			var a=t[t.length - 1].split('-');
 			$('#type').val('video-lookup');
 			$('#query').val(a[1]);
-			setTimeout(function(){
-				beginSearch2();
-			}, 100);
-			
+			videoid = a[1];			
+
 		} else if (u.indexOf('videoid') > -1) {
 			var a=t[t.length - 1].split('?'),b=a[1].split('&');
 			console.log(a);
@@ -147,9 +142,7 @@ function beginSearch2() {
 					
 					$('#type').val('video-lookup');
 					$('#query').val(c[1]);
-					setTimeout(function(){
-						beginSearch2();
-					}, 100);
+					videoid = c[1];
 
 				}
 			}
@@ -162,60 +155,357 @@ function beginSearch2() {
 					
 					$('#type').val('user-lookup');
 					$('#query').val(c[1]);
-					setTimeout(function(){
-						beginSearch2();
-					}, 100);
+					videoid = c[1];
 
 				}
 			}
 		} else {
-			
-			
-			/*
-
-				!! NEED TO MAKE BETTER ERROR BOX !!
-
-			*/
-			$('main').html('<div class="list"><div class="empty">Unsupported URL detected.</div></div>');
-
-
+			$('main').html('<div class="list"><div class="empty">Unsupported URL was specified.</div></div>');									
 		}
-
 		isSearching = false;
-		$('overlay').hide();
-		
+		$('overlay').hide();		
+	} else if ($('#type').val() == 'video-lookup') {
+		videoid = $('#query').val();
+	} else if ($('#type').val() == 'user-lookup') {
+		userid = $('#query').val();
 	}
 
+	$('overlay').hide();
+	if (videoid.length > 0) {
+		LiveMe.getVideoInfo(videoid)
+			.then(video => {
+				performUserLookup(video.userid);
+			})
+			.catch(err => {
+				$('main').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div></div>');						
+			});
 
-
-	if ($('#type').val() == 'search') {
-		searchkeyword($('#query').val(), function(e) {
-			isSearching = false;
-			$('main').html('<div id="results" class="list"></div>'); 
-			renderSearchResults(e);
-			$('overlay').hide();
-		});
-	} else if ($('#type').val() == 'hashtag') {
-		search_hashtag($('#query').val(), function(e) {
-			isSearching = false;
-			$('main').html('<div id="videolist_full" class="panel"></div>'); 
-			renderHashtagResults(e);
-			$('overlay').hide();
-		});
+	} else if (userid.length > 0) {
+		performUserLookup(userid);
 	} else {
-		getuservideos($('#query').val(), function(e){
-			isSearching = false;
-			if ((typeof e.userinfo.userid === "undefined") || (e.userinfo.userid == 0)) {
-				$('main').html('<div class="list"><div class="empty">Search returned nothing.</div></div>');
-			} else {
-				$('main').html('<div id="videolist" class="panel"></div>'); 
-				renderUserLookup(e);
-			}
-			$('overlay').hide();
+		if ($('#type').val() == 'search') {
+			current_page = 1;
+			performUsernameSearch();
+		} else if ($('#type').val() == 'hashtag') {
+			current_page = 1;
+			performHashtagSearch();
+		}
+	}
+}
+
+function performUserLookup(uid) {
+	$('overlay').hide();
+	$('panel').show();
+	$('main').addClass('with-panel').html('<div id="videolist" class="list"></div>');
+
+	LiveMe.getUserInfo(uid)
+		.then(user => {
+
+			var sex = user.user_info.sex < 0 ? '' : (user.user_info.sex == 0 ? 'female' : 'male');
+
+			$('.user-panel').html(`
+				<img class="avatar" src="${user.user_info.face}" onerror="this.src='images/blank.png'">
+				<div class="meta">
+					<div>
+						<span>Username:</span>
+						${user.user_info.uname}
+					</div>
+					<div class="align-center">
+						<span>User ID:</span>
+						<div class="input has-right-button width180">
+							<input type="text" id="useridtf" value="${user.user_info.uid}" disabled="disabled">
+							<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${user.user_info.uid}')" title="Copy to Clipboard">
+						</div>
+					</div>
+					<div>
+						<span>Level:</span>
+						${user.user_info.level}
+					</div>
+					<div>
+						<br><br>
+						<input type="button" class="toggle tiny tiny-100" value="Favorite" onClick="toggleFavorite()" id="favorites_button">
+						<br><br><br>
+					</div>
+					<div>
+						<span>Following:</span>
+						<input type="button" class="tiny tiny-100" value="${user.count_info.following_count}" onClick="showFollowing('${user.user_info.uid}', ${user.count_info.following_count}, '${user.user_info.uname}')">
+					</div>
+					<div>
+						<span>Fans:</span>
+						<input type="button" class="tiny tiny-100" value="${user.count_info.follower_count}" onClick="showFans('${user.user_info.uid}', ${user.count_info.follower_count}, '${user.user_info.uname}')">
+					</div>
+				</div>
+				<input type="hidden" id="sex" value="${sex}">
+			`);
+
+			setTimeout(function(){
+				if (Favorites.isOnList($('#useridtf').val()) == true) {
+					$('#favorites_button').addClass('active');
+				}
+			}, 250);
+
+			current_page = 1;
+			current_user = {
+				uid: user.user_info.uid,
+				sex: sex,
+				face: user.user_info.face,
+				nickname: user.user_info.uname
+			};
+			getUsersReplays();
+
+		})
+		.catch(err => {
+			console.log(err);
+			$('main').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div>');
 		});
-	}	
 
 }
+
+function getUsersReplays() {
+	LiveMe.getUserReplays(current_user.uid, current_page, MAX_PAGE_SIZE)
+		.then(replays => {
+			if (replays.length > 0) {
+				for (var i = 0; i < replays.length; i++) {
+
+					let dt = new Date(replays[i].vtime * 1000);
+					var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
+					var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == replays[i].hlsvideosource ? true : false) : false;
+					var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == replays[i].vid ? true : false) : false;
+
+					var ls = (replays[i].videolength - Math.round(replays[i].videolength / 60)) % 60, lm = Math.round(replays[i].videolength / 60);
+					var length = lm + ':' + (ls < 10 ? '0' : '') + ls;
+					var deleted = replays[i].private == true ? '[PRIVATE] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
+					var downloaded = Downloads.hasBeenDownloaded(replays[i].vid) ? 'downloaded' : '';
+
+					var h = `
+						<div class="item ${highlight} ${downloaded}">
+							<div class="header">${deleted}${replays[i].title}&nbsp;</div>
+							<div class="content">
+								<div class="meta">
+									<div class="width150">
+										<span>Posted on:</span>
+										${ds}
+									</div>
+									<div class="width100">
+										<span>Length:</span>
+										${length}
+									</div>
+									<div class="width100">
+										<span>Views:</span>
+										${replays[i].playnumber}
+									</div>
+									<div class="width100">
+										<span>Likes:</span>
+										${replays[i].likenum}
+									</div>
+									<div class="width100">
+										<span>Shares:</span>
+										${replays[i].sharenum}
+									</div>
+									<div class="width60">
+										<span>Country</span>
+										${replays[i].countryCode}
+									</div>
+									<div class="width400 align-right">
+										<a class="button icon icon-play" onClick="playVideo('${replays[i].hlsvideosource}')" title="Play Video"></a>
+						`;
+					if (replays[i].hlsvideosource.indexOf('liveplay') < 0 && replays[i].hlsvideosource.indexOf('hlslive') < 0) {
+						h += `
+										<!-- <a class="button icon icon-chat" onClick="openChat('${replays[i].msgfile}', '${replays[i].vtime}', '${replays[i].uname}')" title="View Message History"></a> -->
+										<a class="button icon icon-download" onClick="downloadVideo('${replays[i].userid}', '${replays[i].uname}', '${replays[i].vid}', '${replays[i].title.replace("'", "")}', '${replays[i].vtime}', '${replays[i].hlsvideosource}')" title="Download Replay"></a>
+						`;
+					}
+						
+					h += `
+									</div>
+								</div>
+							</div>
+							<div class="footer">
+								<div class="width200">
+									<span>Video ID:</span>
+									<div class="input has-right-button">
+										<input type="text" value="${replays[i].vid}" disabled="disabled">
+										<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${replays[i].vid}')" title="Copy to Clipboard">
+									</div>
+								</div>
+								<div class="spacer">&nbsp;</div>
+								<div class="width700">
+									<span>Video URL:</span>
+									<div class="input has-right-button">
+										<input type="text" value="${replays[i].hlsvideosource}" disabled="disabled">
+										<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${replays[i].hlsvideosource}')" title="Copy to Clipboard">
+									</div>
+								</div>
+							</div>
+						</div>
+					`;
+					$('#videolist').append(h);	
+				}			
+			}
+
+			if (current_page == 1 && replays.length == 0) {
+				$('.list').html('<div class="empty">No visible replays available for this account.</div>');						
+			}
+
+			if (replays.length == MAX_PAGE_SIZE) {
+				current_page++;
+				getUsersReplays();
+			}
+
+		})
+		.catch(err => {			
+			if (current_page == 1)
+				$('.list').html('<div class="empty">No visible replays available for this account.</div>');						
+		});
+}
+
+function performUsernameSearch() {
+	if (current_page == 1) {
+		$('main').html('<div id="userlist" class="list"></div>');
+	}
+
+	LiveMe.performSearch($('#query').val(), current_page, MAX_PAGE_SIZE, 1 )
+		.then(results => {
+			for(var i = 0; i < results.length; i++) {
+				$('#userlist').append(`
+					<div class="item">
+						<div class="avatar">
+							<img src="${results[i].face}" onerror="this.src='images/blank.png'">
+						</div>
+						<div class="content">
+							<div class="header">${results[i].nickname}&nbsp;</div>
+							<div class="meta">
+								<div class="width100">
+									<span>Level:</span>
+									${results[i].level}
+								</div>
+								<div class="width200">
+									<span>User ID:</span>
+									<input type="button" class="tiny tiny-160" value="${results[i].user_id}" onClick="showUser('${results[i].user_id}')">
+								</div>
+								<div class="width100">
+									<span>Fans:</span>
+									<input type="button" class="tiny tiny-100" value="${results[i].follwer_count}" onClick="showFans('${results[i].user_id}', '${results[i].follower_count}', '${results[i].nickname}')">
+								</div>
+							</div>
+						</div>
+					</div>
+				`);
+			}
+
+			if (results.length == 0) {
+				$('.list').html('<div class="empty">No accounts were found matching your search.</div>');						
+			}
+
+		})
+		.catch(err => {
+			console.log(err);
+		});	
+}
+
+function performHashtagSearch() {
+	if (current_page == 1) {
+		$('main').html('<div id="videolist" class="list"></div>');
+	}
+
+	LiveMe.performSearch($('#query').val(), current_page, MAX_PAGE_SIZE, 2 )
+		.then(results => {
+			console.log(JSON.stringify(results[0], null, 2));
+
+			for(var i = 0; i < results.length; i++) {
+			
+				var dt = new Date(results[i].vtime * 1000);
+				var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
+				var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == results[i].hlsvideosource ? true : false) : false;
+				var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == results[i].vid ? true : false) : false;
+
+				var ll = parseFloat(results[i].videolength), lh = Math.round(ll / 3600), lm = Math.round(ll / 60) % 60, ls = ll % 60;
+				var length = lh + ':' + (lm < 10 ? '0' : '') + lm + ':' + (ls < 10 ? '0' : '') + ls;
+				var downloaded = Downloads.hasBeenDownloaded(results[i].vid) ? 'downloaded' : '';
+
+				var h = `
+
+					<div class="item ${downloaded}">
+						<div class="header">${results[i].title}&nbsp;</div>
+						<div class="content">
+							<div class="meta">
+								<div class="width150">
+									<span>Posted on:</span>
+									${ds}
+								</div>
+								<div class="width100">
+									<span>Length:</span>
+									${length}
+								</div>
+								<div class="width100">
+									<span>Views:</span>
+									${results[i].playnumber}
+								</div>
+								<div class="width100">
+									<span>Likes:</span>
+									${results[i].likenum}
+								</div>
+								<div class="width100">
+									<span>Shares:</span>
+									${results[i].sharenum}
+								</div>
+								<div class="width60">
+									<span>Country</span>
+									${results[i].countryCode}
+								</div>
+								<div class="width400 align-right">
+									<a class="button icon icon-play" onClick="playVideo('${results[i].hlsvideosource}')" title="Play Video"></a>
+					`;
+				if (results[i].hlsvideosource.indexOf('liveplay') < 0 && results[i].hlsvideosource.indexOf('hlslive') < 0) {
+					h += `
+									<!-- <a class="button icon icon-chat" onClick="openChat('${results[i].msgfile}', '${results[i].vtime}', '${results.uname}')" title="View Message History"></a> -->
+									<a class="button icon icon-download" onClick="downloadVideo('${results[i].userid}', '${results.uname}', '${results[i].vid}', '${results[i].title.replace("'", "")}', '${results[i].vtime}', '${results[i].hlsvideosource}')" title="Download Replay"></a>
+					`;
+				}
+					
+				h += `
+								</div>
+							</div>
+						</div>
+						<div class="footer">
+							<div class="width200">
+								<span>Video ID:</span>
+								<div class="input has-right-button">
+									<input type="text" value="${results[i].vid}" disabled="disabled">
+									<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${results[i].vid}')" title="Copy to Clipboard">
+								</div>
+							</div>
+							<div class="spacer">&nbsp;</div>
+							<div class="width700">
+								<span>Video URL:</span>
+								<div class="input has-right-button">
+									<input type="text" value="${results[i].hlsvideosource}" disabled="disabled">
+									<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${results[i].hlsvideosource}')" title="Copy to Clipboard">
+								</div>
+							</div>
+						</div>
+					</div>
+				`;
+
+				$('#videolist').append(h);
+				
+			}
+
+			if (current_page == 1 && results.length == 0) {
+				$('.list').html('<div class="empty">No videos were found on LiveMe matching the specified hashtag.</div>');
+			}
+
+			if (results.length == MAX_PAGE_SIZE) {
+				current_page++;
+				performHashtagSearch();
+			}
+
+		})
+		.catch(err => {
+			console.log(err);
+		});	
+}
+
 
 
 
@@ -240,7 +530,6 @@ function showFans(u,m,n) {
 
 	ipcRenderer.send('open-window', { url: 'fans.html?'+u+'#'+m+'#'+n });
 }
-
 
 function playVideo(u) {
 	if (debounced) return;
@@ -269,6 +558,7 @@ function downloadVideo(userid, username, videoid, videotitle, videotime, videour
 	});
 }
 
+/*
 function openChat(u, t, a) {
 	if (debounced) return;
 	debounced = true;
@@ -277,305 +567,4 @@ function openChat(u, t, a) {
 	ipcRenderer.send('open-chat', { url: u, startTime: t, nickname: a });
 }
 
-function renderUserLookup(e) {
-
-	$('panel').show();
-	$('#main').addClass('with-panel').html('<div id="videolist" class="list"></div>');
-
-
-	if (typeof e === "undefined") {
-		$('.list').html('<div class="empty">Search returned no data, account may be closed.</div>');
-		return;
-	}
-
-	if (e.userinfo.userid == 0) {
-		$('.list').html('<div class="empty">Search returned no data, account may be closed.</div>');
-		return;
-	}
-
-	if (e.userinfo.userid > 0) {
-		current_user = {
-			uid: e.userinfo.userid,
-			sex: e.userinfo.sex,
-			face: e.userinfo.usericon,
-			nickname: e.userinfo.username
-		};
-
-		$('.user-panel').html(`
-			<img class="avatar" src="${e.userinfo.usericon}" onerror="this.src='images/blank.png'">
-			<div class="meta">
-				<div>
-					<span>Username:</span>
-					${e.userinfo.username}
-				</div>
-				<div class="align-center">
-					<span>User ID:</span>
-					<div class="input has-right-button width180">
-						<input type="text" id="useridtf" value="${e.userinfo.userid}" disabled="disabled">
-						<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${e.userinfo.userid}')" title="Copy to Clipboard">
-					</div>
-				</div>
-				<div>
-					<span>Level:</span>
-					${e.userinfo.level}
-				</div>
-				<div>
-					<br><br>
-					<input type="button" class="toggle tiny tiny-100" value="Favorite" onClick="toggleFavorite()" id="favorites_button">
-					<br><br><br>
-				</div>
-				<div>
-					<span>Following:</span>
-					<input type="button" class="tiny tiny-100" value="${e.userinfo.following}" onClick="showFollowing('${e.userinfo.userid}', ${e.userinfo.following}, '${e.userinfo.username}')">
-				</div>
-				<div>
-					<span>Fans:</span>
-					<input type="button" class="tiny tiny-100" value="${e.userinfo.fans}" onClick="showFans('${e.userinfo.userid}', ${e.userinfo.following}, '${e.userinfo.username}')">
-				</div>
-			</div>
-			<input type="hidden" id="sex" value="${e.userinfo.sex}">
-		`);
-
-		setTimeout(function(){
-			if (Favorites.isOnList($('#useridtf').val()) == true) {
-				$('#favorites_button').addClass('active');
-			}
-		}, 250);
-
-	}
-
-	if (typeof e.videos === undefined) {
-		$('#videolist').html('<div class="empty">No videos entries for this user account found.</div>');
-		return;
-	}
-
-	if (e.videos.length == 0) {
-		$('#videolist').html('<div class="empty">No videos entries for this user account found.</div>');
-		return;
-	}
-
-	for(i = 0; i < e.videos.length; i++) {
-		if (e.videos[i].url.length > 8) {
-
-			let dt = new Date(e.videos[i].dt * 1000);
-			var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
-			var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == e.videos[i].url ? true : false) : false;
-			var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == e.videos[i].videoid ? true : false) : false;
-
-			var ls = (e.videos[i].length - Math.round(e.videos[i].length / 60)) % 60, lm = Math.round(e.videos[i].length / 60);
-			var length = lm + ':' + (ls < 10 ? '0' : '') + ls;
-			var deleted = e.videos[i].private == true ? '[PRIVATE] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
-			var downloaded = Downloads.hasBeenDownloaded(e.videos[i].videoid) ? 'downloaded' : '';
-
-			var h = `
-				<div class="item ${highlight} ${downloaded}">
-					<div class="header">${deleted}${e.videos[i].title}&nbsp;</div>
-					<div class="content">
-						<div class="meta">
-							<div class="width150">
-								<span>Posted on:</span>
-								${ds}
-							</div>
-							<div class="width100">
-								<span>Length:</span>
-								${length}
-							</div>
-							<div class="width100">
-								<span>Views:</span>
-								${e.videos[i].plays}
-							</div>
-							<div class="width100">
-								<span>Likes:</span>
-								${e.videos[i].likes}
-							</div>
-							<div class="width100">
-								<span>Shares:</span>
-								${e.videos[i].shares}
-							</div>
-							<div class="width60">
-								<span>Country</span>
-								${e.videos[i].location.country}
-							</div>
-							<div class="width300 align-right">
-								<a class="button icon icon-play" onClick="playVideo('${e.videos[i].url}')" title="Play Video"></a>
-				`;
-			if (e.videos[i].url.indexOf('liveplay') < 0 && e.videos[i].url.indexOf('hlslive') < 0) {
-				h += `
-								<a class="button icon icon-chat" onClick="openChat('${e.videos[i].msgfile}', '${e.videos[i].dt}', '${e.userinfo.username}')" title="View Message History"></a>
-								<a class="button icon icon-download" onClick="downloadVideo('${e.userinfo.userid}', '${e.userinfo.username}', '${e.videos[i].videoid}', '${e.videos[i].title.replace("'", "")}', '${e.videos[i].dt}', '${e.videos[i].url}')" title="Download Replay"></a>
-				`;
-			}
-				
-			h += `
-							</div>
-						</div>
-					</div>
-					<div class="footer">
-						<div class="width200">
-							<span>Video ID:</span>
-							<div class="input has-right-button">
-								<input type="text" value="${e.videos[i].videoid}" disabled="disabled">
-								<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${e.videos[i].videoid}')" title="Copy to Clipboard">
-							</div>
-						</div>
-						<div class="spacer">&nbsp;</div>
-						<div class="width700">
-							<span>Video URL:</span>
-							<div class="input has-right-button">
-								<input type="text" value="${e.videos[i].url}" disabled="disabled">
-								<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${e.videos[i].url}')" title="Copy to Clipboard">
-							</div>
-						</div>
-					</div>
-				</div>
-			`;
-
-			$('#videolist').append(h);
-		}
-	}
-
-}
-
-function renderSearchResults(e) {
-	$('main').html('<div id="userlist" class="list"></div>');
-
-	if (typeof(e) == "undefined") {
-		return;
-	}
-
-	if (e.length < 1) {
-		$('.list').html('<div class="empty">No users were found on LiveMe.</div>');
-		return;
-	}
-
-	for(i = 0; i < e.length; i++) {
-		if (e[i].userid > 0) {
-			$('#userlist').append(`
-
-				<div class="item">
-					<div class="avatar">
-						<img src="${e[i].face}" onerror="this.src='images/blank.png'">
-					</div>
-					<div class="content">
-						<div class="header">${e[i].nickname}&nbsp;</div>
-						<div class="meta">
-							<div class="width100">
-								<span>Level:</span>
-								${e[i].level}
-							</div>
-							<div class="width200">
-								<span>User ID:</span>
-								<input type="button" class="tiny tiny-160" value="${e[i].userid}" onClick="showUser('${e[i].userid}')">
-							</div>
-							<div class="width100">
-								<span>Fans:</span>
-								<input type="button" class="tiny tiny-100" value="${e[i].fans}" onClick="showFans('${e[i].userid}', '${e[i].fans}', '${e[i].nickname}')">
-							</div>
-							<div class="width100">
-								<span>Following:</span>
-								<input type="button" class="tiny tiny-100" value="${e[i].followings}" onClick="showFollowing('${e[i].userid}', ${e[i].followings}, '${e[i].nickname}')">								
-							</div>
-						</div>
-					</div>
-				</div>
-			`);
-		}
-	}
-}
-
-function renderHashtagResults(e) {
-
-	$('main').html('<div id="videolist" class="list"></div>');
-
-	if (typeof(e) == "undefined") {
-		return;
-	}
-
-	if (e.length < 1) {
-		$('.list').html('<div class="empty">No videos were found on LiveMe matching the specified hashtag.</div>');
-		return;
-	}
-
-	for(i = 0; i < e.length; i++) {
-		if (e[i].videosource.length > 8) {
-
-			var dt = new Date(e[i].vtime * 1000);
-			var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
-			var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == e[i].url ? true : false) : false;
-			var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == e[i].vdoid ? true : false) : false;
-
-			var ll = parseFloat(e[i].videolength), lh = Math.round(ll / 3600), lm = Math.round(ll / 60) % 60, ls = ll % 60;
-			//var ls = (parseInt(e[i].videolength) - Math.round(parseInt(e[i].videolength) / 60)) % 60, lm = Math.round(parseInt(e[i].videolength) / 60);
-			var length = lh + ':' + (lm < 10 ? '0' : '') + lm + ':' + (ls < 10 ? '0' : '') + ls;
-			var deleted = e[i].private == true ? '[PRIVATE] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
-			var downloaded = Downloads.hasBeenDownloaded(e[i].vdoid) ? 'downloaded' : '';
-
-			var h = `
-
-				<div class="item ${highlight} ${downloaded}">
-					<div class="header">${deleted}${e[i].title}&nbsp;</div>
-					<div class="content">
-						<div class="meta">
-							<div class="width150">
-								<span>Posted on:</span>
-								${ds}
-							</div>
-							<div class="width100">
-								<span>Length:</span>
-								${length}
-							</div>
-							<div class="width100">
-								<span>Views:</span>
-								${e[i].playnumber}
-							</div>
-							<div class="width100">
-								<span>Likes:</span>
-								${e[i].likenum}
-							</div>
-							<div class="width100">
-								<span>Shares:</span>
-								${e[i].sharenum}
-							</div>
-							<div class="width60">
-								<span>Country</span>
-								${e[i].countryCode}
-							</div>
-							<div class="width300 align-right">
-								<a class="button icon icon-play" onClick="playVideo('${e[i].videosource}')" title="Play Video"></a>
-				`;
-			if (e[i].videosource.indexOf('liveplay') < 0 && e[i].videosource.indexOf('hlslive') < 0) {
-				h += `
-								<a class="button icon icon-chat" onClick="openChat('${e[i].msgfile}', '${e[i].vt}', '${e.uname}')" title="View Message History"></a>
-								<a class="button icon icon-download" onClick="downloadVideo('${e.userid}', '${e.uname}', '${e[i].vdoid}', '${e[i].title.replace("'", "")}', '${e[i].vt}', '${e[i].videosource}')" title="Download Replay"></a>
-				`;
-			}
-				
-			h += `
-							</div>
-						</div>
-					</div>
-					<div class="footer">
-						<div class="width200">
-							<span>Video ID:</span>
-							<div class="input has-right-button">
-								<input type="text" value="${e[i].vdoid}" disabled="disabled">
-								<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${e[i].vdoid}')" title="Copy to Clipboard">
-							</div>
-						</div>
-						<div class="spacer">&nbsp;</div>
-						<div class="width700">
-							<span>Video URL:</span>
-							<div class="input has-right-button">
-								<input type="text" value="${e[i].videosource}" disabled="disabled">
-								<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${e[i].videosource}')" title="Copy to Clipboard">
-							</div>
-						</div>
-					</div>
-				</div>
-			`;
-
-			$('#videolist').append(h);
-		}
-	}
-
-}
+*/
