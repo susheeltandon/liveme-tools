@@ -77,6 +77,8 @@ function toggleFavorite() {
 
 function beginSearch() {
 
+	if (isSearching) return;
+
 	var u=$('#query').val(), isnum = /^\d+$/.test(u);
 
 	if ((u.length==20) && (isnum)) {
@@ -113,6 +115,9 @@ function beginSearch() {
 
 function beginSearch2() {
 
+	if (isSearching) return;
+
+	isSearching = true;
 	var videoid = '', userid = '';
 
 	isSearching = true;
@@ -257,6 +262,7 @@ function performUserLookup(uid) {
 		.catch(err => {
 			console.log(err);
 			$('main').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div>');
+			isSearching = false;
 		});
 
 }
@@ -345,6 +351,7 @@ function getUsersReplays() {
 
 			if (current_page == 1 && replays.length == 0) {
 				$('.list').html('<div class="empty">No visible replays available for this account.</div>');						
+				isSearching = false;
 			}
 
 			if (replays.length == MAX_PAGE_SIZE) {
@@ -356,6 +363,7 @@ function getUsersReplays() {
 		.catch(err => {			
 			if (current_page == 1)
 				$('.list').html('<div class="empty">No visible replays available for this account.</div>');						
+			isSearching = false;
 		});
 }
 
@@ -395,11 +403,13 @@ function performUsernameSearch() {
 
 			if (results.length == 0) {
 				$('.list').html('<div class="empty">No accounts were found matching your search.</div>');						
+				isSearching = false;
 			}
 
 		})
 		.catch(err => {
 			console.log(err);
+			isSearching = false;
 		});	
 }
 
@@ -493,6 +503,7 @@ function performHashtagSearch() {
 
 			if (current_page == 1 && results.length == 0) {
 				$('.list').html('<div class="empty">No videos were found on LiveMe matching the specified hashtag.</div>');
+				isSearching = false;
 			}
 
 			if (results.length == MAX_PAGE_SIZE) {
@@ -503,6 +514,7 @@ function performHashtagSearch() {
 		})
 		.catch(err => {
 			console.log(err);
+			isSearching = false;
 		});	
 }
 
