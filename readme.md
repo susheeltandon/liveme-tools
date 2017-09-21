@@ -17,6 +17,10 @@ This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux design
 ## Getting Started
 
 ### Downloading and Installing
+
+**Thanks to Facebook a couple modules used by this project can now only be installed using `yarn` 
+package manager.  The rest can still be installed using `npm`.**
+
 You can download the [latest release](https://github.com/thecoder75/liveme-tools/releases/latest)
 if you wish to not compile it yourself.
 
