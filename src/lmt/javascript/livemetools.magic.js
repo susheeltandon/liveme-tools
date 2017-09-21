@@ -164,7 +164,7 @@ function _dolookup2() {
 		return;
 	}
 
-	$('overlay .status').html('<progress value="'+((page_index - 1) * PAGE_SIZE)+'" max="'+video_count+'" min="0"></progress><br>Getting details on '+video_count+' replays...<br><br><input type="button" value="Cancel" onClick="cancelAction()">');
+	$('overlay .status').html('<progress value="'+((page_index - 1) * PAGE_SIZE)+'" max="'+video_count+'" min="0"></progress><br>Getting details on '+video_count+' replays...<br><br><input type="button" class="small" value="Cancel" onClick="cancelAction()">');
 	$.ajax({
 		url: 'http://live.ksmobile.net/live/getreplayvideos',
 		data: {
