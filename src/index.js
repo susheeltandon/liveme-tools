@@ -76,7 +76,7 @@ function createWindow() {
     });
 
     mainwin
-        .once('ready-to-show', () => {
+        .on('ready-to-show', () => {
             mainwin.show();
         })
         .on('closed', () => {
@@ -97,7 +97,7 @@ function createWindow() {
         minHeight: 200,
         maxHeight: 1600,
         darkTheme: true,
-        autoHideMenuBar: false,
+        autoHideMenuBar: true,
         show: true,
         skipTaskbar: false,
         disableAutoHideCursor: true,
@@ -116,11 +116,13 @@ function createWindow() {
         }
     });
 
+    queuewin.setMenu(null);
     queuewin
         .on('closed', () => {
             queuewin = null;
         })
         .loadURL(`file://${__dirname}/lmt/queue.html`);
+        
     
     setTimeout(function(){
         queuewin.minimize();
@@ -145,6 +147,11 @@ function createWindow() {
 
     global.Favorites = Favorites;
     global.Downloader = Downloader;
+
+    setTimeout(() => {
+        showSplash();
+    }, 250);
+    
 }
 
 
@@ -200,12 +207,14 @@ function showSplash() {
         transparent: true,
         parent: mainwin
     });
+    aboutwin.setMenu(null);
+    aboutwin
+        .on('ready-to-show', () => {
+            aboutwin.show();
+        })
+        .loadURL(`file://${__dirname}/lmt/splash.html`);
 
-    aboutwin.loadURL(`file://${__dirname}/lmt/splash.html`);
-
-    aboutwin.once('ready-to-show', () => {
-        aboutwin.show();
-    });
+        
 
 }
 
@@ -215,7 +224,7 @@ function showSettings() {
         height: 432,
         resizable: false,
         darkTheme: true,
-        autoHideMenuBar: false,
+        autoHideMenuBar: true,
         show: false,
         skipTaskbar: false,
         center: true,
@@ -228,11 +237,13 @@ function showSettings() {
         closable: true,
         frame: true,
         parent: mainwin,
-        modal: true
+        modal: false
     });
 
+    settingsWindow.setMenu(null);
+
     settingsWindow
-        .once('ready-to-show', () => {
+        .on('ready-to-show', () => {
             settingsWindow.show();
         })
         .loadURL(`file://${__dirname}/lmt/settings.html`);
@@ -258,7 +269,7 @@ function openFavoritesWindow() {
             height: 720,
             resizable: false,
             darkTheme: true,
-            autoHideMenuBar: false,
+            autoHideMenuBar: true,
             show: false,
             skipTaskbar: false,
             vibrancy: 'ultra-dark',
@@ -275,15 +286,16 @@ function openFavoritesWindow() {
                 devTools: true
             }
         });
-
+        favoritesWindow.setMenu(null);
         favoritesWindow
-            .once('ready-to-show', () => {
+            .on('ready-to-show', () => {
                 favoritesWindow.show();
             })
             .on('closed', () => {
                 favoritesWindow = null;
             })
             .loadURL(`file://${__dirname}/lmt/favorites-list.html`);
+            
     }
 };
 
@@ -334,8 +346,10 @@ ipcMain.on('open-window', (event, arg) => {
         frame: true,
         show: false
     });
+    win.setMenu(null);
 
-    win.once('ready-to-show', () => {
+
+    win.on('ready-to-show', () => {
         win.show();
     }).loadURL(`file://${__dirname}/lmt/` + arg.url);
 });
@@ -371,13 +385,16 @@ ipcMain.on('play-video', (event, arg) => {
             closable: true,
             frame: process.platform == 'darwin' ? false : true
         });
+        playerWindow.setMenu(null);
 
+        /*
         if (process.platform == 'darwin') {
             playerWindow.setAspectRatio(9 / 16);
         }
+        */
 
         playerWindow
-            .once('ready-to-show', () => {
+            .on('ready-to-show', () => {
                 playerWindow.show();
             })
             .on('closed', () => {
@@ -414,6 +431,7 @@ ipcMain.on('open-chat', (event, arg) => {
         closable: true,
         frame: true
     });
+    chatWindow.setMenu(null);
 
     chatWindow
         .on('closed', () => {
@@ -658,21 +676,6 @@ function getMenuTemplate() {
             ]
         },
         {
-            label : 'Lists',
-            submenu : [
-                {
-                    label: 'Import URL List',
-                    accelerator: 'CommandOrControl+I',
-                    click: () => importUrlList()
-                },
-                {
-                    label: 'Import VideoID List',
-                    accelerator: 'CommandOrControl+Shift+I',
-                    click: () => importVideoIdList()
-                }
-            ]
-        },
-        {
             role: 'window',
             submenu: [
                 { role: 'minimize' },
@@ -705,6 +708,26 @@ function getMenuTemplate() {
 
     if (process.platform === 'darwin') {
         template.unshift({
+            label: 'File',
+            submenu: [
+                {
+                    label: 'Import',
+                    submenu : [
+                        {
+                            label: 'Import URL List',
+                            accelerator: 'CommandOrControl+I',
+                            click: () => importUrlList()
+                        },
+                        {
+                            label: 'Import VideoID List',
+                            accelerator: 'CommandOrControl+Shift+I',
+                            click: () => importVideoIdList()
+                        }
+                    ]
+                }
+            ]
+        });
+        template.unshift({
             label: app.getName(),
             submenu: [
                 {
@@ -728,25 +751,39 @@ function getMenuTemplate() {
             ]
         });
     } else {
-        template[0].push({ 
-            type: separator
+        template.unshift({
+            label: 'File',
+            submenu: [
+                {
+                    label: 'Import',
+                    submenu : [
+                        {
+                            label: 'Import URL List',
+                            accelerator: 'CommandOrControl+I',
+                            click: () => importUrlList()
+                        },
+                        {
+                            label: 'Import VideoID List',
+                            accelerator: 'CommandOrControl+Shift+I',
+                            click: () => importVideoIdList()
+                        }
+                    ]
+                },
+                { type: 'separator' },
+                {
+                    label : 'Preferences',
+                    click: () => showSettings() 
+                },
+                { type: 'separator' },
+                { 
+                    label: 'Quit',
+                    click: () => app.quit()
+                }
+            ]
         });
-        template[0].push({ 
-            label: 'Preferences', 
-            click: () => showSettings() 
-        });
-    }
-
-
-    if (process.platform === 'linux') {
-        // File menu (Linux)
-        template[0].submenu.push({
-            label: 'Quit',
-            click: () => app.quit()
-        })
     } 
 
-    return template
+    return template;
 }
 
 
