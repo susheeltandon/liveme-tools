@@ -24,7 +24,8 @@ const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron'),
     request = require('request'),
     appSettings = require('electron-settings'),
     Favorites = require('./custom_modules/Favorites'),
-    Downloader = require('./custom_modules/Downloader');
+    Downloader = require('./custom_modules/Downloader'),
+    LiveMe = require('liveme-api');
 
 let mainwin = null,
     queuewin = null,
@@ -126,40 +127,6 @@ function createWindow() {
     }, 100);
 
 
-    /*
-
-        !! NEED TO MOVE THIS TO ITS OWN COMMAND SOMEWHERE ELSE !!
-
-    */
-    importwin = new BrowserWindow({
-        width: 320,
-        height: 160,
-        resizable: false,
-        darkTheme: true,
-        autoHideMenuBar: false,
-        show: false,
-        skipTaskbar: false,
-        vibrancy: 'ultra-dark',
-        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
-        disableAutoHideCursor: true,
-        titleBarStyle: 'default',
-        fullscreen: false,
-        maximizable: false,
-        closable: true,
-        frame: true,
-        child: true,
-        parent: mainwin
-    });
-
-    importwin
-        .on('closed', () => {
-            importwin = null;
-        })
-        .loadURL(`file://${__dirname}/lmt/importlist.html`);
-
-
-
-
     // Build our custom menubar
     Menu.setApplicationMenu(Menu.buildFromTemplate(getMenuTemplate()));
 
@@ -212,35 +179,31 @@ app
     Splash/About Window
 */
 function showSplash() {
-    if (aboutwin == null) {
-        aboutwin = new BrowserWindow({
-            width: 600,
-            height: 180,
-            resizable: false,
-            darkTheme: true,
-            autoHideMenuBar: true,
-            show: false,
-            skipTaskbar: true,
-            disableAutoHideCursor: true,
-            titleBarStyle: 'default',
-            fullscreen: false,
-            vibrancy: 'ultra-dark',
-            backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
-            maximizable: false,
-            frame: false,
-            movable: false,
-            transparent: true,
-            parent: mainwin
-        });
+    aboutwin = new BrowserWindow({
+        width: 600,
+        height: 180,
+        resizable: false,
+        darkTheme: true,
+        autoHideMenuBar: true,
+        show: false,
+        skipTaskbar: true,
+        disableAutoHideCursor: true,
+        titleBarStyle: 'default',
+        fullscreen: false,
+        vibrancy: 'ultra-dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
+        maximizable: false,
+        frame: false,
+        movable: false,
+        transparent: true,
+        parent: mainwin
+    });
 
-        aboutwin.loadURL(`file://${__dirname}/lmt/splash.html`);
+    aboutwin.loadURL(`file://${__dirname}/lmt/splash.html`);
 
-        aboutwin.once('ready-to-show', () => {
-            aboutwin.show();
-        });
-    } else {
+    aboutwin.once('ready-to-show', () => {
         aboutwin.show();
-    }    
+    });
 
 }
 
@@ -288,17 +251,15 @@ function openFavoritesWindow() {
     }
 };
 
-/*
-	Import Window
-*/
-ipcMain.on('show-import-win', (event, arg) => {
-    importwin.show();
-    importwin.webContents.send('import-list', { list: arg.list });
-});
+function refreshFavorites() {
 
-ipcMain.on('hide-import-win', () => {
-    importwin.hide();
-});
+}
+
+function exportFavorites() {
+
+}
+
+
 
 /*
 	Settings Related
@@ -332,6 +293,8 @@ ipcMain.on('show-settings', () => {
         .loadURL(`file://${__dirname}/lmt/settings.html`);
 });
 
+
+
 /*
     Search Related
     ?? - Called from Following/Fans/Favorites windows when an entry is clicked.  Will 
@@ -353,6 +316,8 @@ ipcMain.on('livemesearch', (event, arg) => {
         })
     }
 });
+
+
 
 /*
 	Popup Windows (Followings/Fans)
@@ -381,16 +346,24 @@ ipcMain.on('open-window', (event, arg) => {
     }).loadURL(`file://${__dirname}/lmt/` + arg.url);
 });
 
+
+
 /*
 	Video Player Related
+
+    macOS allows us to still have window controls but no titlebar 
+    and overlay the controls on the content of the page.
+
+    This allows us to have a window just like QuickTime Player
+    does.
 */
 ipcMain.on('play-video', (event, arg) => {
     if (playerWindow == null) {
         playerWindow = new BrowserWindow({
             width: 368,
-            height: 664,
+            height: process.platform == 'darwin' ?  640 : 664,
             minWidth: 368,
-            minHeight: 664,
+            minHeight: process.platform == 'darwin' ?  640 : 664,
             resizable: true,
             darkTheme: true,
             autoHideMenuBar: false,
@@ -398,11 +371,11 @@ ipcMain.on('play-video', (event, arg) => {
             skipTaskbar: false,
             backgroundColor: '#000000',
             disableAutoHideCursor: true,
-            titleBarStyle: 'default',
+            titleBarStyle: 'hidden',
             fullscreen: false,
             maximizable: true,
             closable: true,
-            frame: true
+            frame: process.platform == 'darwin' ? false : true
         });
 
         playerWindow
@@ -491,6 +464,154 @@ ipcMain.on('history-delete', (event, arg) => {
 
 
 
+/*
+
+    Misc. Functions
+
+    Here are the Import and Export functions and other functions we
+    use.
+
+*/
+function importUrlList() {
+    var d = remote.dialog.showOpenDialog(
+        {
+            properties: [
+                'openFile',
+            ],
+            buttonLabel : 'Import',
+            filters : [
+                { name : 'Plain Text File', extensions: [ 'txt' ]}
+            ]
+        },
+        () => {
+            // We have a selection...
+            mainwin.send('show-status', { message : 'Importing file, please wait...' });
+            fs.readFile(d[0], 'utf8', function (err,data) {
+                if (err) {
+                    mainwin.send('update-status', { message : 'Import error while accessing the file.' });
+                    setTimeout(function(){
+                        mainwin.send('hide-status');
+                    }, 2000);
+                } else {
+                    var filelist = data.split('\n');
+                    
+                    for (i = 0; i < filelist.length; i++)  {
+                        if (filelist[i].indexOf('http') > -1) {
+                            Downloads.add({
+                                user: {
+                                    id: null,
+                                    name: null
+                                },
+                                video: {
+                                    id: null,
+                                    title: null,
+                                    time: 0,
+                                    url: filelist[i].trim()
+                                }
+                            });
+
+                        }
+                    }
+                }
+            });
+        }
+    );}
+
+function importVideoIdList() {
+    var d = remote.dialog.showOpenDialog(
+        {
+            properties: [
+                'openFile',
+            ],
+            buttonLabel : 'Import',
+            filters : [
+                { name : 'Plain Text File', extensions: [ 'txt' ]}
+            ]
+        },
+        () => {
+            // We have a selection...
+            mainwin.send('show-status', { message : 'Importing file, please wait...' });
+
+            fs.readFile(d[0], 'utf8', function (err,data) {
+                if (err) {
+                    mainwin.send('update-status', { message : 'Import error while accessing the file.' });
+                    setTimeout(function(){
+                        mainwin.send('hide-status');
+                    }, 2000);
+                } else {
+                    var t = data.split('\n'), i = 0, idlist = [];
+
+                    for (i = 0; i < t.length; i++)
+                        idlist.push(t[i].trim());
+                    
+                    mainwin.send('update-status', { message : 'Found '+idlist.length+' entries to import.' });
+                    _importVideoIdList(idlist);
+                }
+            });
+        }
+    );
+}
+
+function _importVideoIdList(list) {
+    var entry = list.shift();
+    livemeapi.getVideoInfo(vidTest)
+        .then(video => {
+
+            if (video.vid.length > 16) {
+                Downloads.add({
+                    user: {
+                        id: video.userid,
+                        name: video.uname
+                    },
+                    video: {
+                        id: video.vid,
+                        title: video.title,
+                        time: video.vtime,
+                        url: video.hlsvideosource
+                    }
+                });
+            }
+
+            if (list.length > 0) 
+                _importVideoIdList(list);
+            else {
+                mainwin.send('update-status', { message : 'Import complete.' });
+                setTimeout(function(){
+                    mainwin.send('hide-status');
+                }, 1000);
+            }
+        })
+        .catch(err => {
+            console.log(`getVideoInfo() failed, ${err}`);
+            return_code = 1;
+        })
+
+
+
+
+
+
+
+}
+
+function exportFavorites() {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*
@@ -514,6 +635,39 @@ function getMenuTemplate() {
             ]
         },
         {
+            label : 'Favorites',
+            submenu : [
+                {
+                    label: 'Open Favorites',
+                    click: () => openFavoritesWindow()
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: 'Refresh Entries',
+                    click: () => refreshFavorites()
+                },
+                {
+                    label: 'Export Favorites List',
+                    click: () => exportFavorites()
+                }
+            ]
+        },
+        {
+            label : 'Lists',
+            submenu : [
+                {
+                    label: 'Import URL List',
+                    click: () => importUrlList()
+                },
+                {
+                    label: 'Import VideoID List',
+                    click: () => importVideoIdList()
+                }
+            ]
+        },
+        {
             role: 'window',
             submenu: [
                 { role: 'minimize' },
@@ -531,10 +685,6 @@ function getMenuTemplate() {
                 {
                     label: 'Toggle Queue Window',
                     click: () => toggleQueueWindow()
-                },
-                {
-                    label: 'Open Favorites Window',
-                    click: () => openFavoritesWindow()
                 }
             ]
         },
