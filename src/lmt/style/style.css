@@ -73,7 +73,6 @@ p {
 .float-left { float: left; }
 .float-right { float: right; }
 
-
 .spacer { width: 16px; }
 .width24 { width: 24px; }
 .width32 { width: 32px; }
@@ -89,6 +88,8 @@ p {
 .width544 { width: 544px; }
 .width600 { width: 600px; }
 .width700 { width: 700px; }
+
+.male, .female { border: solid 2px; }
 
 
 
@@ -197,7 +198,9 @@ overlay .status {
 	text-align: center;
 	color: rgba(255,255,255,0.7);
 }
-
+overlay .status progress {
+	width: 440px;
+}
 
 /*
 	
@@ -223,6 +226,7 @@ toolbar {
 
 .section.with-progress-bar {
 	line-height: normal;
+	overflow: hidden;
 }
 .section.with-progress-bar > label {
 	display: block;
@@ -825,6 +829,14 @@ a.button.icon {
 }
 
 
+/*
+	
+	Male/Female indication styling
+
+*/
+.male { border-color: #89cff0; }
+.female { border-color: #f9ccca; }
+
 
 
 
@@ -843,6 +855,19 @@ a.button.icon {
 .icon-play { background-image: url(../images/ic_play_circle_outline_white_24px.svg); }
 .icon-remove { background-image: url(../images/ic_cancel_white_24px.svg); }
 .icon-search { background-image: url(../images/search.svg); }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*
