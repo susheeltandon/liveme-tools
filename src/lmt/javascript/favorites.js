@@ -25,32 +25,11 @@ $(function(){
 		$('#small_user_list').html(`<div class="empty">${m}</div>`);
 	});
 
-	setTimeout(function(){
-		Favorites.refresh();	
-	}, 50);	
+	Favorites.refresh();	
 
 });
-
-function closeWindow() { window.close(); }
 
 function getVideos(e) {
 	ipcRenderer.send('submit-search', { userid: e });
 }
 
-function updateList() {
-	Favorites.update();
-}
-
-function exportList() {
-	let d = remote.dialog.showSaveDialog(
-		remote.getCurrentWindow(),
-		{
-			filters: [ { name: "Text File", extensions: ["txt"] }, { name: 'All Files', extensions: ['*'] } ],
-			defaultPath: "favorites.txt"
-		}
-	);
-
-	if (typeof d == "undefined") return;
-
-	Favorites.export(d);
-}
