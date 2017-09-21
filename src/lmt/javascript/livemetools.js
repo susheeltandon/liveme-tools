@@ -38,108 +38,22 @@ $(function(){
         Downloads.killActiveDownload();
 	});
 
+	ipcRenderer.on('show-status' , function(event , data) { 
+		$('overlay').html(data.message).show();
+	});
+	ipcRenderer.on('update-status' , function(event , data) { 
+		$('overlay').html(data.message);
+	});
+	ipcRenderer.on('hide-status' , function(event , data) { 
+		$('overlay').hide();
+	});
+
 	//Favorites.load();
 	Downloads.load();
 });
 
-
-
-function showMainMenu() {
-
-	const MainAppMenu = remote.Menu.buildFromTemplate(
-		[
-			{
-				label: 'Import',
-				submenu: [
-					{
-						label: 'URL List',
-						click: () => showImportURLList()
-					},
-					{
-						label: 'VideoID List',
-						click: () => showImportVideoIDList()
-					}
-				]
-			},
-			{
-				type: 'separator'
-			},
-			{
-				label: 'Open Favorites Window',
-				click: () => showFavorites()
-			},
-			{
-				type: 'separator'
-			},
-			{
-				label: 'Toggle Queue Window',
-				click: () => showQueue()
-			},
-			{
-				type: 'separator'
-			},
-			{
-				label: 'Help',
-				submenu: [
-					{
-						label: 'Online Help',
-						click: () => openExternal('https://github.com/thecoder75/liveme-tools/blob/master/docs/index.md')
-					},
-					{
-						type: 'separator'
-					},
-					{
-						label: 'Github Home',
-						click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/')
-					},
-					{
-						label: 'Report an Issue',
-						click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/issues')
-					},
-					{
-						type: 'separator'
-					},
-					{
-						role: 'toggledevtools'
-					}
-				]
-			},
-			{
-				type: 'separator'
-			},
-			{
-				label: 'Settings',
-				click: () => showSettings()
-			},
-			{
-				type: 'separator'
-			},
-			{
-				label: 'Quit LiveMe Tools',
-				click: () => remote.app.quit()
-			},
-
-		]
-	);	
-
-	MainAppMenu.popup(
-		remote.getCurrentWindow(),
-		{
-			x: 0,
-			y: 40
-		}
-	)
-
-}
-
 function copyToClipboard(i) { clipboard.writeText(i); }
 function cancelAction() { cancelLMTweb = true; }
-
-function showSettings() { ipcRenderer.send('show-settings'); }
-function showFavorites() { ipcRenderer.send('show-favorites'); }
-function showQueue() { ipcRenderer.send('show-queue'); }
-
-function closeApp() { remote.app.quit(); }
 function enterOnSearch(e) { if (e.keyCode == 13) beginSearch(); } 
 
 function onTypeChange() {
@@ -151,91 +65,6 @@ function onTypeChange() {
 		case 'search': $('#query').attr('placeholder', 'Enter Partial or Full Username'); $('#maxlevel').show(); break;
 		case 'hashtag': $('#query').attr('placeholder', 'Enter a hashtag'); $('#maxlevel').hide(); break;
 	}
-}
-
-
-function showImportVideoIDList() {
-	var d = remote.dialog.showOpenDialog(
-		remote.getCurrentWindow(),
-		{
-			properties: [
-				'openFile'
-			]
-		}
-	);
-
-	if (typeof d == "undefined") return;
-	
-	// Get contents of file...
-	fs.readFile(d[0], 'utf8', function (err,data) {
-		if (err) {
-			remote.dialog.showErrorBox(
-				'Import Error',
-				'There was an error while attempting to import the selected file.'
-			);
-			return;
-		} else {
-			var t = data.split('\n'), idlist = [], i = 0;
-			
-			for (i = 0; i < t.length; i++)
-				idlist.push(t[i].trim());
-
-			ipcRenderer.send('show-import-win', { list: idlist });
-		}
-		
-		return;
-	});
-
-}
-
-
-
-function showImportURLList() {
-	var d = remote.dialog.showOpenDialog(
-		remote.getCurrentWindow(),
-		{
-			properties: [
-				'openFile'
-			]
-		}
-	);
-
-	if (typeof d == "undefined") return;
-	
-	// Get contents of file...
-	fs.readFile(d[0], 'utf8', function (err,data) {
-		if (err) {
-			remote.dialog.showErrorBox(
-				'Import Error',
-				'There was an error while attempting to import the selected file.'
-			);
-			return;
-		} else {
-			var filelist = data.split('\n');
-			
-			for (i = 0; i < filelist.length; i++)  {
-				if (filelist[i].indexOf('http') > -1) {
-					Downloads.add({
-						user: {
-							id: null,
-							name: null
-						},
-						video: {
-							id: null,
-							title: null,
-							time: 0,
-							url: filelist[i].trim()
-						}
-					});
-
-				}
-			}
-
-		}
-		
-		return;
-	});
-
 }
 
 function toggleFavorite() {
