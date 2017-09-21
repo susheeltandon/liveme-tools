@@ -22,7 +22,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^4.0.1",
     "init": "^0.1.2",
-    "liveme-api": "^1.0.2",
+    "liveme-api": "^1.1.0",
     "request": "^2.81.0"
   },
   "repository": {
