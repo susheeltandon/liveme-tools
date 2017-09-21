@@ -41,7 +41,7 @@
 									$("#small_user_list").append(`
 										<div class="item small clickable" onClick="getVideos('${e.data[i].uid}')">
 											<div class="avatar">
-												<img src="${e.data[i].face}" onerror="this.src='images/blank.png'">
+												<img src="${e.data[i].face}" class="${sex}" onerror="this.src='images/blank.png'">
 											</div>
 											<div class="content">
 												<div class="header">${e.data[i].nickname}</div>
