@@ -16,7 +16,7 @@
 	polydragon		- https://github.com/polydragon
 
 */
-const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron'),
+const { app, BrowserWindow, ipcMain, Menu, shell, dialog } = require('electron'),
     os = require('os'),
     fs = require('fs'),
     isDev = require('electron-is-dev'),
@@ -175,6 +175,8 @@ app
         }
     });
 
+
+
 /*
     Splash/About Window
 */
@@ -206,6 +208,40 @@ function showSplash() {
     });
 
 }
+
+function showSettings() {
+    let settingsWindow = new BrowserWindow({
+        width: 900,
+        height: 432,
+        resizable: false,
+        darkTheme: true,
+        autoHideMenuBar: false,
+        show: false,
+        skipTaskbar: false,
+        center: true,
+        vibrancy: 'ultra-dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
+        disableAutoHideCursor: true,
+        titleBarStyle: 'default',
+        fullscreen: false,
+        maximizable: false,
+        closable: true,
+        frame: true,
+        parent: mainwin,
+        modal: true
+    });
+
+    settingsWindow
+        .once('ready-to-show', () => {
+            settingsWindow.show();
+        })
+        .loadURL(`file://${__dirname}/lmt/settings.html`);
+};
+
+
+
+
+
 
 
 
@@ -250,48 +286,6 @@ function openFavoritesWindow() {
             .loadURL(`file://${__dirname}/lmt/favorites-list.html`);
     }
 };
-
-function refreshFavorites() {
-
-}
-
-function exportFavorites() {
-
-}
-
-
-
-/*
-	Settings Related
-*/
-ipcMain.on('show-settings', () => {
-    let settingsWindow = new BrowserWindow({
-        width: 900,
-        height: 432,
-        resizable: false,
-        darkTheme: true,
-        autoHideMenuBar: false,
-        show: false,
-        skipTaskbar: false,
-        center: true,
-        vibrancy: 'ultra-dark',
-        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
-        disableAutoHideCursor: true,
-        titleBarStyle: 'default',
-        fullscreen: false,
-        maximizable: false,
-        closable: true,
-        frame: true,
-        parent: mainwin,
-        modal: true
-    });
-
-    settingsWindow
-        .once('ready-to-show', () => {
-            settingsWindow.show();
-        })
-        .loadURL(`file://${__dirname}/lmt/settings.html`);
-});
 
 
 
@@ -377,6 +371,10 @@ ipcMain.on('play-video', (event, arg) => {
             closable: true,
             frame: process.platform == 'darwin' ? false : true
         });
+
+        if (process.platform == 'darwin') {
+            playerWindow.setAspectRatio(9 / 16);
+        }
 
         playerWindow
             .once('ready-to-show', () => {
@@ -473,7 +471,7 @@ ipcMain.on('history-delete', (event, arg) => {
 
 */
 function importUrlList() {
-    var d = remote.dialog.showOpenDialog(
+    var d = dialog.showOpenDialog(
         {
             properties: [
                 'openFile',
@@ -483,10 +481,11 @@ function importUrlList() {
                 { name : 'Plain Text File', extensions: [ 'txt' ]}
             ]
         },
-        () => {
+        (filePaths) => {
+            if (filePaths == null) return;
             // We have a selection...
             mainwin.send('show-status', { message : 'Importing file, please wait...' });
-            fs.readFile(d[0], 'utf8', function (err,data) {
+            fs.readFile(filePaths[0], 'utf8', function (err,data) {
                 if (err) {
                     mainwin.send('update-status', { message : 'Import error while accessing the file.' });
                     setTimeout(function(){
@@ -518,7 +517,7 @@ function importUrlList() {
     );}
 
 function importVideoIdList() {
-    var d = remote.dialog.showOpenDialog(
+    var d = dialog.showOpenDialog(
         {
             properties: [
                 'openFile',
@@ -528,11 +527,12 @@ function importVideoIdList() {
                 { name : 'Plain Text File', extensions: [ 'txt' ]}
             ]
         },
-        () => {
+        (filePaths) => {
             // We have a selection...
+            if (filePaths == null) return;
             mainwin.send('show-status', { message : 'Importing file, please wait...' });
 
-            fs.readFile(d[0], 'utf8', function (err,data) {
+            fs.readFile(filePaths[0], 'utf8', function (err,data) {
                 if (err) {
                     mainwin.send('update-status', { message : 'Import error while accessing the file.' });
                     setTimeout(function(){
@@ -584,18 +584,20 @@ function _importVideoIdList(list) {
         .catch(err => {
             console.log(`getVideoInfo() failed, ${err}`);
             return_code = 1;
-        })
-
-
-
-
-
-
-
+        });
 }
 
 function exportFavorites() {
-
+    let d = remote.dialog.showSaveDialog(
+        {
+            filters: [ { name: "Text File", extensions: ["txt"] }, { name: 'All Files', extensions: ['*'] } ],
+            defaultPath: "exported_favorites.txt"
+        }, 
+        (filePaths) => {
+            if (filePaths[0] != null)
+                Favorites.export(filePaths[0]);
+        }
+    );
 }
 
 
@@ -639,6 +641,7 @@ function getMenuTemplate() {
             submenu : [
                 {
                     label: 'Open Favorites',
+                    accelerator: 'CommandOrControl+D',
                     click: () => openFavoritesWindow()
                 },
                 {
@@ -646,7 +649,7 @@ function getMenuTemplate() {
                 },
                 {
                     label: 'Refresh Entries',
-                    click: () => refreshFavorites()
+                    click: () => Favorites.update()
                 },
                 {
                     label: 'Export Favorites List',
@@ -659,10 +662,12 @@ function getMenuTemplate() {
             submenu : [
                 {
                     label: 'Import URL List',
+                    accelerator: 'CommandOrControl+I',
                     click: () => importUrlList()
                 },
                 {
                     label: 'Import VideoID List',
+                    accelerator: 'CommandOrControl+Shift+I',
                     click: () => importVideoIdList()
                 }
             ]
@@ -680,11 +685,6 @@ function getMenuTemplate() {
                         { role: 'forcereload' },
                         { role: 'toggledevtools' }
                     ]
-                },
-                { type: 'separator' },
-                {
-                    label: 'Toggle Queue Window',
-                    click: () => toggleQueueWindow()
                 }
             ]
         },
@@ -712,6 +712,12 @@ function getMenuTemplate() {
                     click: () => showSplash()  
                 },
                 { type: 'separator' },
+                {
+                    label : 'Preferences',
+                    accelerator: 'CommandOrControl+,',
+                    click: () => showSettings()
+                },
+                { type: 'separator' },
                 { role: 'services', submenu: [] },
                 { type: 'separator' },
                 { role: 'hide' },
@@ -721,17 +727,24 @@ function getMenuTemplate() {
                 { role: 'quit' }
             ]
         });
+    } else {
+        template[0].push({ 
+            type: separator
+        });
+        template[0].push({ 
+            label: 'Preferences', 
+            click: () => showSettings() 
+        });
     }
 
-    // Add "File > Quit" menu item so Linux distros where the system tray icon is
-    // missing will have a way to quit the app.
+
     if (process.platform === 'linux') {
         // File menu (Linux)
         template[0].submenu.push({
             label: 'Quit',
             click: () => app.quit()
         })
-    }
+    } 
 
     return template
 }
