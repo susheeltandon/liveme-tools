@@ -12,9 +12,6 @@
 			$(function(){
 				$('h2').html('v '+remote.app.getVersion());
 				setTimeout(function(){
-					$('#splash').fadeOut(800);
-				}, 3000);
-				setTimeout(function(){
 					window.close();
                 }, 5000);
                 
@@ -27,21 +24,22 @@
 
 		<style>
 			ul { list-style: none; margin: 0; padding: 0; display: inline-block; }
-			ul li { font-size: 9pt; font-weight: 400; display: inline; padding:0; margin: 0; }
+			ul li { font-size: 10pt; font-weight: 300; display: inline; padding: 0; margin: 0; }
 			ul li:after { content: ', ' }
 			ul li:last-child:after { content: ' '; }
 
 			#splash {
 				display: block;
 				height: 128px;
-				background: url(images/liveme.tools.icon.svg) left no-repeat;
+				background-image: url(images/liveme.tools.icon.svg);
+				background-repeat: no-repeat;
+				background-position: 0px 0px;
 				background-size: 128px 128px;
 				position: relative;
-				color: rgba(255,255,255,0.6);
+				color: rgba(255,255,255,0.9);
 				z-index: 2;
-				box-shadow: 0px 8px 18px rgba(0,0,0,0.6);
 				padding: 0;
-				margin: 16px 16px 0;
+				margin: 0;
 			}
 			#splash h1 { 
 				position: absolute;
@@ -55,27 +53,22 @@
 			#splash h2 {
 				position: absolute;
 				bottom: 2px;
-				right: 60px;
-				font-size: 12pt;
-				font-weight: 400;
-				letter-spacing: 0.08em;
+				right: 8px;
+				font-size: 10pt;
+				font-weight: 300;
+				letter-spacing: 0.04em;
 				text-align: right;
-				color: rgba(0,0,0,0.6);
-			}
-			#splash h3 {
-				font-size: 8pt;
-				padding: 0;
-				margin: 0;
+				color: rgba(255,255,255,0.9);
 			}
 			.credits {
-				padding: 2px 4px;
 				position: absolute;
 				bottom: 2px;
-				left: 144px;
-				color: rgba(0,0,0,0.9);
+				left: 148px;
+				color: rgba(255,255,255,0.9);
+				font-size: 8pt;
 			}
 			.credits span {
-				font-size: 8.5pt;
+				font-size: 9pt;
 				padding-right: 12px;
 			}
 		</style>
