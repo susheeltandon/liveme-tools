@@ -189,8 +189,8 @@ app
 */
 function showSplash() {
     aboutwin = new BrowserWindow({
-        width: 600,
-        height: 180,
+        width: 640,
+        height: 128,
         resizable: false,
         darkTheme: true,
         autoHideMenuBar: true,
