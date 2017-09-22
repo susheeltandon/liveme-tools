@@ -16,7 +16,7 @@ const 	{ electron, BrowserWindow, remote, ipcRenderer, shell, clipboard } = requ
 		Downloads = remote.getGlobal('Downloader'),
 		LiveMe = require('liveme-api');
 
-var isSearching = false, favorites_list = [], debounced = false, current_user = {}, current_page = 0, MAX_PAGE_SIZE = 10;
+var 	isSearching = false, favorites_list = [], debounced = false, current_user = {}, current_page = 0, MAX_PAGE_SIZE = 10;
 
 $(function(){
 
@@ -363,7 +363,7 @@ function getUsersReplays() {
 				isSearching = false;
 			}
 
-			if (replays.length == MAX_PAGE_SIZE) {
+			if ((replays.length == MAX_PAGE_SIZE) && ( $('.item').length != appSettings.get('downloads.replaycount')) ) {
 				current_page++;
 				getUsersReplays();
 			} else {
@@ -522,7 +522,7 @@ function performHashtagSearch() {
 				isSearching = false;
 			}
 
-			if (results.length == MAX_PAGE_SIZE) {
+			if ((results.length == MAX_PAGE_SIZE) && ($('.item').length < appSettings.get('downloads.replaycount')) ) {
 				current_page++;
 				performHashtagSearch();
 			} else {
