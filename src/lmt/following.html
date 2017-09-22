@@ -11,7 +11,7 @@
 		<script src="javascript/jquery-2.2.4.min.js"></script>
 		
 		<script>
-			const LiveMe = require('liveme-api');
+			const LiveMe = require('liveme-api'), { ipcRenderer } = require('electron');
 			var page = 1, userid = '';
 
 			$(function(){
@@ -30,7 +30,7 @@
 	                		var sex = results[i].sex < 0 ? '' : (results[i].sex == 0 ? 'female' : 'male');
 
 							$(".list").append(`
-								<div class="item small clickable" onClick="getVideos('${results[i].uid}')">
+								<div class="item small clickable" onClick="getVideos('${results[i].uid}')" id="${results[i].uid}">
 									<div class="avatar">
 										<img src="${results[i].face}" class="${sex}" onerror="this.src='images/blank.png'">
 									</div>
@@ -58,7 +58,7 @@
             }
 
 			function getVideos(e) {
-				var {ipcRenderer} = require('electron')
+				$('#'+e).addClass('marked');
 				ipcRenderer.send('submit-search', { userid: e });
 			}
 
