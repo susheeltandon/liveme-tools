@@ -12,73 +12,63 @@
 
 		<script>
 			
+			const LiveMe = require('liveme-api');
+			var page = 1, userid = '';
 
-			function closeApp() {
-			    window.close()
-			}
-
-			function doFetch() {
+			$(function(){
 			    var e = window.location.href.split("?")[1].split("#");
-                userID = e[0];
+                userid = e[0];
                 
                 document.title = `${e[2]} - Fans`;
+				doFetch();				
+			})
 
-			    max = e[1], $.ajax({
-			        url: "http://live.ksmobile.net/follow/getFollowerListShip",
-			        data: {
-			            page_size: ps,
-			            page_index: cp,
-			            access_token: userID
-			        },
-			        cache: !1,
-			        type: "GET",
-			        dataType: "json",
-			        success: function(e) {
-			            if (e.data.length > 0) {
-			                for (i = 0; i < e.data.length; i++) {
-			                	if (e.data[i].uid.length > 15) {
-			                		var sex = e.data[i].sex < 0 ? '' : (e.data[i].sex == 0 ? 'female' : 'male');
-									$("#small_user_list").append(`
-										<div class="item small clickable" onClick="getVideos('${e.data[i].uid}')">
-											<div class="avatar">
-												<img src="${e.data[i].face}" class="${sex}" onerror="this.src='images/blank.png'">
-											</div>
-											<div class="content">
-												<div class="header">${e.data[i].nickname}</div>
-											</div>
+            function doFetch() {
+				LiveMe.getFans(userid, 10, page)
+					.then(results => {
+						for(var i = 0; i < results.length; i++) {
+
+	                		var sex = results[i].sex < 0 ? '' : (results[i].sex == 0 ? 'female' : 'male');
+
+							$(".list").append(`
+								<div class="item small clickable" onClick="getVideos('${results[i].uid}')">
+									<div class="avatar">
+										<img src="${results[i].face}" class="${sex}" onerror="this.src='images/blank.png'">
+									</div>
+									<div class="content">
+										<div class="header">${results[i].nickname}</div>
+										<div class="meta">
+											<div>Country: ${results[i].countryCode} &nbsp;&nbsp;- </div>
+											<div>Level: ${results[i].level} </div>
 										</div>
-									`);
-				                }
-			                }
-		                    cp++;
-		                    doFetch();
-			            }
-			        }
-			    })
-			}
+									</div>
+								</div>
+							`);
+						}
+						if (results.length == 10) {
+							page++;
+							setTimeout(() => {
+								doFetch();
+							}, 25);
+						}							
+					})
+					.catch(err => {
+						console.log('Error: ' + err);
+					});
+
+            }
 
 			function getVideos(e) {
 				var {ipcRenderer} = require('electron')
 				ipcRenderer.send('submit-search', { userid: e });
 			}
-			var ps = 20,
-			    cp = 1,
-			    ct = 0,
-			    max = 0,
-			    userID = "";
-			$(function() {
-				$('#small_user_list').html('');
-			    setTimeout(function() {
-			        doFetch();
-			    }, 250);
-			});
 
 		</script>
 		
 	</head>
 	<body>
 		<main>
-			<div class="list" id="small_user_list"></div>
+			<div class="list"></div>
 		</main>
 	</body>
 </html>
