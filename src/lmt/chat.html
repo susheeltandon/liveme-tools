@@ -10,23 +10,23 @@
     <script src="javascript/jquery-2.2.4.min.js"></script>
     <script src="javascript/livemetools.magic.js"></script>
     <script>
-        const { remote, BrowserWindow, ipcRenderer } = require('electron'), api = require('liveme-api');
+        const { remote, BrowserWindow, ipcRenderer } = require('electron'), LiveMe = require('liveme-api');
 
         $(function () {
             ipcRenderer.on('set-chat', (event, arg) => {
                 var startTime = parseInt(arg.startTime) * 1000;
                 var addedEntries = 0;
-                $('#message_history').empty();
+                $('.list').empty();
                 $('overlay').show();
 
-                api.getChatHistoryForVideo(arg.url)
+                LiveMe.getChatHistoryForVideo(arg.url)
                     .then(messages => {
                         $('#overlay').hide();
 
                         if (!messages) {
-                            $('#message_history').append('<span class="emptylist">Failed to load chat message history.</span>');
+                            $('.list').append('<span class="emptylist">Failed to load chat message history.</span>');
                         } else if (messages.length == 0) {
-                            $('#message_history').append('<span class="emptylist">No chat message history found.</span>');
+                            $('.list').append('<span class="emptylist">No chat message history found.</span>');
                         } else {
                             for (var i = 0; i < messages.length; i++) {
                                 var message = messages[i];
@@ -41,7 +41,7 @@
                                 } else if (message.objectName == "RC:TxtMsg") {
                                     var highlight = message.content.user.name == arg.nickname ? 'highlight' : '';
 
-                                    $('#message_history').append(`
+                                    $('.list').append(`
                                         <div class="message ${highlight}">
                                             <div class="time">${t}</div>
                                             <div class="author">${message.content.user.name}</div>
@@ -54,11 +54,11 @@
                         }
 
                         if (addedEntries == 0) {
-                            $('#message_history').append('<span class="emptylist">No message history available.</span>');
+                            $('.list').append('<span class="empty">No message history available.</span>');
                         }
                     })
                     .catch(err => {
-                        $('#message_history').append('<span class="emptylist">An error occured when loading the chat message history.</span>');
+                        $('.list').append('<span class="empty">An error occured when loading the chat message history.</span>');
                     });
             });
         });
@@ -66,8 +66,11 @@
     </head>
 
     <body>
+        <overlay>
+            <div class="status">Loading...</div>
+        </overlay>
         <main>
-            <b>Chat is broken so it can be added to the video player window.</b>
+            <div class="list message"></div>
         </main>
     </body>
 
