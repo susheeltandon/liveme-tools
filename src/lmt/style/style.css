@@ -90,7 +90,13 @@ p {
 .width700 { width: 700px; }
 
 .male, .female { border: solid 3px; }
-
+.marked {
+	background-image: url(../images/ic_check_white_24px.svg);
+	background-position: right 24px center;
+	background-repeat: no-repeat;
+	background-size: 24px 24px;
+	-webkit-transition: 0s;
+}
 
 
 /*
@@ -839,7 +845,6 @@ a.button.icon {
 .highlight {
 	background-color: rgba(255,255,0,0.1);
 }
-
 
 /*
 	
