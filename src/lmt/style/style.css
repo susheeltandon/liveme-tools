@@ -452,6 +452,10 @@ input[type=text],input[type=password] {
 	outline: none;
 }
 
+input[type=text].disabled {
+	-webkit-transition: 0s;
+	cursor: not-allowed;
+}
 
 .select {
 	display: inline-block;
@@ -758,6 +762,12 @@ input[type=text]:focus,input[type=password]:focus {
 	background-color: transparent;
 	color: rgba(240,240,240,0.8);
 }
+
+input[type=text].disabled {
+	color: rgba(112,112,112,0.9);
+	background-color: transparent;
+}
+
 
 .select {
 	background-color: rgba(64,64,64,1);
