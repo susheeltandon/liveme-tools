@@ -79,6 +79,7 @@ function beginSearch() {
 
 	if (isSearching) return;
 
+	$('#query').addClass('disabled');
 	var u=$('#query').val(), isnum = /^\d+$/.test(u);
 
 	if ((u.length==20) && (isnum)) {
@@ -116,6 +117,8 @@ function beginSearch() {
 function beginSearch2() {
 
 	if (isSearching) return;
+
+	$('#query').addClass('disabled');
 
 	isSearching = true;
 	var videoid = '', userid = '';
@@ -165,7 +168,9 @@ function beginSearch2() {
 				}
 			}
 		} else {
-			$('main').html('<div class="list"><div class="empty">Unsupported URL was specified.</div></div>');									
+			$('main').html('<div class="list"><div class="empty">Unsupported URL was specified.</div></div>');
+			$('#query').removeClass('disabled');
+			isSearching = false;
 		}
 		isSearching = false;
 		$('overlay').hide();		
@@ -183,6 +188,8 @@ function beginSearch2() {
 			})
 			.catch(err => {
 				$('main').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div></div>');						
+				$('#query').removeClass('disabled');
+				isSearching = false;
 			});
 
 	} else if (userid.length > 0) {
@@ -262,6 +269,7 @@ function performUserLookup(uid) {
 		.catch(err => {
 			console.log(err);
 			$('main').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div>');
+			$('#query').removeClass('disabled');
 			isSearching = false;
 		});
 
@@ -351,18 +359,23 @@ function getUsersReplays() {
 
 			if (current_page == 1 && replays.length == 0) {
 				$('.list').html('<div class="empty">No visible replays available for this account.</div>');						
+				$('#query').removeClass('disabled');
 				isSearching = false;
 			}
 
 			if (replays.length == MAX_PAGE_SIZE) {
 				current_page++;
 				getUsersReplays();
+			} else {
+				$('#query').removeClass('disabled');
+				isSearching = false;
 			}
 
 		})
 		.catch(err => {			
 			if (current_page == 1)
 				$('.list').html('<div class="empty">No visible replays available for this account.</div>');						
+			$('#query').removeClass('disabled');
 			isSearching = false;
 		});
 }
@@ -403,12 +416,14 @@ function performUsernameSearch() {
 
 			if (results.length == 0) {
 				$('.list').html('<div class="empty">No accounts were found matching your search.</div>');						
+				$('#query').removeClass('disabled');
 				isSearching = false;
 			}
 
 		})
 		.catch(err => {
 			console.log(err);
+			$('#query').removeClass('disabled');
 			isSearching = false;
 		});	
 }
@@ -503,17 +518,22 @@ function performHashtagSearch() {
 
 			if (current_page == 1 && results.length == 0) {
 				$('.list').html('<div class="empty">No videos were found on LiveMe matching the specified hashtag.</div>');
+				$('#query').removeClass('disabled');
 				isSearching = false;
 			}
 
 			if (results.length == MAX_PAGE_SIZE) {
 				current_page++;
 				performHashtagSearch();
+			} else {
+				$('#query').removeClass('disabled');
+				isSearching = false;
 			}
 
 		})
 		.catch(err => {
 			console.log(err);
+			$('#query').removeClass('disabled');
 			isSearching = false;
 		});	
 }
