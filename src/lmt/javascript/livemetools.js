@@ -408,14 +408,6 @@ function performUsernameSearch() {
 				`);
 			}
 
-
-			/*
-
-
-					Once we can figure out the page value not working on search we can uncomment
-					this and enable more than 20 results.
-
-			*/
 			if (results.length == 10) {
 				current_page++;
 				setTimeout(() => {
