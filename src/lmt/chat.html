@@ -25,6 +25,8 @@
                     LiveMe.getChatHistoryForVideo(video.msgfile)
                         .then(messages => {
                             console.log(messages);
+                            return;
+
                             $('overlay').hide();
 
                             if (!messages) {
