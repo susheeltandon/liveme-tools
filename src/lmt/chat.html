@@ -10,9 +10,73 @@
     <script src="javascript/jquery-2.2.4.min.js"></script>
     <script src="javascript/livemetools.magic.js"></script>
     <script>
-        const { remote, BrowserWindow, ipcRenderer } = require('electron'), LiveMe = require('liveme-api');
+        const   LiveMe = require('liveme-api');
+        var     username = '';
 
-        $(function () {
+        $(function(){
+
+            var t = window.location.href.split('?'), videoid = t[1];
+
+            LiveMe.getVideoInfo(videoid)
+                .then(video => {
+                    
+                    username = video.uname;
+
+                    LiveMe.getChatHistoryForVideo(video.msgfile)
+                        .then(messages => {
+                            console.log(messages);
+                            $('overlay').hide();
+
+                            if (!messages) {
+                                $('.list').append('<span class="emptylist">Failed to load chat message history.</span>');
+                            } else if (messages.length == 0) {
+                                $('.list').append('<span class="emptylist">No chat message history found.</span>');
+                            } else {
+
+                                for (var i = 0; i < messages.length; i++) {
+                                    var message = messages[i];
+                                    // Server stores time in UTC so we need to calculate from there to display correct offsets
+                                    var timeOffset = new Date(parseInt(message.timestamp) - startTime), hh = timeOffset.getUTCHours(), mm = timeOffset.getUTCMinutes(), ss = timeOffset.getUTCSeconds();
+                                    var t = (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
+
+                                    if (message.objectName == "app:joinchatroommsgcontent") {
+                                        //$('#message_history').append('<div class="chat_joinmsg"><span class="time">[' + message.timestamp + ']</span><span class="author">' + message.content.user.name + '</span><span class="message">joined the room</span></div>');
+                                    } else if (message.objectName == "app:praisemsgcontent") {
+                                        //$('#message_history').append('<div class="chat_praisemsg"><span class="time">[' + message.timestamp + ']</span><span class="author">' + message.content.name + '</span> praised the broadcaster (+<span class="message">' + message.content.count + '</span>)</div>');
+                                    } else if (message.objectName == "RC:TxtMsg") {
+                                        var highlight = message.content.user.name == arg.nickname ? 'highlight' : '';
+
+                                        $('.list').append(`
+                                            <div class="item ${highlight}">
+                                                <div class="meta">
+                                                    <div class="width100">${t}</div>
+                                                    <div class="width200 align-right">${message.content.user.name}</div>
+                                                </div>
+                                                ${message.content.content}
+                                            </div>
+                                            `);
+                                        addedEntries++;
+                                    }
+                                }
+                            }
+
+                            if (addedEntries == 0) {
+                                $('.list').append('<span class="empty">No message history available.</span>');
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            $('.list').append('<span class="empty">An error occured while loading.</span>');
+                        });
+                })
+                .catch(err => {
+
+                });
+
+        });
+
+/*
+
             ipcRenderer.on('set-chat', (event, arg) => {
                 var startTime = parseInt(arg.startTime) * 1000;
                 var addedEntries = 0;
@@ -21,13 +85,15 @@
 
                 LiveMe.getChatHistoryForVideo(arg.url)
                     .then(messages => {
-                        $('#overlay').hide();
+                        $('overlay').hide();
 
                         if (!messages) {
                             $('.list').append('<span class="emptylist">Failed to load chat message history.</span>');
                         } else if (messages.length == 0) {
                             $('.list').append('<span class="emptylist">No chat message history found.</span>');
                         } else {
+                            console.log(messages);
+
                             for (var i = 0; i < messages.length; i++) {
                                 var message = messages[i];
                                 // Server stores time in UTC so we need to calculate from there to display correct offsets
@@ -42,10 +108,12 @@
                                     var highlight = message.content.user.name == arg.nickname ? 'highlight' : '';
 
                                     $('.list').append(`
-                                        <div class="message ${highlight}">
-                                            <div class="time">${t}</div>
-                                            <div class="author">${message.content.user.name}</div>
-                                            <div class="content">${message.content.content}</div>
+                                        <div class="item ${highlight}">
+                                            <div class="meta">
+                                                <div class="width100">${t}</div>
+                                                <div class="width200 align-right">${message.content.user.name}</div>
+                                            </div>
+                                            ${message.content.content}
                                         </div>
                                         `);
                                     addedEntries++;
@@ -62,6 +130,8 @@
                     });
             });
         });
+*/
+
     </script>
     </head>
 
