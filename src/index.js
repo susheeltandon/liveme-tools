@@ -437,12 +437,9 @@ ipcMain.on('open-chat', (event, arg) => {
         .on('closed', () => {
             chatWindow = null;
         })
-        .loadURL(`file://${__dirname}/lmt/chat.html`);
+        .loadURL(`file://${__dirname}/lmt/chat.html?${arg.videoid}`);
 
     chatWindow.showInactive();
-    chatWindow.once('ready-to-show', () => {
-        chatWindow.webContents.send('set-chat', { url: arg.url, startTime: arg.startTime, nickname: arg.nickname });    
-    });    
 });
 
 
