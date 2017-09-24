@@ -552,6 +552,80 @@ div.input.has-left-select > .select select {
 	line-height: 26px;
 }
 
+.switch {
+	display: inline-block;
+	position: relative;
+	width: 48px;
+	-webkit-user-select: none;
+	user-select: none;
+	vertical-align: middle;
+	outline: none;
+}
+
+.switch>label {
+	display: block;
+	position: relative;
+	height: 18px;
+	line-height: 18px;
+	font-size: 8pt;
+	color: rgba(255,255,255,0.7);
+	text-align: center;
+	text-transform: uppercase;
+	background: transparent;
+	border: 1px solid rgba(255,255,255,0.1);
+	border-radius: 11px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.06);
+	-webkit-transition: padding-left 0.15s ease-out;
+}
+
+.switch>label:before {
+	content: '';
+	display: block;
+	width: 16px;
+	height: 16px;
+	background: rgba(255,255,255,0.2);
+	border-radius: 8px;
+	-webkit-box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4), 1px 0 1px rgba(0,0,0,0.3);
+}
+
+.switch>label:after {
+	content: attr(data-off);
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 30px
+}
+
+.switch>input {
+	position: absolute;
+	z-index: 0;
+	top: 1px;
+	left: 1px;
+	width: 48px;
+	height: 16px;
+	padding: 0;
+	opacity: 0;
+	-webkit-appearance: none;
+	outline: none;
+}
+
+.switch>input:focus {
+	opacity: 1;
+}
+
+.switch>input:checked+label {
+	padding-left: 31px;
+	color: rgb(224,224,224);
+	background: rgb(96,96,96);
+}
+
+.switch>input:checked+label:after {
+	content: attr(data-on);
+	left: 0
+}
+
+
+
 
 
 /*
