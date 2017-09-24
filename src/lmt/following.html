@@ -23,7 +23,7 @@
 			})
 
             function doFetch() {
-				LiveMe.getFollowing(userid, 10, page)
+				LiveMe.getFollowing(userid, page, 10)
 					.then(results => {
 						for(var i = 0; i < results.length; i++) {
 
