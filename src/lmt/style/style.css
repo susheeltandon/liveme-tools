@@ -77,6 +77,7 @@ p {
 .width24 { width: 24px; }
 .width32 { width: 32px; }
 .width48 { width: 48px; }
+.width75 { width: 75px; }
 .width100 { width: 100px; }
 .width150 { width: 150px; }
 .width180 { width: 180px; }
@@ -114,6 +115,9 @@ main {
 	overflow-x: hidden;
 	overflow-y: auto;
 	-webkit-transition: 0s;
+
+	-webkit-user-drag: none;
+	-webkit-user-select: none;
 }
 
 main.offset48 {
@@ -456,6 +460,8 @@ input[type=text],input[type=password] {
 	border-radius: 4px;
 	margin: 0 4px;
 	outline: none;
+	-webkit-user-drag: force;
+	-webkit-user-select: force;	
 }
 
 input[type=text].disabled {
@@ -708,7 +714,51 @@ div.input.has-left-select > .select select {
 	height: calc(100vh - 48px);
 }
 
+.list .item.tile {
+	display: inline-block;
+	width: 300px;
+	height: 280px;
+	border: none;
+	margin: 5px;
+}
 
+.list .item.tile .avatar {
+	display: block;
+	text-align: center;
+}
+
+.list .item.tile .avatar img {
+	display: block;
+	margin: 0 auto;
+}
+
+.list .item.tile .header {
+	display: block;
+	font-size: 10pt;
+	height: 40px;
+	vertical-align: top;
+	padding: 8px 0 0;
+}
+
+.list .item.tile .meta {
+	display: table;
+	width: 100%;
+	margin: 4px 0;
+}
+
+.list .item.tile .meta div {
+	display: table-cell;
+	vertical-align: top;
+	font-size: 9pt;
+	padding: 4px 0;
+	text-align: center;
+}
+.list .item.tile .meta div span {
+	display: block;
+	font-size: 8pt;
+	margin: 0 0 4px;
+	text-align: left;
+}
 
 
 
@@ -832,6 +882,10 @@ a.button.icon {
 
 .list .item .content .meta div span, .list .item .footer div span {
 	color: rgb(128,128,128);
+}
+
+.list .item.tile {
+	background-color: rgba(64,64,64,0.25);
 }
 
 .list .empty {
