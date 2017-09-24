@@ -222,7 +222,7 @@ function showSplash() {
 function showSettings() {
     let settingsWindow = new BrowserWindow({
         width: 900,
-        height: 432,
+        height: 360,
         resizable: false,
         darkTheme: true,
         autoHideMenuBar: true,
