@@ -53,13 +53,19 @@
         "dmg"
       ],
       "identity": null,
-      "icon": "build/appicon.icns"
+      "icon": "build/appicon.icns",
+      "extraResources": [
+        "ffmpeg"
+      ]
     },
     "win": {
       "target": [
         "dir"
       ],
-      "icon": "build/appicon.ico"
+      "icon": "build/appicon.ico",
+      "extraResources": [
+        "ffmpeg.exe"
+      ]
     },
     "linux": {
       "target": [
