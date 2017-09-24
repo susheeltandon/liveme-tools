@@ -8,9 +8,7 @@ $(function() {
 			directory : path.join(remote.app.getPath('home'), 'Downloads'),
 			filemode: 0,
 			filetemplate: '',
-			history: true,
-			engine: 'internal',
-			replaycount: 10
+			history: true
 		});
 	}
 
@@ -20,9 +18,7 @@ $(function() {
 			directory: appSettings.get('downloads.directory'),
 			filemode: appSettings.get('downloads.filemode'),
 			filetemplate: appSettings.get('downloads.filetemplate'),
-			history: appSettings.get('downloads.history'),
-			engine: appSettings.get('downloads.engine'),
-			replaycount: 10
+			history: appSettings.get('downloads.history')
 		});
 	}
 
@@ -31,8 +27,6 @@ $(function() {
 		$('#filemode').prop('checked', appSettings.get('downloads.filemode'));
 		$('#filetemplate').val(appSettings.get('downloads.filetemplate'));
 		$('#history').prop('checked', appSettings.get('downloads.history'));
-		$('#engine').val(appSettings.get('downloads.engine'));
-		$('#replaycount').val(appSettings.get('downloads.replaycount'));
 		checkType();
 	}, 100);
 });
@@ -48,9 +42,7 @@ function saveSettings() {
 		directory: $('#download_folder').val(), 
 		filemode: $('#filemode').is(':checked') ? 1 : 0,
 		filetemplate: $('#filetemplate').val(),
-		history: $('#history').is(':checked') ? 1 : 0,
-		engine: $('#engine').val(),
-		replaycount: parseInt($('#replaycount').val())
+		history: $('#history').is(':checked') ? 1 : 0
 	});
 
 	if (oldHistory && !appSettings.get('downloads.history')) {
