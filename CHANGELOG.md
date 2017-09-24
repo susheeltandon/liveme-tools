@@ -20,6 +20,13 @@
 
 ### 5.x.x Releases
 
+#### 2017-09-17 - v5.0.9 
+**Added:**
+- Can now delete active downloads as well.
+
+**Fixed:**
+- See commits for details.
+
 #### 2017-09-13 - v5.0.6
 **Added:**
 - Automatically will download FFMPEG if its not found on the computer.
