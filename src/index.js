@@ -33,7 +33,8 @@ let mainwin = null,
     favoritesWindow = null,
     chatWindow = null,
     importwin = null,
-    aboutwin = null;
+    aboutwin = null,
+    livemeomg = null;
 
 function createWindow() {
 	/*
@@ -250,6 +251,37 @@ function showSettings() {
 };
 
 
+function showLiveMeOMG() {
+    let livemeomg = new BrowserWindow({
+        width: 640,
+        height: 540,
+        resizable: true,
+        darkTheme: true,
+        autoHideMenuBar: true,
+        show: false,
+        skipTaskbar: false,
+        center: true,
+        vibrancy: 'ultra-dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
+        disableAutoHideCursor: true,
+        titleBarStyle: 'default',
+        fullscreen: false,
+        maximizable: true,
+        closable: true,
+        frame: true,
+        modal: false
+    });
+
+    livemeomg.setMenu(null);
+
+    livemeomg
+        .on('ready-to-show', () => {
+            livemeomg.show();
+        })
+        .loadURL(`file://${__dirname}/lmt/livemeomg.html`);
+};
+
+
 
 
 
@@ -403,6 +435,9 @@ ipcMain.on('play-video', (event, arg) => {
     }
 
     playerWindow.loadURL(`file://${__dirname}/lmt/player.html#` + arg.url);
+});
+ipcMain.on('video-set-time', (event, arg) => {
+    playerWindow.webContents.send('jump-to-time', { time: arg.time });
 });
 
 /* 
@@ -721,6 +756,11 @@ function getMenuTemplate() {
                             click: () => importVideoIdList()
                         }
                     ]
+                },
+                { type: 'separator' },
+                {
+                    label: 'Show LiveMe-OMG',
+                    click: () => showLiveMeOMG()
                 }
             ]
         });
@@ -765,6 +805,11 @@ function getMenuTemplate() {
                             click: () => importVideoIdList()
                         }
                     ]
+                },
+                { type: 'separator' },
+                {
+                    label: 'Show LiveMe-OMG',
+                    click: () => showLiveMeOMG()
                 },
                 { type: 'separator' },
                 {
