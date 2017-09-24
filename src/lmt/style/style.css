@@ -788,6 +788,24 @@ div.input.has-left-select > .select select {
 	height: calc(100vh - 48px);
 }
 
+.list .item.message {
+	display: block;
+	font-size: 10pt;
+	font-weight: 300;
+}
+
+.list .item.message div {
+	display: block;
+	vertical-align: top;
+}
+
+.list .item.message div span {
+	display: inline-block;
+}
+
+
+
+
 .list .item.tile {
 	display: inline-block;
 	width: 300px;
