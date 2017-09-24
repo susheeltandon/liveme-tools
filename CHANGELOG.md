@@ -1,5 +1,23 @@
 ## CHANGELOG
 
+### 6.x.x Releases
+
+#### 2017-09-00 - v6.0.0
+**Added:**
+- Migrated to using LiveMe API module 
+- Whole new UI styling added
+- Added custom video player UI
+- Added ability to jump to video time index from message history by click on the time
+- Added ability to trigger a search by clicking on the username in the message history
+- Added autoload of content when you scroll to the bottom with loading of 10 entries at a time
+- Added LiveMe OMG window with ability to watch videos from it and search the users (All, Only Girls, Only Boys)
+
+**Fixed:**
+- Moved List Import and Export functions to main thread
+- Major code cleanups
+- Upgraded jQuery to 3.2.1 from 2.2.4
+- Improved network data speeds by moving all web requests to Node modules from jQuery
+
 ### 5.x.x Releases
 
 #### 2017-09-17 - v5.0.9 

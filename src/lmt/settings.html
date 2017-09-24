@@ -13,27 +13,22 @@
 		<script src="javascript/settings.js"></script>
 
 		<style>
-			body { color: rgba(255,255,255,0.7); }
+			body { color: rgba(255,255,255,0.7); padding: 16px; font-size: 9pt; }
 			h3 { color: rgba(255,255,255,0.3); font-weight: 300; font-size: 14pt; border-bottom: solid 2px rgba(255,255,255,0.1); }
-			p { margin: 0; font-weight: 300; font-size: 10pt; }
 			.label { display: block; font-size: 10pt; font-weight: 300; padding: 4px 4px 2px; }
-			h5 { font-weight: 300; margin: 8px 4px; padding: 0; }
 			ul { list-style: none; margin: 0; padding: 0 0 0 32px; }
-			li { margin: 2px 0; padding: 0; font-size: 8.5pt; font-weight: 300; color: rgba(255,255,255,0.7); }
+			li { margin: 2px 0; padding: 0; font-size: 9.5pt; font-weight: 300; color: rgba(255,255,255,0.6); }
 			li span { font-weight: 400; display: inline-block; width: 100px; }
 			.cell { display: inline-block; width: 192px; vertical-align: middle; }
 
 			div.buttons {
 				position: absolute;
-				bottom: 0;
+				bottom: 12px;
 				left: 0;
-				right: 0;
+				right: 16px;
 				display: block;
 				text-align: right;
-				height: 48px;
-				line-height: 48px;
-				padding: 0 16px;
-				background-color: rgba(0,0,0,0.05);
+				padding: 0;
 			}
 			div.buttons input {
 				vertical-align: middle;
@@ -45,10 +40,7 @@
 		</style>
 	</head>
 
-	<body onContextMenu="return false;">
-		<header class="small">
-			<h1>Settings</h1>
-		</header>
+	<body>
 
 		<div class="inset">
 			<table width="100%">
@@ -57,24 +49,13 @@
 						<td width="50%" style="padding-right: 16px">
 
 							<h3>Downloads</h3>
-							<!--
-							<div style="margin: 12px 0;">
-								<div class="cell">
-									<p>Download Engine:</p>
-								</div>
-								<div class="cell" style="text-align: right;">
-									<div class="select" style="width: 140px;">
-										<select id="engine">
-											<option selected value="internal">Internal</option>
-											<option value="ffmpeg">FFMPEG</option>
-										</select>
-									</div>
-								</div>
-							</div>
-							-->
+						
 							<div style="margin: 16px 0;">
-								<h5>Folder to store downloads in:</h5>
-								<input type="text" id="download_folder" placeholder="" style="width: 350px"> <input type="button" value="..." onClick="SetDownloadPath()">
+								Folder to store downloads in:
+								<div class="input has-right-button width400">
+									<input type="text" id="download_folder" value="${user.user_info.uid}" disabled="disabled">
+									<input type="button" value="..." onClick="SetDownloadPath" title="Browse for folder">
+								</div>
 							</div>
 
 							<div style="margin-top: 24px;">
@@ -94,26 +75,6 @@
 								<p style="margin: 8px 4px; font-size: 9pt;">
 									When enabled, highlights any videos if you previously downloaded them.
 								</p>
-							</div>
-
-
-							<h3 style="margin-top: 32px;">Search Options</h3>
-							<div style="margin-top: 12px;">
-								<div class="cell">
-									<p>Limit number of replays to:</p>
-								</div>
-								<div class="cell" style="text-align: right;">
-									<div class="select" style="width: 100px;">
-										<select id="replaycount">
-											<option value="5">5</option>
-											<option value="10">10</option>
-											<option value="25">25</option>
-											<option value="50">50</option>
-											<option value="100">100</option>
-											<option value="-1">Unlimited</option>
-										</select>
-									</div>
-								</div>
 							</div>
 							
 						</td>
@@ -135,11 +96,11 @@
 								</div>
 							</div>
 							<div id="ftblock-no">
-								<h5>Filenames will be the playlist name in the URL.</h5>
+								Filenames will be the playlist name in the URL.
 							</div>
 							<div id="ftblock-yes">
-								<h5>Filenames will be created using the template below:</h5>
-								<input type="text" id="filetemplate" style="width: 100%;">
+								Filenames will be created using the template below:
+								<input type="text" id="filetemplate" class="width400">
 								<ul>
 									<li><span>%%userid%%</span> User ID</li>
 									<li><span>%%username%%</span> Username</li>
@@ -147,7 +108,7 @@
 									<li><span>%%videotitle%%</span> Video Title</li>
 									<li><span>%%videotime%%</span> Video Time</li>
 								</ul>
-								<p style="font-size: 8pt;">
+								<p>
 									The filename of the playlist will be used if the custom title ends up being empty.
 								</p>
 							</div>

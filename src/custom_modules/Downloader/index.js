@@ -2,12 +2,13 @@
 	Downloader Module
 */
 
-const { app, ipcMain } = require('electron');
+const { app, ipcMain, dialog } = require('electron');
 
 const path = require('path'),
     ffmpeg = require('fluent-ffmpeg'),
     fs = require('fs-extra'),
     isDev = require('electron-is-dev'),
+    shell = require('shelljs'),
     eventEmitter = new (require('events').EventEmitter)();
 
 var appSettings = null,
@@ -103,12 +104,11 @@ module.exports = {
     init: function (settings) {
         appSettings = settings;
 
-        if (process.platform == 'win32') {
-            ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.exe');
-        } else if (process.platform == 'darwin') {
-            ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.macos');
-        } else {
-            ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.linux');
+        // If FFMPEG is not installed already in the path then we use our local copy
+        
+        if (!shell.which('ffmpeg'+(process.platform == 'win32' ? '.exe' : ''))) {
+            console.log('Unable to find FFMPEG on your computer.');
+            dialog.showErrorBox('LiveMe Tools', 'FFMPEG must be installed on your computer somewhere in the system path for downloads to work.');
         }
     },
 

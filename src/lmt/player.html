@@ -7,24 +7,20 @@
 			if (typeof module === 'object') {window.module = module; module = undefined;} 
 		</script>
 
-		<script src="javascript/jquery-2.2.4.min.js"></script>
+		<script src="javascript/jquery-3.2.1.min.js"></script>
 		<script type="text/javascript" src="javascript/hls.js"></script>
 
-		<style>
-			body { background-color: #000 !important; }
-			#video { background-color: #000 !important; }
-			h4 {  }
-		</style>
-
 		<script>
-			const { remote, BrowserWindow } = require('electron'), ipc = require('electron').ipcRenderer;
+			const { ipcRenderer } = require('electron');
+
 			$(function(){
 				var t=window.location.href.split('#'), u=t[1], uu = t[1].split('/'), f=uu[uu.length - 1];
 				if (f.indexOf('playlist') > -1) {
 					f = uu[uu.length - 2]+'/'+uu[uu.length-1];
 				}
 
-				var video = document.getElementById('video');
+				document.title = u;
+				var video = document.getElementById('videoplayer');
 				var hls = new Hls();
 				
 				hls.loadSource(u);
@@ -34,26 +30,93 @@
 					video.play();
 				});
 	
-				$('header h4').html('Player - ' + f);
+				// $('header h4').html('Player - ' + f);
 
 				video.addEventListener('loadeddata', function() {
-						$('#video').show();
+					$('#video').show();
+					$('#playpause').removeClass('icon-media-play').addClass('icon-media-pause');
 				}, false);
+
+				video.addEventListener('timeupdate', function(e) {
+					// For larger bar steps only use 100 or 1000, for smoother and smaller bar steps use 1000000 
+					var a = Math.round((video.currentTime / video.duration) * 1000000) / 1000000, b = $('#progressbar').width() * a;
+					$('#progressbar .bar').css({ width: b });
+					var h = Math.round(video.currentTime / 3600), m = Math.round(video.currentTime / 60) % 60, s = Math.round(video.currentTime % 60),
+						o = (h>0?h+':':'')+(m>9?'':'0')+m+':'+(s>9?'':'0')+s;
+					$('.current_time').html(o);
+				}, false);
+
+				video.addEventListener('progress', function() {
+					var a = 0;
+					if (video.duration > 0) {
+						var i = video.buffered.length - 1;
+						var b = Math.floor((video.buffered.end(i) / video.duration) * 1000) / 1000, 
+							c = $('#progressbar').width() * b;
+						$('#progressbar .buffer-bar').css({ width: c });
+					}
+				});
+
+
+				document.getElementById('progressbar').addEventListener('click', function(e){
+					var a = e.pageX - this.offsetLeft, b = $('#progressbar').width(), c = video.duration, p = Math.round((a / b) * 100) / 100, t = p * c;
+					video.currentTime = t;
+				}, false);
+
+				$('#videoplayer').mouseout(function(){
+					$('.video_controls').css({ opacity: 0 });
+				});
+
+				$('.video_controls').mouseout(function(){
+					$('.video_controls').css({ opacity: 0 });
+				});
+
+				$('#videoplayer').mouseover(function(){
+					$('.video_controls').css({ opacity: 1.0 });
+				});
+
+				$('.video_controls').mouseover(function(){
+					$('.video_controls').css({ opacity: 1.0 });
+				});
+
+				$(window).on('close', function() {
+					video.pause();
+				});
+
+
+
+				ipcRenderer.on('jump-to-time' , function(event , data) { 
+					video.currentTime = data.time
+				});
+
+
 
 
 			});
-			function hidePlayer() { $('#video').trigger('pause'); ipc.send('hide-player'); }
+
+			function PlayPause() {
+				var o = document.getElementById('videoplayer');
+				if (o.paused == true) {
+					o.play();
+					$('#playpause').removeClass('icon-media-play').addClass('icon-media-pause');
+				} else {
+					o.pause();
+					$('#playpause').addClass('icon-media-play').removeClass('icon-media-pause');
+				}
+
+			}
+
+
 		</script>
 
         <link rel="stylesheet" href="style/style.css">
 
 	</head>
 	<body>
-		<header class="small transparent">
-			<h4>Player</h4>
-			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="hidePlayer()">
-		</header>
-		<video id="video" controls autoplay></video>
-
+		<video id="videoplayer" autoplay></video>
+		<div class="video_controls">
+			<a id="playpause" class="button icon icon-media-pause" onClick="PlayPause()"></a>
+			<div class="progress" id="progressbar"><div class="buffer-bar"></div><div class="bar"></div></div>
+			<div class="current_time"></div>
+		</div>
 	</body>
 </html>

@@ -1,13 +1,13 @@
 <!doctype html>
 <html>
 	<head>
-		<title>LiveMe Tools</title>
+		<title>LiveMe Tools - Upgrade Notice</title>
 		<script>
 			if (typeof module === 'object') {window.module = module; module = undefined; }
 		</script>
 
 		<link rel="stylesheet" href="style/style.css">
-		<script src="javascript/jquery-2.2.4.min.js"></script>
+		<script src="javascript/jquery-3.2.1.min.js"></script>
 		<script>
 			const { remote, shell } = require('electron');
 
@@ -26,23 +26,21 @@
 			function closeWin() { window.close(); }
 			function getDownloads() { shell.openExternal('https://github.com/thecoder75/liveme-tools/releases/latest'); }
 		</script>
+		<style>
+			#main { padding: 10px 20px; font-size: 10pt; }
 
+		</style>
 	</head>
 
-	<body onContextMenu="return false;">
-
-		<header class="small">
-			<h4>&nbsp;</h4>
-			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="closeWin()">
-		</header>
-
-		<div id="main" style="padding: 0 20px; text-align: center;">
-			<h2>Upgrade Available</h2>
-			<p style="padding: 20px 0; font-size: 12pt">
+	<body>
+		<main>
+			<p style="padding: 60px 0 40px; font-size: 12pt; line-height: 18pt; text-align: center">
 				Looks like version <span id="new"></span> has been released!<br>
 				You're running version <span id="current"></span>.
 			</p>
-			<input type="button" value="Visit Download Page" onClick="getDownloads()">
-		</div>
+			<div style="text-align: center;">
+				<input type="button" value="Visit Download Page" onClick="getDownloads()">
+			</div>
+		</main>
 	</body>
 </html>

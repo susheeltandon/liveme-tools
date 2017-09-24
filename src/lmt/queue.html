@@ -14,13 +14,24 @@
 
 			$(function() {
 				Downloader.events.on('add', (arg) => {
-					$('#queuelist').append(`<div class="entry" id="${arg.id}"><div class="title">${arg.value}</div><img class="remove" src="images/ic_cancel_white_24px.svg" onClick="remove('${arg.id}')"></div>`);
+					$('#queuelist').append(`
+						<div class="item small" id="${arg.id}">
+							<div class="content">
+								<div style="display: inline-block; width: 572px; text-overflow: ellipsis; overflow: hidden; line-height: 28px">
+									${arg.value}
+								</div>
+								<div style="display: inline-block; text-align: right;">
+									<a class="button icon icon-remove float-right" onClick="remove('${arg.id}')"></a>
+								</div>
+							</div>
+						</div>
+					`);
 				});
 
 				Downloader.events.on('fail', (arg) => {
 					$('#' + arg.id).addClass("error");
-					$('#queueheader .progress').css({ width: '0%' });
-					$('.active_url').empty();
+					$('.progress .bar').css({ width: '0%' });
+					$('.active_url').html('&nbsp;');
 
 					setTimeout(() => {
 						$('#' + arg.id).slideUp(400).remove();
@@ -34,21 +45,21 @@
 				});
 
 				Downloader.events.on('progress', (arg) => {
-					$('#queueheader .progress').css({ width: arg.value + '%' });
-					$('.active_url').html('<h5>Downloading:</h5>'+arg.url);
+					$('.progress .bar').css({ width: arg.value + '%' });
+					$('.active_url').html(arg.url);
 				});
 
 				Downloader.events.on('start', (arg) => {
 					$('#' + arg.id).remove();
-					$('#queueheader .progress').css({ width: '0%' });
-                    $('.active_url').html('<h5>Downloading:</h5>'+arg.url);
+					$('.progress .bar').css({ width: '0%' });
+                    $('.active_url').html(arg.url);
                     $('#cancelActiveButton').show();
 				});
 
 				Downloader.events.on('finish', (arg) => {
 					$('#' + arg.id).addClass("finished");
-					$('#queueheader .progress').css({ width: '0%' });
-					$('.active_url').empty();
+					$('.progress .bar').css({ width: '0%' });
+					$('.active_url').html('&nbsp;');
 
 					setTimeout(() => {
 						$('#' + arg.id).slideUp(400).remove();
@@ -58,11 +69,11 @@
 				});
 
 				Downloader.events.on('resume', () => {
-					$('#queueheader img.pause').prop('src', 'images/ic_pause_circle_outline_white_24px.svg');
+					$('a.button.icon-play').removeClass('icon-play').addClass('icon-pause');
 				});
 
 				Downloader.events.on('pause', () => {
-					$('#queueheader img.pause').prop('src', 'images/ic_play_circle_outline_white_24px.svg');
+					$('a.button.icon-pause').removeClass('icon-pause').addClass('icon-play');
 				});
 
 				Downloader.events.on('remove', (arg) => {
@@ -93,7 +104,7 @@
 			function addSingleURL() {
 				var u = $('#url').val();
 
-				$('#overlay').hide();
+				$('overlay').hide();
 				$('#prompt1').hide();
 
 				if (u != null) {
@@ -114,17 +125,17 @@
 			}
 
 			function showURLPrompt() {
-				$('#overlay').show();
+				$('overlay').show();
 				$('#prompt1').show().focus();
 			}
 
 			function hideURLPrompt() {
-				$('#overlay').hide();
+				$('overlay').hide();
 				$('#prompt1').hide();
 			}
 
 			function emptyQueue() {
-				$('#overlay').show();
+				$('overlay').show();
 				$('#prompt2').show();
 			}
 
@@ -134,56 +145,62 @@
 			}
 
 			function hideEmptyPrompt() {
-				$('#overlay').hide(200);
+				$('overlay').hide(200);
 				$('#prompt2').hide(200);
 			}
 		</script>
-`
+
 	</head>
-	<body onContextMenu="return false;">
+	<body>
+		<overlay></overlay>
+		<toolbar>
+			<div class="section width48">
+				<a class="button icon icon-pause" onClick="pauseResume()"></a>
+			</div>
+			<div class="section with-progress-bar width520">
+				<label class="active_url">&nbsp;</label>
+				<div class="progress"><div class="bar"></div></div>				
+			</div>
+			<div class="section width48 align-right">
+				<a id="cancelActiveButton" class="button icon icon-cancel" style="display: none;" onClick="killDownload()"></a>
+			</div>
+		</toolbar>
 
-		<header class="small">
-			<h4>Download Queue</h4>
-			<img class="close-icon" src="images/ic_close_white_24px.svg" onClick="hideQueue()">
-		</header>
+		<main class="offset48 with-footer">
+			<div id="queuelist" class="list"></div>
+		</main>
 
-		<div id="overlay">&nbsp;</div>
-		<div id="prompt1" class="popup_prompt">
+		<footer class="align-right">
+			<input type="button" class="tiny" value="Add URL" class="tiny" onClick="showURLPrompt()">
+			<input type="button" class="tiny" value="Empty Queue" class="tiny" onClick="emptyQueue()">
+		</footer>
+
+		
+		<div id="prompt1" class="modal small">
 			<div class="content">
 				Enter the URL you would like to add to the download queue:
-				<input type="text" id="url" style="width: 440px; margin-top: 6px">
-			</div>
-			<div class="buttons">
-				<input type="button" value="Add URL" onClick="addSingleURL()">
-				<input type="button" value="Cancel" onClick="hideURLPrompt()">
+				<input type="text" id="url" style="width: 425px; margin-top: 8px">
+
+				<div class="buttons">
+					<input type="button" value="Add URL" onClick="addSingleURL()">
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="button" value="Cancel" onClick="hideURLPrompt()">
+				</div>
 			</div>
 		</div>
 
-		<div id="prompt2" class="popup_prompt">
+
+		<div id="prompt2" class="modal tiny">
 			<div class="content">
 				Confirm removal of all items currently in the download queue.
-			</div>
-			<div class="buttons">
-				<input type="button" value="Yes, empty it!" onClick="emptyQueueYes()">
-				<input type="button" value="No, don't do it!" onClick="hideEmptyPrompt()">
+				<div class="buttons">
+					<input type="button" value="Yes, empty it!" onClick="emptyQueueYes()">
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="button" value="No, don't do it!" onClick="hideEmptyPrompt()">
+				</div>
 			</div>
 		</div>
 
-		<div id="queueheader">
-			<img class="pause" src="images/ic_pause_circle_outline_white_24px.svg" onClick="pauseResume()">
-			<img id="cancelActiveButton" style="display: none;" class="addurl" src="images/ic_cancel_white_24px.svg" onClick="killDownload()">
-			<div class="active_url"></div>
-			<div class="progress"></div>
-		</div>
 		
-		<div id="queuelist"></div>
-
-		<footer>
-			<div style="text-align: right;">
-				<input type="button" value="Add URL" class="tiny" onClick="showURLPrompt()">
-				<input type="button" value="Empty Queue" class="tiny" onClick="emptyQueue()">
-			</div>
-
-		</footer>
 	</body>
 </html>
