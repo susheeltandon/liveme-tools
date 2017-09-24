@@ -835,15 +835,18 @@ function CheckForUpgrade() {
     request({ url: 'https://raw.githubusercontent.com/thecoder75/liveme-tools/master/src/package.json?random=' + r, timeout: 15000 }, function (err, response, body) {
         var js = JSON.parse(body), nv = parseFloat(js.minversion.replace('.', '')), ov = parseFloat(app.getVersion().replace('.', '')), isCurrent = nv > ov;
 
+        ov = 0;
+
         if (nv > ov) {
             let win = new BrowserWindow({
-                width: 400,
-                height: 244,
+                width: 480,
+                height: 280,
                 resizable: false,
                 darkTheme: true,
                 autoHideMenuBar: false,
                 skipTaskbar: false,
-                backgroundColor: '#4a4d4e',
+                vibrancy: 'ultra-dark',
+                backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
                 disableAutoHideCursor: true,
                 titleBarStyle: 'default',
                 fullscreen: false,
@@ -853,7 +856,7 @@ function CheckForUpgrade() {
                 show: false
             });
 
-            win.once('ready-to-show', () => {
+            win.on('ready-to-show', () => {
                 win.show();
             }).loadURL(`file://${__dirname}/lmt/upgrade.html`);
         }
