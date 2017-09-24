@@ -11,7 +11,7 @@ This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux design
 - Create local Favorites lists without an account
 - Import a list of Replay URLs or VideoIDs for downloading
 - Ability to add a single URL
-- Can use either internal stream downloader or [FFMPEG](ffmpeg.md) to download videos
+- Uses [FFMPEG](ffmpeg.md) to download playlists
 - and much more!
 
 ## Getting Started

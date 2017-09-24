@@ -80,14 +80,12 @@ function createWindow() {
         .on('ready-to-show', () => {
             mainwin.show();
         })
-        .on('closed', () => {
-            // !! TEMPORARY !!
-            app.exit(0);
-
-
+        .on('window-all-closed', () => {
+            queuewin.close();
             app.quit();
         })
-        .loadURL(`file://${__dirname}/lmt/index.html`);
+
+    mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
 
     queuewin = new BrowserWindow({
         width: 640,
@@ -173,10 +171,6 @@ if (shouldQuit) {
 
 app
     .on('ready', createWindow)
-    .on('window-all-closed', () => {
-        mainwin.webContent.send('do-shutdown');
-        app.quit();
-    })
     .on('activate', () => {
         if (mainwin === null) {
             createWindow();
@@ -650,8 +644,15 @@ function exportFavorites() {
     );
 }
 
+function shutdownApp() {
+    Favorites.forceSave();
+    Downloader.forceSave();
+    Downloader.killActiveDownload();
 
-
+    setTimeout(function(){
+        app.exit(0);
+    }, 500);
+}
 
 
 
@@ -784,7 +785,11 @@ function getMenuTemplate() {
                 { role: 'hideothers' },
                 { role: 'unhide' },
                 { type: 'separator' },
-                { role: 'quit' }
+                { 
+                    label: 'Quit ' + app.getName(),
+                    accelerator: 'CommandOrControl+Q',
+                    click: () => shutdownApp()
+                }
             ]
         });
     } else {
@@ -819,7 +824,8 @@ function getMenuTemplate() {
                 { type: 'separator' },
                 { 
                     label: 'Quit',
-                    click: () => app.quit()
+                    accelerator: 'CommandOrControl+F4',
+                    click: () => shutdownApp()
                 }
             ]
         });

@@ -1,5 +1,5 @@
 {
-  "name": "LiveMeTools",
+  "name": "liveme-tools",
   "title": "LiveMe Tools",
   "version": "6.0.0",
   "minversion": "6.0.0",
@@ -53,28 +53,19 @@
         "dmg"
       ],
       "identity": null,
-      "icon": "build/appicon.icns",
-      "extraResources": [
-        "ffmpeg.macos"
-      ]
+      "icon": "build/appicon.icns"
     },
     "win": {
       "target": [
         "dir"
       ],
-      "icon": "build/appicon.ico",
-      "extraResources": [
-        "ffmpeg.exe"
-      ]
+      "icon": "build/appicon.ico"
     },
     "linux": {
       "target": [
         "dir"
       ],
-      "maintainer": "thecoder1975@gmail.com",
-      "extraResources": [
-        "ffmpeg.linux"
-      ]
+      "maintainer": "thecoder1975@gmail.com"
     }
   },
   "scripts": {
