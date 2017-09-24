@@ -4,7 +4,7 @@
 [![Discord](https://img.shields.io/discord/340106715334836224.svg)](https://discord.gg/A5p2aF4)
 
 This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux designed to:
-- *COMING SOON: Allow viewing a list of live videos with filter options*
+- Allow viewing a list of live videos with filter options
 - Search for users or videos tagged with hashtags
 - View details on users and their replays
 - Watch and download replay videos
@@ -20,6 +20,8 @@ This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux design
 
 **Thanks to Facebook a couple modules used by this project can now only be installed using `yarn` 
 package manager.  The rest can still be installed using `npm`.**
+
+**This uses the custom (LiveMe API)[https://github.com/thecoder75/liveme-api/] module also developed by our developers and contributors.**
 
 You can download the [latest release](https://github.com/thecoder75/liveme-tools/releases/latest)
 if you wish to not compile it yourself.
