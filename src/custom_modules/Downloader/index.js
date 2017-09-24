@@ -8,6 +8,7 @@ const path = require('path'),
     ffmpeg = require('fluent-ffmpeg'),
     fs = require('fs-extra'),
     isDev = require('electron-is-dev'),
+    shell = require('shelljs'),
     eventEmitter = new (require('events').EventEmitter)();
 
 var appSettings = null,
@@ -102,16 +103,24 @@ module.exports = {
 
     init: function (settings) {
         appSettings = settings;
+        var ffmpeg_path = '';
 
-        /*
-        if (process.platform == 'win32') {
-            ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.exe');
-        } else if (process.platform == 'darwin') {
-            ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.macos');
-        } else {
-            ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.linux');
+        switch (process.platform) {
+            case 'win32': ffmpeg_path = which('ffmpeg.exe'); break;
+            default: ffmpeg_path = which('ffmpeg'); break;
         }
-        */
+
+        if (ffmpeg_path.length > 0) {
+            ffmpeg.setFfmpegPath(ffmpeg_path);
+        } else {
+            if (process.platform == 'win32') {
+                ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.exe');
+            } else if (process.platform == 'darwin') {
+                ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.macos');
+            } else {
+                ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.linux');
+            }
+        }
     },
 
     /*
