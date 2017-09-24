@@ -16,7 +16,8 @@ const 	{ electron, BrowserWindow, remote, ipcRenderer, shell, clipboard } = requ
 		Downloads = remote.getGlobal('Downloader'),
 		LiveMe = require('liveme-api');
 
-var 	favorites_list = [], debounced = false, current_user = {}, current_page = 1, isSearching = false;
+var 	favorites_list = [], debounced = false, current_user = {}, current_page = 1, has_more = false, 
+		current_search = '', scroll_busy = false;
 
 $(function(){
 
@@ -49,6 +50,25 @@ $(function(){
 
 	Downloads.load();
 
+
+
+	$('main').scroll(function() {
+		if ($(this).scrollTop() + $(this).height() == $('.list').height()) {
+			if (has_more == false) return;
+			if (scroll_busy == true) return;
+
+			current_page++;
+			if (current_search == 'getUsersReplays') {
+				getUsersReplays();
+			} else if (current_search == 'performUsernameSearch') {
+				performUsernameSearch();
+			} else if (current_search == 'performHashtagSearch') {
+				performHashtagSearch();
+			}
+		}
+	});
+
+
 });
 
 function copyToClipboard(i) { clipboard.writeText(i); }
@@ -77,8 +97,6 @@ function toggleFavorite() {
 }
 
 function beginSearch() {
-
-	if (isSearching) return;
 
 	var u=$('#query').val(), isnum = /^\d+$/.test(u);
 
@@ -120,8 +138,6 @@ function beginSearch2() {
 	debounced = true;
 	setTimeout(function(){ debounced = false; }, 250);
 
-	if (isSearching) return;
-	isSearching = true;
 	current_page = 1;
 
 	var videoid = '', userid = '';
@@ -349,19 +365,18 @@ function getUsersReplays() {
 					`;
 					$('.list').append(h);	
 				}	
-
-
 			}
 
+			current_search = 'getUsersReplays';
+			scroll_busy = false;
+
 			if (replays.length == 10) {
-				current_page++;
-				setTimeout(() => {
-					getUsersReplays();
-				}, 100);
+				has_more = true;
 			} else if (replays.length < 10) {
-				isSearching = false;
-			} else if (replays.length == 0 && current_page == 1) {
-				isSearching = false;
+				has_more = false;
+			} 
+
+			if (replays.length == 0 && current_page == 1) {
 				$('.list').html('<div class="empty">No visible replays available for this account.</div>');						
 			}
 
@@ -408,16 +423,18 @@ function performUsernameSearch() {
 				`);
 			}
 
+
+			current_search = 'performUsernameSearch';
+			scroll_busy = false;
+
 			if (results.length == 10) {
-				current_page++;
-				setTimeout(() => {
-					performUsernameSearch();
-				}, 100);
+				has_more = true;
 			} else if (results.length < 10) {
-				isSearching = false;
-			} else if (results.length == 0 && current_page == 1) {
-				$('.list').html('<div class="empty">No accounts were found matching your search.</div>');		
-				isSearching = false;				
+				has_more = false;
+			} 
+
+			if (results.length == 0 && current_page == 1) {
+				$('.list').html('<div class="empty">No accounts were found matching your search.</div>');						
 			}
 
 		})
@@ -513,16 +530,17 @@ function performHashtagSearch() {
 				
 			}
 
+			current_search = 'performHashtagSearch';
+			scroll_busy = false;
+
 			if (results.length == 10) {
-				current_page++;
-				setTimeout(() => {
-					performHashtagSearch();
-				}, 100);
+				has_more = true;
 			} else if (results.length < 10) {
-				isSearching = false;
-			} else if (results.length == 0 && current_page == 1) {
+				has_more = false;
+			} 
+
+			if (results.length == 0 && current_page == 1) {
 				$('.list').html('<div class="empty">No videos were found on LiveMe matching the specified hashtag.</div>');
-				isSearching = false;
 			}
 			
 		})
