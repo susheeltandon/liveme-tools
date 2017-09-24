@@ -445,10 +445,10 @@ ipcMain.on('video-set-time', (event, arg) => {
 */
 ipcMain.on('open-chat', (event, arg) => {
     chatWindow = new BrowserWindow({
-        width: 320,
+        width: 340,
         height: 480,
-        minWidth: 320,
-        maxWidth: 320,
+        minWidth: 340,
+        maxWidth: 340,
         minHeight: 240,
         maxHeight: 1600,
         resizable: true,
