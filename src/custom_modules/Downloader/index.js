@@ -103,16 +103,10 @@ module.exports = {
 
     init: function (settings) {
         appSettings = settings;
-        var ffmpeg_path = '';
 
-        switch (process.platform) {
-            case 'win32': ffmpeg_path = which('ffmpeg.exe'); break;
-            default: ffmpeg_path = which('ffmpeg'); break;
-        }
-
-        if (ffmpeg_path.length > 0) {
-            ffmpeg.setFfmpegPath(ffmpeg_path);
-        } else {
+        // If FFMPEG is not installed already in the path then we use our local copy
+        
+        if (!shell.which('ffmpeg'+(process.platform == 'win32' ? '.exe' : ''))) {
             if (process.platform == 'win32') {
                 ffmpeg.setFfmpegPath((isDev ? '' : 'resources/') + 'ffmpeg.exe');
             } else if (process.platform == 'darwin') {
