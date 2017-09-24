@@ -80,6 +80,15 @@
 					video.pause();
 				});
 
+
+
+				ipcRenderer.on('jump-to-time' , function(event , data) { 
+					video.currentTime = data.time
+				});
+
+
+
+
 			});
 
 			function PlayPause() {
@@ -93,6 +102,8 @@
 				}
 
 			}
+
+
 		</script>
 
         <link rel="stylesheet" href="style/style.css">
