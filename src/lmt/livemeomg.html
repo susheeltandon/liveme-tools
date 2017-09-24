@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+	<head>
+		<title>LiveMe OMG</title>
+		<script>
+			if (typeof module === 'object') {window.module = module; module = undefined; }
+		</script>
+
+		<link rel="stylesheet" href="style/style.css">
+		<script src="javascript/jquery-3.2.1.min.js"></script>
+		<script src="javascript/jquery.scrollmore.js"></script>
+
+		<script>
+			const LiveMe = require('liveme-api'), { ipcRenderer } = require('electron');
+			var current_mode = 'all', current_page = 1, has_more = false, debounce = false;
+
+
+			$(function() {
+				doSearch('all');
+
+				$('main').scroll(function() {
+					if ($(this).scrollTop() + $(this).height() == $('.list').height()) {
+						current_page++;
+						
+						if (current_mode=='all') {
+							loadAll()
+						} else if (current_mode=='girl') {
+							loadGirl()
+						} else if (current_mode=='boy') {
+							loadBoy()
+						}
+					}
+				});
+			});			
+
+			function doSearch(n) {
+				$('.list').empty();
+
+				has_more = false;
+				current_page = 1;
+				current_mode = n;
+
+				if (n=='all') {
+					loadAll()
+				} else if (n=='girl') {
+					loadGirl()
+				} else if (n=='boy') {
+					loadBoy()
+				}
+			}
+			function loadAll() {
+				LiveMe.getLive(current_page, 10)
+					.then(results => {
+						for (var i = 0; i < results.length; i++) {
+							$('.list').append(`
+								<div class="item tile">
+									<div class="avatar"><img src="${results[i].videocapture}"></div>
+									<div class="header">${results[i].title}</div>
+									<div class="meta">
+										<div>${results[i].uname}</div>
+									</div>
+									<div class="meta small">
+										<div><span>Level:</span>${results[i].level}</div>
+										<div><span>Views:</span>${results[i].playnumber}</div>
+										<div><span>Likes:</span>${results[i].likenum}</div>
+										<div><span>Shares:</span>${results[i].sharenum}</div>
+									</div>
+									<div class="meta">
+										<div><input type="button" class="small" value="Watch" onClick="playVideo('${results[i].vdoid}')"></div>
+										<div><input type="button" class="small" value="See All" onClick="sendSearch('${results[i].userid}')"></div>
+									</div>
+								</div>
+							`);
+						}
+					
+					});
+
+			}
+			function loadGirl() {
+				LiveMe.getLiveGirls(current_page, 10)
+					.then(raw => {
+						var results = raw.video_info;
+
+						for (var i = 0; i < results.length; i++) {
+							$('.list').append(`
+								<div class="item tile">
+									<div class="avatar"><img src="${results[i].videocapture}"></div>
+									<div class="header">${results[i].title}</div>
+									<div class="meta">
+										<div>${results[i].uname}</div>
+									</div>
+									<div class="meta small">
+										<div><span>Level:</span>${results[i].level}</div>
+										<div><span>Views:</span>${results[i].playnumber}</div>
+										<div><span>Likes:</span>${results[i].likenum}</div>
+										<div><span>Shares:</span>${results[i].sharenum}</div>
+									</div>
+									<div class="meta">
+										<div><input type="button" class="small" value="Watch" onClick="playVideo('${results[i].vdoid}')"></div>
+										<div><input type="button" class="small" value="See All" onClick="sendSearch('${results[i].userid}')"></div>
+									</div>
+								</div>
+							`);
+						}
+						
+					
+					});
+
+			}
+			function loadBoy() {
+				LiveMe.getLiveBoys(current_page, 10)
+					.then(raw => {
+						var results = raw.video_info;
+
+						for (var i = 0; i < results.length; i++) {
+							$('.list').append(`
+								<div class="item tile">
+									<div class="avatar"><img src="${results[i].videocapture}"></div>
+									<div class="header">${results[i].title}</div>
+									<div class="meta">
+										<div>${results[i].uname}</div>
+									</div>
+									<div class="meta small">
+										<div class="width75"><span>Level:</span>${results[i].level}</div>
+										<div class="width75"><span>Views:</span>${results[i].playnumber}</div>
+										<div class="width75"><span>Likes:</span>${results[i].likenum}</div>
+										<div class="width75"><span>Shares:</span>${results[i].sharenum}</div>
+									</div>
+									<div class="meta">
+										<div class="width150"><input type="button" class="small" value="Watch" onClick="playVideo('${results[i].vdoid}')"></div>
+										<div class="width150 align-right"><input type="button" class="small" value="See All" onClick="sendSearch('${results[i].userid}')"></div>
+									</div>
+								</div>
+							`);
+						}
+						
+						
+					});
+
+			}
+
+			function playVideo(u) {
+				if (debounce) return;
+				debounce = true;
+				setTimeout(function(){ debounce = false; }, 500);
+
+				ipcRenderer.send('play-video', { url: u });
+			}
+
+			function sendSearch(e) {
+				ipcRenderer.send('submit-search', { userid: e });
+			}
+
+		</script>
+	</head>
+
+	<body>
+
+		<toolbar>
+			<input type="button" class="small" value="Top Live" onClick="doSearch('all')">
+			<input type="button" class="small" value="Only Girls" onClick="doSearch('girl')">
+			<input type="button" class="small" value="Only Boys" onClick="doSearch('boy')">
+		</toolbar>		
+
+		<overlay>
+			<div class="status"></div>
+		</overlay>
+		<main class="offset48" id="main">
+			<div class="list"></div>
+		</main>
+
+	</body>
+</html>
