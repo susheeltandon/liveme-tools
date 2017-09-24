@@ -107,8 +107,13 @@ module.exports = {
         // If FFMPEG is not installed already in the path then we use our local copy
         
         if (!shell.which('ffmpeg'+(process.platform == 'win32' ? '.exe' : ''))) {
-            console.log('Unable to find FFMPEG on your computer.');
-            dialog.showErrorBox('LiveMe Tools', 'FFMPEG must be installed on your computer somewhere in the system path for downloads to work.');
+            if (process.platform == 'linux') {
+                // Linux users need to install their own
+                dialog.showErrorBox('LiveMe Tools', 'You need to install FFMPEG from your distributions repository for downloads to work.');
+            } else {
+                // We bundle the macOS & Windows version
+                ffmpeg.setFfmpegPath('/resources/ffmpeg' + (process.platform == 'win32' ? '.exe' : ''));
+            }
         }
     },
 
