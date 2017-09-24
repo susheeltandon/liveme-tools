@@ -37,10 +37,6 @@ let mainwin = null,
     livemeomg = null;
 
 function createWindow() {
-	/*
-        Load Settings
-        Dupe?
-	*/
     if (!appSettings.get('downloads.directory')) {
         appSettings.set('downloads', {
             directory: path.join(app.getPath('home'), 'Downloads'),
@@ -155,13 +151,11 @@ function createWindow() {
     
 }
 
-
 var shouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
     if (mainwin) {
         if (mainwin.isMinimized()) {
             mainwin.restore();
         }
-
         mainwin.focus();
     }
 });
