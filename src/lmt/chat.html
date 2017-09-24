@@ -11,7 +11,7 @@
     <script src="javascript/livemetools.magic.js"></script>
     <script>
         const   LiveMe = require('liveme-api');
-        var     username = '';
+        var     username = '', startTime = 0, addedEntries = 0;
 
         $(function(){
 
@@ -21,12 +21,18 @@
                 .then(video => {
                     
                     username = video.uname;
+                    startTime = video.vtime;
 
                     LiveMe.getChatHistoryForVideo(video.msgfile)
-                        .then(messages => {
-                            console.log(messages);
-                            return;
-
+                        .then(raw => {
+                            var t = raw.data.split('\n'), messages = [];
+                            for (var i = 0; i < t.length; i++) {
+                                try {
+                                    messages.push(JSON.parse(t[i]));
+                                } catch(err) {
+                                    // Caught
+                                }
+                            }
                             $('overlay').hide();
 
                             if (!messages) {
@@ -46,15 +52,18 @@
                                     } else if (message.objectName == "app:praisemsgcontent") {
                                         //$('#message_history').append('<div class="chat_praisemsg"><span class="time">[' + message.timestamp + ']</span><span class="author">' + message.content.name + '</span> praised the broadcaster (+<span class="message">' + message.content.count + '</span>)</div>');
                                     } else if (message.objectName == "RC:TxtMsg") {
-                                        var highlight = message.content.user.name == arg.nickname ? 'highlight' : '';
+                                        var highlight = message.content.user.name == username ? 'highlight' : '';
 
                                         $('.list').append(`
-                                            <div class="item ${highlight}">
-                                                <div class="meta">
-                                                    <div class="width100">${t}</div>
-                                                    <div class="width200 align-right">${message.content.user.name}</div>
+                                            <div class="item message ${highlight}">
+                                                <div>
+                                                    <span class="width100 clickable" onClick="setVideoTime(${t})">${t}</span>
+                                                    <span class="width200 align-right clickable" onClick="userSearch('${message.fromUserId}')">${message.content.user.name}</span>
                                                 </div>
-                                                ${message.content.content}
+
+                                                <p>
+                                                    ${message.content.content}
+                                                </p>
                                             </div>
                                             `);
                                         addedEntries++;
@@ -65,74 +74,18 @@
                             if (addedEntries == 0) {
                                 $('.list').append('<span class="empty">No message history available.</span>');
                             }
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            $('.list').append('<span class="empty">An error occured while loading.</span>');
                         });
-                })
-                .catch(err => {
-
                 });
 
         });
 
-/*
+        function setVideoTime(t) {
+            ipcRenderer.send('video-set-time', { time: t });
+        }
 
-            ipcRenderer.on('set-chat', (event, arg) => {
-                var startTime = parseInt(arg.startTime) * 1000;
-                var addedEntries = 0;
-                $('.list').empty();
-                $('overlay').show();
-
-                LiveMe.getChatHistoryForVideo(arg.url)
-                    .then(messages => {
-                        $('overlay').hide();
-
-                        if (!messages) {
-                            $('.list').append('<span class="emptylist">Failed to load chat message history.</span>');
-                        } else if (messages.length == 0) {
-                            $('.list').append('<span class="emptylist">No chat message history found.</span>');
-                        } else {
-                            console.log(messages);
-
-                            for (var i = 0; i < messages.length; i++) {
-                                var message = messages[i];
-                                // Server stores time in UTC so we need to calculate from there to display correct offsets
-                                var timeOffset = new Date(parseInt(message.timestamp) - startTime), hh = timeOffset.getUTCHours(), mm = timeOffset.getUTCMinutes(), ss = timeOffset.getUTCSeconds();
-                                var t = (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
-
-                                if (message.objectName == "app:joinchatroommsgcontent") {
-                                    //$('#message_history').append('<div class="chat_joinmsg"><span class="time">[' + message.timestamp + ']</span><span class="author">' + message.content.user.name + '</span><span class="message">joined the room</span></div>');
-                                } else if (message.objectName == "app:praisemsgcontent") {
-                                    //$('#message_history').append('<div class="chat_praisemsg"><span class="time">[' + message.timestamp + ']</span><span class="author">' + message.content.name + '</span> praised the broadcaster (+<span class="message">' + message.content.count + '</span>)</div>');
-                                } else if (message.objectName == "RC:TxtMsg") {
-                                    var highlight = message.content.user.name == arg.nickname ? 'highlight' : '';
-
-                                    $('.list').append(`
-                                        <div class="item ${highlight}">
-                                            <div class="meta">
-                                                <div class="width100">${t}</div>
-                                                <div class="width200 align-right">${message.content.user.name}</div>
-                                            </div>
-                                            ${message.content.content}
-                                        </div>
-                                        `);
-                                    addedEntries++;
-                                }
-                            }
-                        }
-
-                        if (addedEntries == 0) {
-                            $('.list').append('<span class="empty">No message history available.</span>');
-                        }
-                    })
-                    .catch(err => {
-                        $('.list').append('<span class="empty">An error occured when loading the chat message history.</span>');
-                    });
-            });
-        });
-*/
+        function userSearch(u) {
+            ipcRenderer.send('submit-search', { userid: u });
+        }
 
     </script>
     </head>
