@@ -26,6 +26,9 @@ package manager.  The rest can still be installed using `npm`.**
 You can download the [latest release](https://github.com/thecoder75/liveme-tools/releases/latest)
 if you wish to not compile it yourself.
 
+Also you will need to manually install FFMPEG on your computer.  For Linux users, please get it from your distribution's repository.
+For Windows and macOS users, please download a prebuilt binary from [here](http://ffmpeg.org) and install in a folder in your path.
+
 ## Built With
 * [Electron](http://electron.atom.io)
 * [NodeJS](http://nodejs.org)

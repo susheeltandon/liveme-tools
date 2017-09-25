@@ -2,7 +2,11 @@
 
 ### 6.x.x Releases
 
-#### 2017-09-00 - v6.0.0
+#### 2017-09-25 - v6.0.1
+**Fixed:**
+- Removed bundled FFMPEG executable due to issues with macOS and Windows systems.
+
+#### 2017-09-24 - v6.0.0
 **Added:**
 - Migrated to using LiveMe API module 
 - Whole new UI styling added
