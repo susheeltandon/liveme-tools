@@ -2,6 +2,10 @@
 
 ### 6.x.x Releases
 
+#### 2017-09-25 - v6.0.2
+**Fixed:**
+- Fixed issue where LiveMeOMG page was sending the VideoID instead of the URL to the player.
+
 #### 2017-09-25 - v6.0.1
 **Fixed:**
 - Removed bundled FFMPEG executable due to issues with macOS and Windows systems.
