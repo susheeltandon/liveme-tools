@@ -50,8 +50,6 @@ $(function(){
 
 	Downloads.load();
 
-
-
 	$('main').scroll(function() {
 		if ($(this).scrollTop() + $(this).height() == $('.list').height()) {
 			if (has_more == false) return;
@@ -209,8 +207,10 @@ function beginSearch2() {
 		performUserLookup(userid);
 	} else {
 		if ($('#type').val() == 'search') {
+			$('main').html('<div id="userlist" class="list"></div>');
 			performUsernameSearch();
 		} else if ($('#type').val() == 'hashtag') {
+			$('main').html('<div id="userlist" class="list"></div>');
 			performHashtagSearch();
 		}
 	}
@@ -223,7 +223,6 @@ function performUserLookup(uid) {
 
 	LiveMe.getUserInfo(uid)
 		.then(user => {
-
 			var sex = user.user_info.sex < 0 ? '' : (user.user_info.sex == 0 ? 'female' : 'male');
 
 			$('.user-panel').html(`
@@ -267,6 +266,9 @@ function performUserLookup(uid) {
 				}
 			}, 250);
 
+			scroll_busy = false;
+			current_page = 1;
+
 			current_user = {
 				uid: user.user_info.uid,
 				sex: sex,
@@ -288,6 +290,7 @@ function getUsersReplays() {
 
 	LiveMe.getUserReplays(current_user.uid, current_page, 10)
 		.then(replays => {
+
 			if (replays.length > 0) {
 				for (var i = 0; i < replays.length; i++) {
 
@@ -382,20 +385,20 @@ function getUsersReplays() {
 
 		})
 		.catch(err => {			
-			isSearching = false;
-			if (status.page == 1)
-				$('.list').html('<div class="empty">No visible replays available for this account.</div>');						
+			scroll_busy = false;
+
+			if (current_page == 1) {
+				$('.list').html('<div class="empty">No visible replays available for this account.</div>');	
+			}
 		});
+		
 }
 
 function performUsernameSearch() {
-	if (status.page == 1) {
-		$('main').html('<div id="userlist" class="list"></div>');
-	}
-
 	LiveMe.performSearch($('#query').val(), current_page, 10, 1 )
 		.then(results => {
-			console.log('Got ' + results.length + ' results.');
+			console.log(JSON.stringify(results[0], null, 2));
+
 			for(var i = 0; i < results.length; i++) {
 				$('.list').append(`
 					<div class="item">
@@ -423,7 +426,6 @@ function performUsernameSearch() {
 				`);
 			}
 
-
 			current_search = 'performUsernameSearch';
 			scroll_busy = false;
 
@@ -441,14 +443,11 @@ function performUsernameSearch() {
 		.catch(err => {
 			console.log(err);
 			isSearching = false;
+			$('.list').html('<div class="empty">No accounts were found matching your search.</div>');						
 		});	
 }
 
 function performHashtagSearch() {
-	if (status.page == 1) {
-		$('main').html('<div id="videolist" class="list"></div>');
-	}
-
 	LiveMe.performSearch($('#query').val(), current_page, 10, 2 )
 		.then(results => {
 			for(var i = 0; i < results.length; i++) {
@@ -547,6 +546,7 @@ function performHashtagSearch() {
 		.catch(err => {
 			console.log(err);
 			isSearching = false;
+			$('.list').html('<div class="empty">No videos were found on LiveMe matching the specified hashtag.</div>');
 		});	
 }
 
