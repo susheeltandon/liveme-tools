@@ -2,6 +2,10 @@
 
 ### 6.x.x Releases
 
+#### 2017-09-26 - v6.0.4
+**Added:**
+- Will show the details of the video that was directly search by VideoID
+
 #### 2017-09-26 - v6.0.3
 **Added:**
 - Restored the context (right-click) menu to text fields.
