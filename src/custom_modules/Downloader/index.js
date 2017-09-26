@@ -104,16 +104,11 @@ module.exports = {
     init: function (settings) {
         appSettings = settings;
 
-        // If FFMPEG is not installed already in the path then we use our local copy
-        
-        if (!shell.which('ffmpeg'+(process.platform == 'win32' ? '.exe' : ''))) {
-            if (process.platform == 'linux') {
-                // Linux users need to install their own
-                dialog.showErrorBox('LiveMe Tools', 'You need to install FFMPEG from your distributions repository for downloads to work.');
-            } else {
-                dialog.showErrorBox('LiveMe Tools', 'You need to install FFMPEG onto your computer in a folder located in your path.');
-            }
-        }
+        /*
+
+                Removed prompt about FFMPEG as people were getting it even when it was installed.
+
+        */
     },
 
     /*
