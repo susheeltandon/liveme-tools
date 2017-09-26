@@ -2,6 +2,16 @@
 
 ### 6.x.x Releases
 
+#### 2017-09-26 - v6.0.3
+**Added:**
+- Restored the context (right-click) menu to text fields.
+
+**Fixed:**
+- Removed FFMPEG prompt
+- Fixed Username search not returning results at times.
+- Fixed replays not showing at times due to all being invisible and not downloaded.
+- Fixed closing issue experienced by some users.
+
 #### 2017-09-25 - v6.0.2
 **Fixed:**
 - Fixed issue where LiveMeOMG page was sending the VideoID instead of the URL to the player.
