@@ -150,12 +150,6 @@ function createWindow() {
 }
 
 var shouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
-    if (mainwin) {
-        if (mainwin.isMinimized()) {
-            mainwin.restore();
-        }
-        mainwin.focus();
-    }
 });
 
 if (shouldQuit) {
