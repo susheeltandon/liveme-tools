@@ -647,8 +647,8 @@ function shutdownApp() {
     Downloader.killActiveDownload();
 
     setTimeout(function(){
-        app.exit(0);
-    }, 500);
+        app.quit();
+    }, 100);
 }
 
 
