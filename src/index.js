@@ -75,11 +75,17 @@ function createWindow() {
     mainwin
         .on('ready-to-show', () => {
             mainwin.show();
-        })
-        .on('window-all-closed', () => {
-            queuewin.close();
-            app.quit();
-        })
+        });
+
+    if (process.platform == 'darwin') {
+        mainwin.on('window-all-closed', () => {
+            shutdownApp();
+        });
+    } else {
+        mainwin.on('closed', () => {
+            shutdownApp();
+        });
+    }
 
     mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
 
@@ -633,6 +639,9 @@ function exportFavorites() {
 }
 
 function shutdownApp() {
+    queuewin.setClosable(true);
+    queuewin.close();
+
     Favorites.forceSave();
     Downloader.forceSave();
     Downloader.killActiveDownload();
