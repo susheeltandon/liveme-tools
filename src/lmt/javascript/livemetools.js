@@ -237,13 +237,86 @@ function beginSearch2() {
 	if (videoid.length > 0) {
 		LiveMe.getVideoInfo(videoid)
 			.then(video => {
-				performUserLookup(video.userid);
+				if (video.userid.length < 8) {
+					$('panel').hide();
+					$('main').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div></div>');						
+				} else {
+					let dt = new Date(video.vtime * 1000);
+					var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
+					var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == video.hlsvideosource ? true : false) : false;
+					var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == video.vid ? true : false) : false;
+
+					var ls = (video.videolength - Math.round(video.videolength / 60)) % 60, lm = Math.round(video.videolength / 60);
+					var length = lm + ':' + (ls < 10 ? '0' : '') + ls;
+					var deleted = '[SEARCHED] ', highlight = hi1 || hi2 ? 'highlight' : '';
+					var downloaded = Downloads.hasBeenDownloaded(video.vid) ? 'downloaded' : '';
+
+					var h = `
+						<div class="item ${highlight} ${downloaded}">
+							<div class="header">${deleted}${video.title}&nbsp;</div>
+							<div class="content">
+								<div class="meta">
+									<div class="width150">
+										<span>Posted on:</span>
+										${ds}
+									</div>
+									<div class="width100">
+										<span>Length:</span>
+										${length}
+									</div>
+									<div class="width100">
+										<span>Views:</span>
+										${video.playnumber}
+									</div>
+									<div class="width100">
+										<span>Likes:</span>
+										${video.likenum}
+									</div>
+									<div class="width100">
+										<span>Shares:</span>
+										${video.sharenum}
+									</div>
+									<div class="width60">
+										<span>Country</span>
+										${video.countryCode}
+									</div>
+									<div class="width400 align-right">
+										<a class="button icon icon-play" onClick="playVideo('${video.hlsvideosource}')" title="Play Video"></a>
+										<a class="button icon icon-chat" onClick="openChat('${videovid}')" title="View Message History"></a>
+										<a class="button icon icon-download" onClick="downloadVideo('${video.userid}', '${video.uname}', '${video.vid}', '${video.title.replace("'", "")}', '${video.vtime}', '${video.hlsvideosource}')" title="Download Replay"></a>
+									</div>
+								</div>
+							</div>
+							<div class="footer">
+								<div class="width200">
+									<span>Video ID:</span>
+									<div class="input has-right-button">
+										<input type="text" value="${video.vid}" disabled="disabled">
+										<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${video.vid}')" title="Copy to Clipboard">
+									</div>
+								</div>
+								<div class="spacer">&nbsp;</div>
+								<div class="width700">
+									<span>Video URL:</span>
+									<div class="input has-right-button">
+										<input type="text" value="${video.hlsvideosource}" disabled="disabled">
+										<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${video.hlsvideosource}')" title="Copy to Clipboard">
+									</div>
+								</div>
+							</div>
+						</div>
+					`;
+					$('.list').append(h);						
+					performUserLookup(video.userid);
+				}
 			})
 			.catch(err => {
+				$('panel').hide();
 				$('main').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div></div>');						
 			});
 
 	} else if (userid.length > 0) {
+		$('panel').hide();		
 		performUserLookup(userid);
 	} else {
 		if ($('#type').val() == 'search') {
@@ -263,6 +336,7 @@ function performUserLookup(uid) {
 
 	LiveMe.getUserInfo(uid)
 		.then(user => {
+
 			var sex = user.user_info.sex < 0 ? '' : (user.user_info.sex == 0 ? 'female' : 'male');
 
 			$('.user-panel').html(`
