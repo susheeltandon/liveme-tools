@@ -21,7 +21,7 @@
                 .then(video => {
                     
                     username = video.uname;
-                    startTime = video.vtime;
+                    startTime = video.vtime * 1000;
 
                     LiveMe.getChatHistoryForVideo(video.msgfile)
                         .then(raw => {
