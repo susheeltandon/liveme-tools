@@ -2,6 +2,13 @@
 
 ### 6.x.x Releases
 
+#### 2017-09-29 - v6.0.6
+**Added:**
+- Updated video progress bar styling for better visibility
+
+**Fixed:**
+- Fixed broken time in message history.
+
 #### 2017-09-26 - v6.0.5
 **Fixed:**
 - Fixed broken VideoID search
