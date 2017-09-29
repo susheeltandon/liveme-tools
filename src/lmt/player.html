@@ -39,8 +39,9 @@
 
 				video.addEventListener('timeupdate', function(e) {
 					// For larger bar steps only use 100 or 1000, for smoother and smaller bar steps use 1000000 
-					var a = Math.round((video.currentTime / video.duration) * 1000000) / 1000000, b = $('#progressbar').width() * a;
+					var a = Math.round((video.currentTime / video.duration) * 1000) / 1000, b = $('#progressbar').width() * a;
 					$('#progressbar .bar').css({ width: b });
+
 					var h = Math.round(video.currentTime / 3600), m = Math.round(video.currentTime / 60) % 60, s = Math.round(video.currentTime % 60),
 						o = (h>0?h+':':'')+(m>9?'':'0')+m+':'+(s>9?'':'0')+s;
 					$('.current_time').html(o);
@@ -83,9 +84,15 @@
 				});
 
 
+				$('.message_overlay').hide();
 
 				ipcRenderer.on('jump-to-time' , function(event , data) { 
-					video.currentTime = data.time
+					$('.message_overlay').html('Jumping to ' + data.label).show();
+					video.currentTime = Math.floor(data.time / 1000);
+
+					setTimeout(function(){
+						$('.message_overlay').hide();
+					}, 2500);
 				});
 
 
@@ -113,6 +120,7 @@
 	</head>
 	<body>
 		<video id="videoplayer" autoplay></video>
+		<div class="message_overlay"></div>
 		<div class="video_controls">
 			<a id="playpause" class="button icon icon-media-pause" onClick="PlayPause()"></a>
 			<div class="progress" id="progressbar"><div class="buffer-bar"></div><div class="bar"></div></div>
