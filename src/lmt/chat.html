@@ -10,7 +10,7 @@
     <script src="javascript/jquery-2.2.4.min.js"></script>
     <script src="javascript/livemetools.magic.js"></script>
     <script>
-        const   LiveMe = require('liveme-api');
+        const   LiveMe = require('liveme-api'), { ipcRenderer } = require('electron');
         var     username = '', startTime = 0, addedEntries = 0;
 
         $(function(){
@@ -44,7 +44,8 @@
                                 for (var i = 0; i < messages.length; i++) {
                                     var message = messages[i];
                                     // Server stores time in UTC so we need to calculate from there to display correct offsets
-                                    var timeOffset = new Date(parseInt(message.timestamp) - startTime), hh = timeOffset.getUTCHours(), mm = timeOffset.getUTCMinutes(), ss = timeOffset.getUTCSeconds();
+                                    var timeOffset = new Date(parseInt(message.timestamp) - startTime), hh = timeOffset.getUTCHours(), mm = timeOffset.getUTCMinutes(), ss = timeOffset.getUTCSeconds(),
+                                        vidtime = (ss + (mm * 60) + (hh * 3600)) * 1000;
                                     var t = (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
 
                                     if (message.objectName == "app:joinchatroommsgcontent") {
@@ -57,7 +58,7 @@
                                         $('.list').append(`
                                             <div class="item message ${highlight}">
                                                 <div>
-                                                    <span class="width100 clickable" onClick="setVideoTime(${t})">${t}</span>
+                                                    <span class="width100 clickable" onClick="setVideoTime(${vidtime}, '${t}')">${t}</span>
                                                     <span class="width200 align-right clickable" onClick="userSearch('${message.fromUserId}')">${message.content.user.name}</span>
                                                 </div>
 
@@ -79,8 +80,8 @@
 
         });
 
-        function setVideoTime(t) {
-            ipcRenderer.send('video-set-time', { time: t });
+        function setVideoTime(t, l) {
+            ipcRenderer.send('video-set-time', { time: t, label: l });
         }
 
         function userSearch(u) {
