@@ -419,7 +419,7 @@ ipcMain.on('play-video', (event, arg) => {
     playerWindow.loadURL(`file://${__dirname}/lmt/player.html#` + arg.url);
 });
 ipcMain.on('video-set-time', (event, arg) => {
-    playerWindow.webContents.send('jump-to-time', { time: arg.time });
+    playerWindow.webContents.send('jump-to-time', { time: arg.time, label: arg.label });
 });
 
 /* 
@@ -642,7 +642,7 @@ function shutdownApp() {
 
     setTimeout(function(){
         app.quit();
-    }, 100);
+    }, 500);
 }
 
 
