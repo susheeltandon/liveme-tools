@@ -8,6 +8,7 @@
 
 **Fixed:**
 - Fixed broken time in message history.
+- Fixed time jumping from message history when time was clicked on.
 
 #### 2017-09-26 - v6.0.5
 **Fixed:**
