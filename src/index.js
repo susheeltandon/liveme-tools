@@ -36,7 +36,7 @@ let mainwin = null,
     aboutwin = null,
     livemeomg = null;
 
-function createWindow() {
+function startApplication() {
     if (!appSettings.get('downloads.directory')) {
         appSettings.set('downloads', {
             directory: path.join(app.getPath('home'), 'Downloads'),
@@ -77,15 +77,9 @@ function createWindow() {
             mainwin.show();
         });
 
-    if (process.platform == 'darwin') {
-        mainwin.on('window-all-closed', () => {
-            shutdownApp();
-        });
-    } else {
-        mainwin.on('closed', () => {
-            shutdownApp();
-        });
-    }
+    mainwin.on('closed', () => {
+        shutdownApp();
+    });
 
     mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
 
@@ -164,10 +158,10 @@ if (shouldQuit) {
 }
 
 app
-    .on('ready', createWindow)
+    .on('ready', startApplication)
     .on('activate', () => {
         if (mainwin === null) {
-            createWindow();
+            startApplication();
         }
     });
 
