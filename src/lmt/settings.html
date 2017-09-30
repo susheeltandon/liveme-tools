@@ -77,6 +77,25 @@
 								</p>
 							</div>
 							
+							<div style="margin-top: 24px;">
+								<div>
+									<div class="cell">
+										<p style="margin: 8px 0">
+											Auto-detect FFMPEG
+										</p>
+									</div>
+									<div class="cell" style="text-align: right;">
+										<span class="switch">
+											<input type="checkbox" id="autodetectffmpeg" onChange="checkType()">
+											<label for="autodetectffmpeg" data-on="YES" data-off="NO"></label>
+										</span>
+									</div>
+								</div>
+								<div class="input has-right-button width400">
+									<input type="text" id="ffmpegpath" disabled="disabled">
+									<input type="button" value="..." onClick="setFfmpegPath()" title="Browse for folder">
+								</div>
+							</div>
 						</td>
 
 						<td width="50%" style="padding-left: 16px">

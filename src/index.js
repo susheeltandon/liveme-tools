@@ -313,6 +313,10 @@ function openFavoritesWindow() {
     }
 };
 
+ipcMain.on('show-settings', (event, arg) => {
+    showSettings();
+});
+
 
 
 /*

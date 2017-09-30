@@ -38,5 +38,12 @@
 		</panel>
 		<main class="offset48" id="main"></main>
 
+
+		<overlay>
+			<div class="ffmpeg-error">
+				<span>FFMPEG was not detected, you will be unable to download broadcasts. If you are sure you have FFMPEG installed correctly, open preferences to set its location.</span>
+				<button onClick="showSettings(); $('div.ffmpeg-error').parent().hide()">Preferences</button> <button onClick="$('div.ffmpeg-error').parent().hide()">Okay</button>
+			</div>
+		</overlay>
 	</body>
 </html>

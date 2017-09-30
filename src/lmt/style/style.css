@@ -220,6 +220,20 @@ overlay .status {
 overlay .status progress {
 	width: 440px;
 }
+overlay .ffmpeg-error {
+	display: block;
+	text-align: center;
+	color: rgba(255,255,255,0.7);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+overlay .ffmpeg-error span {
+	display: block;
+	width: 100%;
+	padding-bottom: 20px;
+}
 
 /*
 	
@@ -390,7 +404,7 @@ footer {
 	Form Controls/Buttons/Etc...
 
 */
-a.button, input[type=button] {
+a.button, input[type=button], button {
 	display: inline-block;
 	height: 32px;
 	line-height: 32px;
@@ -404,32 +418,32 @@ a.button, input[type=button] {
 	-webkit-transition: 0.2s all;
 	outline: none;
 }
-a.button.small, input[type=button].small {
+a.button.small, input[type=button].small, button.small {
 	line-height: 28px;
 	height: 28px;
 	font-size: 9.5pt;
 }
 
-a.button.tiny, input[type=button].tiny {
+a.button.tiny, input[type=button].tiny, button.tiny {
 	line-height: 24px;
 	height: 24px;
 	font-size: 8.5pt;
 	letter-spacing: 0.06em;
 }
 
-a.button.tiny-60, input[type=button].tiny-60 {
+a.button.tiny-60, input[type=button].tiny-60, button.tiny-60 {
 	width: 60px;
 }
-a.button.tiny-100, input[type=button].tiny-100 {
+a.button.tiny-100, input[type=button].tiny-100, button.tiny-100 {
 	width: 100px;
 }
-a.button.tiny-160, input[type=button].tiny-160 {
+a.button.tiny-160, input[type=button].tiny-160, button.tiny-160 {
 	width: 160px;
 }
-a.button.toggle, input[type=button].toggle {
+a.button.toggle, input[type=button].toggle, button.toggle {
 	-webkit-transition: 0.4s all;
 }
-a.button.toggle.active, input[type=button].toggle.active {
+a.button.toggle.active, input[type=button].toggle.active, button.toggle.active {
 	font-weight: 500;
 }
 

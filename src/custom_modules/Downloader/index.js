@@ -157,6 +157,14 @@ module.exports = {
         if (running_instance) {
             running_instance.kill();
         }
+    },
+
+    detectFFMPEG: function() {
+        return new Promise((resolve, reject) => {
+            ffmpeg.getAvailableCodecs((err, codecs) => {
+                return resolve(!err);
+            });
+        });
     }
 };
 

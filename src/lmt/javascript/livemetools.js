@@ -50,6 +50,12 @@ $(function(){
 
 	Downloads.load();
 
+	Downloads.detectFFMPEG().then(result => {
+		if (!result) {
+			$('overlay div.ffmpeg-error').parent().show();
+		}
+	});
+
 	$('main').scroll(function() {
 		if ($(this).scrollTop() + $(this).height() == $('.list').height()) {
 			if (has_more == false) return;
@@ -664,7 +670,9 @@ function performHashtagSearch() {
 		});	
 }
 
-
+function showSettings() {
+	ipcRenderer.send('show-settings');
+}
 
 
 function showUser(u) {
