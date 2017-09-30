@@ -1,12 +1,10 @@
-# ffmpeg Download Engine
+# Setting up ffmpeg
 
-**LiveMe Tools now by defaults uses only FFMPEG to download the streams.**
-
-You **MUST** have it previously installed on your computer for it to work.  
+You **must** have ffmpeg installed on your computer to enable downloading broadcasts. 
 
 ### Linux Users
 
-You can obtain the latest version from the repository for your distribution.  
+You can obtain the latest version from the repository for your distribution.
 
 ### macOS Users
 
@@ -15,5 +13,10 @@ using `chmod +x /usr/local/bin/ff*`
 
 ### Windows Users
 
-Download the prebuilt binary and copy it to your `C:\Windows` directory.
-
+1. Download the [ffmpeg binaries from here](http://ffmpeg.zeranoe.com/builds/).
+2. Extract the .zip to any folder.
+3. In LiveMe Tools, click `File` then `Preferences`.
+4. Click on the `...` button for `FFMPEG` and browse into the newly created directory from the ffmpeg .zip.
+5. Browse into the `bin` directory and select `ffmpeg.exe`.
+6. Repeat steps 4 and 5 but for `FFPROBE`.
+7. Click on `Test FFMPEG`, it should say that the test was successful.
