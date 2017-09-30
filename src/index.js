@@ -729,6 +729,10 @@ function getMenuTemplate() {
                     click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/')
                 },
                 {
+                    label: 'Help with FFMPEG Installation',
+                    click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/blob/master/docs/ffmpeg.md')
+                },
+                {
                     label: 'Report an Issue',
                     click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/issues')
                 }
