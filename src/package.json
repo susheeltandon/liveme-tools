@@ -44,7 +44,8 @@
   "license": "GPL3",
   "build": {
     "appId": "com.thecoderstoolbox.livemetools",
-    "productName": "liveme-tools",
+    "productName": "LiveMeTools",
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
     "asar": true,
     "compression": "maximum",
     "mac": {
@@ -72,8 +73,7 @@
     "postinstall": "install-app-deps",
     "start": "./node_modules/.bin/electron . --enable-logging",
     "dev": "NODE_ENV='development' npm run start",
-    "dist-win": "build -w",
-    "dist-win32": "build -w --ia32",
+    "dist-win": "build -w --ia32 --x64",
     "dist-linux": "build -l",
     "dist-mac": "build -m",
     "dist": "rm -rd dist/* && npm run dist-mac && npm run dist-linux && npm run dist-win"
