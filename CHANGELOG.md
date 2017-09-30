@@ -9,7 +9,7 @@
 - Added settings:
   - You can manually choose a version of ffmpeg for LMT to use.
   - A button to check if ffmpeg is valid and can be used.
-
+- Added a basic check to see if the user is currently live. If they aren't, re-enable the download on an alternate link. (If the first one linked to a live url but they weren't live - it wouldn't work)
 
 **Fixed:**
 - Fixed broken time in message history.

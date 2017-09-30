@@ -424,6 +424,12 @@ function getUsersReplays() {
 					var deleted = replays[i].private == true ? '[PRIVATE] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
 					var downloaded = Downloads.hasBeenDownloaded(replays[i].vid) ? 'downloaded' : '';
 
+					let isLive = replays[i].hlsvideosource.endsWith('flv'), videoUrl = replays[i].hlsvideosource;
+
+					if (!isLive && replays[i].hlsvideosource.indexOf('hlslive') > 0) {
+						videoUrl = replays[i].videosource;
+					}
+
 					var h = `
 						<div class="item ${highlight} ${downloaded}">
 							<div class="header">${deleted}${replays[i].title}&nbsp;</div>
@@ -454,12 +460,13 @@ function getUsersReplays() {
 										${replays[i].countryCode}
 									</div>
 									<div class="width400 align-right">
-										<a class="button icon icon-play" onClick="playVideo('${replays[i].hlsvideosource}')" title="Play Video"></a>
+										<a class="button icon icon-play" onClick="playVideo('${videoUrl}')" title="Play Video"></a>
 						`;
-					if (replays[i].hlsvideosource.indexOf('liveplay') < 0 && replays[i].hlsvideosource.indexOf('hlslive') < 0) {
+					
+					if (!isLive) {
 						h += `
 										<a class="button icon icon-chat" onClick="openChat('${replays[i].vid}')" title="View Message History"></a>
-										<a class="button icon icon-download" onClick="downloadVideo('${replays[i].userid}', '${replays[i].uname}', '${replays[i].vid}', '${replays[i].title.replace("'", "")}', '${replays[i].vtime}', '${replays[i].hlsvideosource}')" title="Download Replay"></a>
+										<a class="button icon icon-download" onClick="downloadVideo('${replays[i].userid}', '${replays[i].uname}', '${replays[i].vid}', '${replays[i].title.replace("'", "")}', '${replays[i].vtime}', '${videoUrl}')" title="Download Replay"></a>
 						`;
 					}
 						
@@ -479,8 +486,8 @@ function getUsersReplays() {
 								<div class="width700">
 									<span>Video URL:</span>
 									<div class="input has-right-button">
-										<input type="text" value="${replays[i].hlsvideosource}" disabled="disabled">
-										<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${replays[i].hlsvideosource}')" title="Copy to Clipboard">
+										<input type="text" value="${videoUrl}" disabled="disabled">
+										<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${videoUrl}')" title="Copy to Clipboard">
 									</div>
 								</div>
 							</div>
@@ -581,6 +588,12 @@ function performHashtagSearch() {
 				var length = lh + ':' + (lm < 10 ? '0' : '') + lm + ':' + (ls < 10 ? '0' : '') + ls;
 				var downloaded = Downloads.hasBeenDownloaded(results[i].vid) ? 'downloaded' : '';
 
+				let isLive = replays[i].hlsvideosource.endsWith('flv'), videoUrl = replays[i].hlsvideosource;
+				
+				if (!isLive && replays[i].hlsvideosource.indexOf('hlslive') > 0) {
+					videoUrl = replays[i].videosource;
+				}
+
 				var h = `
 
 					<div class="item ${downloaded}">
@@ -612,12 +625,12 @@ function performHashtagSearch() {
 									${results[i].countryCode}
 								</div>
 								<div class="width400 align-right">
-									<a class="button icon icon-play" onClick="playVideo('${results[i].hlsvideosource}')" title="Play Video"></a>
+									<a class="button icon icon-play" onClick="playVideo('${videoUrl}')" title="Play Video"></a>
 					`;
-				if (results[i].hlsvideosource.indexOf('liveplay') < 0 && results[i].hlsvideosource.indexOf('hlslive') < 0) {
+				if (!isLive) {
 					h += `
 									<a class="button icon icon-chat" onClick="openChat('${results[i].vid}')" title="View Message History"></a>
-									<a class="button icon icon-download" onClick="downloadVideo('${results[i].userid}', '${results.uname}', '${results[i].vid}', '${results[i].title.replace("'", "")}', '${results[i].vtime}', '${results[i].hlsvideosource}')" title="Download Replay"></a>
+									<a class="button icon icon-download" onClick="downloadVideo('${results[i].userid}', '${results.uname}', '${results[i].vid}', '${results[i].title.replace("'", "")}', '${results[i].vtime}', '${videoUrl}')" title="Download Replay"></a>
 					`;
 				}
 					
@@ -637,8 +650,8 @@ function performHashtagSearch() {
 							<div class="width700">
 								<span>Video URL:</span>
 								<div class="input has-right-button">
-									<input type="text" value="${results[i].hlsvideosource}" disabled="disabled">
-									<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${results[i].hlsvideosource}')" title="Copy to Clipboard">
+									<input type="text" value="${videoUrl}" disabled="disabled">
+									<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${videoUrl}')" title="Copy to Clipboard">
 								</div>
 							</div>
 						</div>
