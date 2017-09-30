@@ -104,9 +104,8 @@ module.exports = {
     init: function (settings) {
         appSettings = settings;
 
-        if (appSettings.get('downloads.ffmpegAutodetect') == 0) {
-            ffmpeg.setFfmpegPath(appSettings.get('downloads.ffmpeg'));
-        }
+        ffmpeg.setFfmpegPath(appSettings.get('downloads.ffmpeg'));
+        ffmpeg.setFfprobePath(appSettings.get('downloads.ffprobe'));
     },
 
     /*
@@ -158,17 +157,19 @@ module.exports = {
     },
 
     detectFFMPEG: function() {
-        console.log(ffmpeg);
         return new Promise((resolve, reject) => {
             ffmpeg.getAvailableCodecs((err, codecs) => {
-                if (err) return resolve(false);
-                return resolve(true);
+                return resolve(!err);
             });
         });
     },
 
     setFfmpegPath: function(path) {
         ffmpeg.setFfmpegPath(path);
+    },
+
+    setFfprobePath: function(path) {
+        ffmpeg.setFfprobePath(path);
     }
 };
 
@@ -237,7 +238,7 @@ function processItem(item) {
                 '-c copy',
                 '-bsf:a aac_adtstoasc',
                 '-vsync 2',
-                '-movflags faststart'
+                '-movflags +faststart'
             ])
             .on('end', function (stdout, stderr) {
                 if (appSettings.get('downloads.history')) {
@@ -255,8 +256,6 @@ function processItem(item) {
                 eventEmitter.emit('start', { id: item.video.id, url: item.video.url });
             })
             .on('error', function (err, stdout, stderr) {
-                console.log(err);
-                console.log(stderr);
                 eventEmitter.emit('fail', { id: item.video.id });
                 running_instance = null;
                 resolve();

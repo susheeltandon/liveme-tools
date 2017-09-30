@@ -8,7 +8,9 @@ $(function() {
 			directory : path.join(remote.app.getPath('home'), 'Downloads'),
 			filemode: 0,
 			filetemplate: '',
-			history: true
+			history: true,
+			ffmpeg: 'ffmpeg',
+			ffprobe: 'ffprobe'
 		});
 	}
 
@@ -19,8 +21,8 @@ $(function() {
 			filemode: appSettings.get('downloads.filemode'),
 			filetemplate: appSettings.get('downloads.filetemplate'),
 			history: appSettings.get('downloads.history'),
-			ffmpegAutodetect: 1,
-			ffmpeg: ''
+			ffmpeg: 'ffmpeg',
+			ffprobe: 'ffprobe'
 		});
 	}
 
@@ -29,8 +31,8 @@ $(function() {
 		$('#filemode').prop('checked', appSettings.get('downloads.filemode'));
 		$('#filetemplate').val(appSettings.get('downloads.filetemplate'));
 		$('#history').prop('checked', appSettings.get('downloads.history'));
-		$('#ffmpegautodetect').prop('checked', appSettings.get('downloads.ffmpegAutodetect'));
 		$('#ffmpegpath').val(appSettings.get('downloads.ffmpeg'));
+		$('#ffprobepath').val(appSettings.get('downloads.ffprobe'));
 		checkType();
 	}, 1);
 });
@@ -39,7 +41,7 @@ function closeWindow() {
 	window.close();
 }
 
-function saveSettings() {
+function saveSettings(close=true) {
 	let oldHistory = appSettings.get('downloads.history');
 
 	appSettings.set('downloads', { 
@@ -48,14 +50,19 @@ function saveSettings() {
 		filetemplate: $('#filetemplate').val(),
 		history: $('#history').is(':checked') ? 1 : 0,
 		ffmpeg: $('#ffmpegpath').val(),
-		ffmpegAutodetect: $('#ffmpegautodetect').is(':checked') ? 1 : 0
+		ffprobe: $('#ffprobepath').val()
 	});
+
+	Downloader.setFfmpegPath(appSettings.get('downloads.ffmpeg'));
+	Downloader.setFfprobePath(appSettings.get('downloads.ffprobe'));
 
 	if (oldHistory && !appSettings.get('downloads.history')) {
 		ipcRenderer.send('history-delete');
 	}
 	
-	closeWindow();
+	if (close) {
+		closeWindow();
+	}
 }
 
 function checkType() {
@@ -69,10 +76,8 @@ function checkType() {
 
 	if ($('#ffmpegautodetect').is(':checked') == 0) {
 		$('#ffmpegPathBox').show();
-		Downloader.setFfmpegPath($('#ffmpegpath').val());
 	} else {
 		$('#ffmpegPathBox').hide();
-		Downloader.setFfmpegPath('ffmpeg');
 	}
 }
 
@@ -91,22 +96,26 @@ function setFfmpegPath() {
 	});
 	if (typeof (path) != 'undefined') {
 		$('#ffmpegpath').val(path);
-		Downloader.setFfmpegPath(path);
+	}
+}
+
+function setFfprobePath() {
+	var path = remote.dialog.showOpenDialog({
+		properties: ['openFile']
+	});
+	if (typeof (path) != 'undefined') {
+		$('#ffprobepath').val(path);
 	}
 }
 
 function checkFfmpeg() {
-	$('#checkFfmpegButton').prop('disable', true);
+	saveSettings(false);
 
 	Downloader.detectFFMPEG().then(result => {
 		if (result) {
-			console.log("success");
 			remote.dialog.showMessageBox(null, { type: "info", buttons: [ "OK" ], title: "LiveMe Tools", message: "FFMPEG check passed" });
 		} else {
-			console.log("fail");
 			remote.dialog.showErrorBox('LiveMe Tools', 'FFMPEG check failed');
 		}
-
-		$('#checkFfmpegButton').prop('disable', false);
 	});
 }

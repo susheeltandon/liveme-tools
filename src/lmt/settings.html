@@ -81,32 +81,33 @@
 								<div>
 									<div class="cell">
 										<p style="margin: 8px 0">
-											Auto-detect FFMPEG
+											FFMPEG Path
 										</p>
 									</div>
-									<div class="cell" style="text-align: right;">
-										<span class="switch">
-											<input type="checkbox" id="ffmpegautodetect" onChange="checkType()">
-											<label for="ffmpegautodetect" data-on="YES" data-off="NO"></label>
-										</span>
+									<div class="cell" style="text-align: right; font-size: 9pt;">
+										<p>Required for downloads</p>
 									</div>
 								</div>
-								<div id="ffmpegPathBox" class="input has-right-button width400">
+								<div class="input has-right-button width400">
 									<input type="text" id="ffmpegpath" disabled="disabled">
-									<input type="button" value="..." onClick="setFfmpegPath()" title="Browse for folder">
+									<input type="button" value="..." onClick="setFfmpegPath()" title="Browse for ffmpeg">
 								</div>
 							</div>
 
-							<div style="margin-top: 24px;">
+							<div style="margin-top: 4px;">
 								<div>
 									<div class="cell">
 										<p style="margin: 8px 0">
-											Check FFMPEG
+											FFPROBE Path
 										</p>
 									</div>
-									<div class="cell" style="text-align: right;">
-										<button class="tiny" id="checkFfmpegButton" onClick="checkFfmpeg()">Check FFMPEG</button>
+									<div class="cell" style="text-align: right; font-size: 9pt;">
+										<p>Required for progress %</p>
 									</div>
+								</div>
+								<div class="input has-right-button width400">
+									<input type="text" id="ffprobepath" disabled="disabled">
+									<input type="button" value="..." onClick="setFfprobePath()" title="Browse for ffprobe">
 								</div>
 							</div>
 						</td>
@@ -151,7 +152,8 @@
 				</tbody>
 			</table>
 							
-			<div class="buttons">				
+			<div class="buttons">
+				<input type="button" value="Check FFMPEG" onClick="checkFfmpeg()">
 				<input type="button" value="Save" onClick="saveSettings()">
 				<input type="button" value="Cancel" onClick="closeWindow()">
 			</div>
