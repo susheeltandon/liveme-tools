@@ -1,20 +1,37 @@
-# Online Help
+# LiveMe Tools
 
-*Updated on 09-07-2017*
+[![Downloads](https://img.shields.io/github/downloads/thecoder75/liveme-tools/total.svg)]()
+[![Discord](https://img.shields.io/discord/340106715334836224.svg)](https://discord.gg/A5p2aF4)
 
-```
+This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux designed to:
+- Allow viewing a list of live videos with filter options
+- Search for users or videos tagged with hashtags
+- View details on users and their replays
+- Watch and download replay videos
+- Create local Favorites lists without an account
+- Import a list of Replay URLs or VideoIDs for downloading
+- Ability to add a single URL
+- Uses [FFMPEG](ffmpeg.md) to download playlists
+- and much more!
 
-This online help is under major construction and will receive additional content and updated
-periodically by the developers.
+## Getting Started
 
-```
+### Downloading and Installing
 
-### Getting Started 
+You can download the [latest release](https://github.com/thecoder75/liveme-tools/releases/latest) if you wish to not compile it yourself.  You can also [visit](https://github.com/thecoder75/liveme-tools/) the source tree to browse and download the code manually if you like.
 
-### How to Search
+**You need to have FFMPEG and FFPROBE installed already on your computer for downloads to work!**  For details on how to do this, check our [ffmpeg.md](https://github.com/thecoder75/liveme-tools/blob/master/docs/ffmpeg.md) page.
 
-### How to Download
+## Developers
+* [thecoder75](https://github.com/thecoder75)
+* [polydragon](https://github.com/polydragon)
 
-### Settings
+## Bug Hunters and Beta Testers
+* [slyfox99](https://github.com/slyfox99)
 
-### Tricks and Tips
+## License
+This project is licensed under the GPL3 License - see the [LICENSE](LICENSE) 
+file for details
+
+
+
