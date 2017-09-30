@@ -15,7 +15,7 @@ $(function() {
 	}
 
 	// Upgrading from < 6.0.5 to >= 6.0.6
-	if (appSettings.has('downloads.directory') != false && appSettings.has('downloads.ffmpegAutodetect') == false) {
+	if (appSettings.has('downloads.directory') != false && appSettings.has('downloads.ffmpeg') == false) {
 		appSettings.set('downloads', {
 			directory: appSettings.get('downloads.directory'),
 			filemode: appSettings.get('downloads.filemode'),
