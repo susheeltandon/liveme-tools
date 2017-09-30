@@ -21,6 +21,7 @@
 **Changed:**
 - Bundling Windows versions as a portable version. No extraction required.
 - Merged x64 and x86 into one portable version - it will use the x64 version if you're running 64-bit and the x86 version if you're running on 32-bit.
+- Color of downloaded video highlight is now a green, instead of a very faint white.
 
 #### 2017-09-26 - v6.0.5
 **Fixed:**
