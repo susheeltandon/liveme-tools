@@ -86,12 +86,12 @@
 									</div>
 									<div class="cell" style="text-align: right;">
 										<span class="switch">
-											<input type="checkbox" id="autodetectffmpeg" onChange="checkType()">
-											<label for="autodetectffmpeg" data-on="YES" data-off="NO"></label>
+											<input type="checkbox" id="ffmpegautodetect" onChange="checkType()">
+											<label for="ffmpegautodetect" data-on="YES" data-off="NO"></label>
 										</span>
 									</div>
 								</div>
-								<div class="input has-right-button width400">
+								<div id="ffmpegPathBox" class="input has-right-button width400">
 									<input type="text" id="ffmpegpath" disabled="disabled">
 									<input type="button" value="..." onClick="setFfmpegPath()" title="Browse for folder">
 								</div>

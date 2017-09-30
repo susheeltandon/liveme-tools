@@ -12,13 +12,15 @@ $(function() {
 		});
 	}
 
-	// Upgrading from 4.x to 5.x
-	if (appSettings.has('downloads.directory') != false && appSettings.has('downloads.replaycount') == false) {
+	// Upgrading from < 6.0.5 to >= 6.0.6
+	if (appSettings.has('downloads.directory') != false && appSettings.has('downloads.ffmpegAutodetect') == false) {
 		appSettings.set('downloads', {
 			directory: appSettings.get('downloads.directory'),
 			filemode: appSettings.get('downloads.filemode'),
 			filetemplate: appSettings.get('downloads.filetemplate'),
-			history: appSettings.get('downloads.history')
+			history: appSettings.get('downloads.history'),
+			ffmpegAutodetect: 1,
+			ffmpeg: ''
 		});
 	}
 
@@ -27,8 +29,10 @@ $(function() {
 		$('#filemode').prop('checked', appSettings.get('downloads.filemode'));
 		$('#filetemplate').val(appSettings.get('downloads.filetemplate'));
 		$('#history').prop('checked', appSettings.get('downloads.history'));
+		$('#ffmpegautodetect').prop('checked', appSettings.get('downloads.ffmpegAutodetect'));
+		$('#ffmpegpath').val(appSettings.get('downloads.ffmpeg'));
 		checkType();
-	}, 100);
+	}, 1);
 });
 
 function closeWindow() {
@@ -42,13 +46,15 @@ function saveSettings() {
 		directory: $('#download_folder').val(), 
 		filemode: $('#filemode').is(':checked') ? 1 : 0,
 		filetemplate: $('#filetemplate').val(),
-		history: $('#history').is(':checked') ? 1 : 0
+		history: $('#history').is(':checked') ? 1 : 0,
+		ffmpeg: $('#ffmpegpath').val(),
+		ffmpegAutodetect: $('#ffmpegautodetect').is(':checked') ? 1 : 0
 	});
 
 	if (oldHistory && !appSettings.get('downloads.history')) {
 		ipcRenderer.send('history-delete');
 	}
-
+	
 	closeWindow();
 }
 
@@ -60,6 +66,12 @@ function checkType() {
 		$('#ftblock-no').hide();
 		$('#ftblock-yes').show();
 	}
+
+	if ($('#ffmpegautodetect').is(':checked') == 0) {
+		$('#ffmpegPathBox').show();
+	} else {
+		$('#ffmpegPathBox').hide();
+	}
 }
 
 function SetDownloadPath() {
@@ -67,7 +79,15 @@ function SetDownloadPath() {
 		properties: ['openDirectory']
 	});
 	if (typeof (dir_path) != 'undefined') {
-		appSettings.set('downloads', { directory: dir_path });
 		$('#download_folder').val(dir_path);
+	}
+}
+
+function setFfmpegPath() {
+	var path = remote.dialog.showOpenDialog({
+		properties: ['openFile']
+	});
+	if (typeof (path) != 'undefined') {
+		$('#ffmpegpath').val(path);
 	}
 }
