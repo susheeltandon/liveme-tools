@@ -424,7 +424,7 @@ function getUsersReplays() {
 					var deleted = replays[i].private == true ? '[PRIVATE] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
 					var downloaded = Downloads.hasBeenDownloaded(replays[i].vid) ? 'downloaded' : '';
 
-					let isLive = replays[i].hlsvideosource.endsWith('flv'), videoUrl = replays[i].hlsvideosource;
+					let isLive = replays[i].hlsvideosource.endsWith('flv') || replays[i].hlsvideosource.indexOf('liveplay') > 0, videoUrl = replays[i].hlsvideosource;
 
 					if (!isLive && replays[i].hlsvideosource.indexOf('hlslive') > 0) {
 						videoUrl = replays[i].videosource;
@@ -588,7 +588,7 @@ function performHashtagSearch() {
 				var length = lh + ':' + (lm < 10 ? '0' : '') + lm + ':' + (ls < 10 ? '0' : '') + ls;
 				var downloaded = Downloads.hasBeenDownloaded(results[i].vid) ? 'downloaded' : '';
 
-				let isLive = replays[i].hlsvideosource.endsWith('flv'), videoUrl = replays[i].hlsvideosource;
+				let isLive = replays[i].hlsvideosource.endsWith('flv') || replays[i].hlsvideosource.indexOf('liveplay') > 0, videoUrl = replays[i].hlsvideosource;
 				
 				if (!isLive && replays[i].hlsvideosource.indexOf('hlslive') > 0) {
 					videoUrl = replays[i].videosource;
