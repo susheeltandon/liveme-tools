@@ -104,8 +104,15 @@ module.exports = {
     init: function (settings) {
         appSettings = settings;
 
-        ffmpeg.setFfmpegPath(appSettings.get('downloads.ffmpeg'));
-        ffmpeg.setFfprobePath(appSettings.get('downloads.ffprobe'));
+        let mpeg = appSettings.get('downloads.ffmpeg'), probe = appSettings.get('downloads.ffprobe');
+
+        if (mpeg && mpeg != 'ffmpeg') {
+            ffmpeg.setFfmpegPath(mpeg);
+        }
+
+        if (probe && probe != 'ffprobe') {
+            ffmpeg.setFfprobePath(probe);
+        }
     },
 
     /*
