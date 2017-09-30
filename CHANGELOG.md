@@ -5,13 +5,10 @@
 #### TBD - v6.0.6
 **Added:**
 - Updated video progress bar styling for better visibility
-- Ffmpeg checks to see if it's available and alert you if it can't be found.
-- (NYI) Simultaneous downloads.
+- Ffmpeg checks to see if it's available and alert you if it can't be found on startup.
 - Added settings:
-  - Autodetect ffmpeg, defaults to on. Tries to find ffmpeg on its own.
-  - Ffmpeg path, if autodetect ffmpeg is off you can manually choose ffmpeg for LMT to use.
+  - You can manually choose a version of ffmpeg for LMT to use.
   - A button to check if ffmpeg is valid and can be used.
-  - (NYI) Number of simultaneous downloads.
 
 
 **Fixed:**
@@ -19,6 +16,7 @@
 - Fixed time jumping from message history when time was clicked on.
 - Fixed settings resetting if you changed download directory but didn't save.
 - Fixed download directory window not showing.
+- Fixed crash if you use File -> Quit.
 
 **Changed:**
 - Bundling Windows versions as a portable version. No extraction required.
