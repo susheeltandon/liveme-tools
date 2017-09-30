@@ -637,8 +637,10 @@ function exportFavorites() {
 }
 
 function shutdownApp() {
-    queuewin.setClosable(true);
-    queuewin.close();
+    if (queuewin != null) {
+        queuewin.setClosable(true);
+        queuewin.close();
+    }
 
     Favorites.forceSave();
     Downloader.forceSave();
