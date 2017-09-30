@@ -104,11 +104,9 @@ module.exports = {
     init: function (settings) {
         appSettings = settings;
 
-        /*
-
-                Removed prompt about FFMPEG as people were getting it even when it was installed.
-
-        */
+        if (appSettings.get('downloads.ffmpegAutodetect') == 0) {
+            ffmpeg.setFfmpegPath(appSettings.get('downloads.ffmpeg'));
+        }
     },
 
     /*
@@ -160,11 +158,17 @@ module.exports = {
     },
 
     detectFFMPEG: function() {
+        console.log(ffmpeg);
         return new Promise((resolve, reject) => {
             ffmpeg.getAvailableCodecs((err, codecs) => {
-                return resolve(!err);
+                if (err) return resolve(false);
+                return resolve(true);
             });
         });
+    },
+
+    setFfmpegPath: function(path) {
+        ffmpeg.setFfmpegPath(path);
     }
 };
 

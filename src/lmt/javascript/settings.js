@@ -1,4 +1,4 @@
-const {electron, remote, ipcRenderer} = require('electron'), appSettings = remote.require('electron-settings');
+const {electron, remote, ipcRenderer} = require('electron'), appSettings = remote.require('electron-settings'), Downloader = remote.getGlobal('Downloader');
 const path = require('path');
 
 $(function() {
@@ -69,8 +69,10 @@ function checkType() {
 
 	if ($('#ffmpegautodetect').is(':checked') == 0) {
 		$('#ffmpegPathBox').show();
+		Downloader.setFfmpegPath($('#ffmpegpath').val());
 	} else {
 		$('#ffmpegPathBox').hide();
+		Downloader.setFfmpegPath('ffmpeg');
 	}
 }
 
@@ -89,5 +91,22 @@ function setFfmpegPath() {
 	});
 	if (typeof (path) != 'undefined') {
 		$('#ffmpegpath').val(path);
+		Downloader.setFfmpegPath(path);
 	}
+}
+
+function checkFfmpeg() {
+	$('#checkFfmpegButton').prop('disable', true);
+
+	Downloader.detectFFMPEG().then(result => {
+		if (result) {
+			console.log("success");
+			remote.dialog.showMessageBox(null, { type: "info", buttons: [ "OK" ], title: "LiveMe Tools", message: "FFMPEG check passed" });
+		} else {
+			console.log("fail");
+			remote.dialog.showErrorBox('LiveMe Tools', 'FFMPEG check failed');
+		}
+
+		$('#checkFfmpegButton').prop('disable', false);
+	});
 }
