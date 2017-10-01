@@ -725,8 +725,8 @@ function getMenuTemplate() {
             role: 'help',
             submenu: [
                 {
-                    label: 'LiveMe Tools Github Page',
-                    click: () => shell.openExternal('https://github.com/thecoder75/liveme-tools/')
+                    label: 'LiveMe Tools Page',
+                    click: () => shell.openExternal('https://thecoder75.github.io/liveme-tools/')
                 },
                 {
                     label: 'Help with FFMPEG Installation',
