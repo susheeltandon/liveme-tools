@@ -38,9 +38,11 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md)
 for details on our code of conduct, and the process for submitting pull 
 requests to us.
 
-## Developers
+## Developers/Maintainers
 * [thecoder75](https://github.com/thecoder75)
 * [polydragon](https://github.com/polydragon)
+
+@polydragon manages the builds for Windows and Linux.  @thecoder75 manages the macOS builds.
 
 ## Bug Hunters and Beta Testers
 * [slyfox99](https://github.com/slyfox99)

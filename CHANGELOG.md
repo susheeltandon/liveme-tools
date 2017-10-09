@@ -2,7 +2,14 @@
 
 ### 6.x.x Releases
 
-#### TBD - v6.0.6
+#### 2017-10-09 - v6.0.7
+**Fixed:**
+- Fixed broken Favorites Export function.
+
+**Please Note:**
+@polydragon manages the builds now for Windows and Linux.  @thecoder75 manages the macOS builds.
+
+#### 2017-10-01 - v6.0.6
 **Added:**
 - Updated video progress bar styling for better visibility
 - Ffmpeg checks to see if it's available and alert you if it can't be found on startup.
