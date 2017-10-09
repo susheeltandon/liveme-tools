@@ -6,8 +6,8 @@
 **Fixed:**
 - Fixed broken Favorites Export function.
 
-**Please Note:**
-@polydragon manages the builds now for Windows and Linux.  @thecoder75 manages the macOS builds.
+**For platform related questions or release issues:**
+*polydragon* manages the builds now for Windows and Linux.  *thecoder75* manages the macOS builds.
 
 #### 2017-10-01 - v6.0.6
 **Added:**
