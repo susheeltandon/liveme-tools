@@ -624,7 +624,7 @@ function _importVideoIdList(list) {
 }
 
 function exportFavorites() {
-    let d = remote.dialog.showSaveDialog(
+    let d = dialog.showSaveDialog(
         {
             filters: [ { name: "Text File", extensions: ["txt"] }, { name: 'All Files', extensions: ['*'] } ],
             defaultPath: "exported_favorites.txt"
