@@ -2,6 +2,11 @@
 
 ### 6.x.x Releases
 
+#### 2017-10-10 - v6.0.8
+**Fixed:**
+- Fixed layout issue when a full length date is present
+- Fixed Favorites Export bug
+
 #### 2017-10-09 - v6.0.7
 **Fixed:**
 - Fixed broken Favorites Export function.
