@@ -627,11 +627,12 @@ function exportFavorites() {
     let d = dialog.showSaveDialog(
         {
             filters: [ { name: "Text File", extensions: ["txt"] }, { name: 'All Files', extensions: ['*'] } ],
-            defaultPath: "exported_favorites.txt"
+            defaultPath: 'Exported Favorites UserID List.txt'
         }, 
-        (filePaths) => {
-            if (filePaths[0] != null)
-                Favorites.export(filePaths[0]);
+        (filePath) => {
+
+            if (filePath != null)
+                Favorites.export(filePath);
         }
     );
 }
