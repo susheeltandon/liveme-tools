@@ -262,11 +262,11 @@ function beginSearch2() {
 							<div class="header">${deleted}${video.title}&nbsp;</div>
 							<div class="content">
 								<div class="meta">
-									<div class="width150">
+									<div class="width180">
 										<span>Posted on:</span>
 										${ds}
 									</div>
-									<div class="width100">
+									<div class="width75">
 										<span>Length:</span>
 										${length}
 									</div>
@@ -286,7 +286,7 @@ function beginSearch2() {
 										<span>Country</span>
 										${video.countryCode}
 									</div>
-									<div class="width400 align-right">
+									<div class="width200 align-right">
 										<a class="button icon icon-play" onClick="playVideo('${video.hlsvideosource}')" title="Play Video"></a>
 										<a class="button icon icon-chat" onClick="openChat('${video.vid}')" title="View Message History"></a>
 										<a class="button icon icon-download" onClick="downloadVideo('${video.userid}', '${video.uname}', '${video.vid}', '${video.title.replace("'", "")}', '${video.vtime}', '${video.hlsvideosource}')" title="Download Replay"></a>
@@ -435,11 +435,11 @@ function getUsersReplays() {
 							<div class="header">${deleted}${replays[i].title}&nbsp;</div>
 							<div class="content">
 								<div class="meta">
-									<div class="width150">
+									<div class="width180">
 										<span>Posted on:</span>
 										${ds}
 									</div>
-									<div class="width100">
+									<div class="width75">
 										<span>Length:</span>
 										${length}
 									</div>
@@ -459,7 +459,7 @@ function getUsersReplays() {
 										<span>Country</span>
 										${replays[i].countryCode}
 									</div>
-									<div class="width400 align-right">
+									<div class="width200 align-right">
 										<a class="button icon icon-play" onClick="playVideo('${videoUrl}')" title="Play Video"></a>
 						`;
 					
@@ -600,11 +600,11 @@ function performHashtagSearch() {
 						<div class="header">${results[i].title}&nbsp;</div>
 						<div class="content">
 							<div class="meta">
-								<div class="width150">
+								<div class="width180">
 									<span>Posted on:</span>
 									${ds}
 								</div>
-								<div class="width100">
+								<div class="width75">
 									<span>Length:</span>
 									${length}
 								</div>
@@ -624,7 +624,7 @@ function performHashtagSearch() {
 									<span>Country</span>
 									${results[i].countryCode}
 								</div>
-								<div class="width400 align-right">
+								<div class="width200 align-right">
 									<a class="button icon icon-play" onClick="playVideo('${videoUrl}')" title="Play Video"></a>
 					`;
 				if (!isLive) {
