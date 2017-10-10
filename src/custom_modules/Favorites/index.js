@@ -3,7 +3,7 @@
 */
 "use strict";
 
-const 	{ app } = require('electron'),
+const 	{ app, dialog } = require('electron'),
 		path = require('path'), axios = require('axios'), fs = require('fs'),
 		eventEmitter = new(require('events').EventEmitter)();
 
@@ -92,9 +92,11 @@ module.exports = {
 			ids += "\n" + o['uid']; // Just uze \n even though windows uses \r\n. It will look stupid in Notepad, but it will still work if this file gets transferred between Windows and Linux/Mac. The importer will parse for \n, not \r\n.
 		}
 
+		console.log('File: ' + file);
+
 		fs.writeFile(file, ids, 'utf8', function(err) {
 			if (err) {
-				remote.dialog.showErrorBox('Export Error', 'There was an error when attempting to export your favorites');
+				dialog.showErrorBox('Export Error', 'There was an error when attempting to export your favorites');
 				console.error(err);
 			}
 		});
