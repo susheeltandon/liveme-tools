@@ -2,7 +2,7 @@
 
 ### 6.x.x Releases
 
-#### ???? - v6.0.8
+#### 2017-10-11 - v6.0.8
 **Fixed:**
 - Fixed layout issue when a full length date is present
 - Fixed Favorites Export bug
@@ -10,9 +10,6 @@
 #### 2017-10-09 - v6.0.7
 **Fixed:**
 - Fixed broken Favorites Export function.
-
-**For platform related questions or release issues:**
-*polydragon* manages the builds now for Windows and Linux.  *thecoder75* manages the macOS builds.
 
 #### 2017-10-01 - v6.0.6
 **Added:**

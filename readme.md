@@ -14,10 +14,6 @@ This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux design
 - Uses [FFMPEG](ffmpeg.md) to download playlists
 - and much more!
 
-**For platform related questions or release issues:**
-*polydragon* manages the builds now for Windows and Linux.  *thecoder75* manages the macOS builds.
-
-
 ## Getting Started
 
 ### Downloading and Installing
