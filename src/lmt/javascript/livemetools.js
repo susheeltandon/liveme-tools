@@ -241,11 +241,14 @@ function beginSearch2() {
 
 	$('overlay').hide();
 	if (videoid.length > 0) {
+
+		$('main').addClass('with-panel').html('<div id="videolist" class="list"></div>');
+
 		LiveMe.getVideoInfo(videoid)
 			.then(video => {
 				if (video.userid.length < 8) {
 					$('panel').hide();
-					$('main').removeClass('haspanel').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div></div>');						
+					$('main').removeClass('with-panel').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div></div>');						
 				} else {
 					let dt = new Date(video.vtime * 1000);
 					var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
@@ -318,7 +321,7 @@ function beginSearch2() {
 			})
 			.catch(err => {
 				$('panel').hide();
-				$('main').removeClass('haspanel').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div></div>');						
+				$('main').removeClass('with-panel').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div></div>');						
 			});
 
 	} else if (userid.length > 0) {
