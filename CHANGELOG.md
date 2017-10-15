@@ -2,6 +2,10 @@
 
 ### 6.x.x Releases
 
+#### 2017-10-15 - v6.0.9 
+**Fixed:**
+- Fixed video search bug
+
 #### 2017-10-11 - v6.0.8
 **Fixed:**
 - Fixed layout issue when a full length date is present
