@@ -326,6 +326,7 @@ function beginSearch2() {
 
 	} else if (userid.length > 0) {
 		$('panel').hide();		
+		$('main').addClass('with-panel').html('<div id="videolist" class="list"></div>');
 		performUserLookup(userid);
 	} else {
 		if ($('#type').val() == 'search') {
@@ -341,7 +342,6 @@ function beginSearch2() {
 function performUserLookup(uid) {
 	$('overlay').hide();
 	$('panel').show();
-	$('main').addClass('with-panel').html('<div id="videolist" class="list"></div>');
 
 	LiveMe.getUserInfo(uid)
 		.then(user => {
