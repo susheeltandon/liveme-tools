@@ -242,11 +242,13 @@ function beginSearch2() {
 	$('overlay').hide();
 	if (videoid.length > 0) {
 
-		$('main').addClass('with-panel').html('<div id="videolist" class="list"></div>');
-
 		LiveMe.getVideoInfo(videoid)
 			.then(video => {
-				if (video.userid.length < 8) {
+
+				$('panel').show();
+				$('main').addClass('with-panel').html('<div id="videolist" class="list"></div>');
+
+				if (video.videosource.length < 1) {
 					$('panel').hide();
 					$('main').removeClass('with-panel').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div></div>');						
 				} else {
@@ -259,6 +261,13 @@ function beginSearch2() {
 					var length = lm + ':' + (ls < 10 ? '0' : '') + ls;
 					var deleted = '[SEARCHED] ', highlight = hi1 || hi2 ? 'highlight' : '';
 					var downloaded = Downloads.hasBeenDownloaded(video.vid) ? 'downloaded' : '';
+
+					let isLive = video.hlsvideosource.endsWith('flv') || video.hlsvideosource.indexOf('liveplay') > 0, videoUrl = video.hlsvideosource;
+
+					if (!isLive && video.hlsvideosource.indexOf('hlslive') > 0) {
+						videoUrl = video.videosource;
+					}
+					if (videoUrl.length < 1) isLive = true;
 
 					var h = `
 						<div class="item ${highlight} ${downloaded}">
@@ -290,9 +299,15 @@ function beginSearch2() {
 										${video.countryCode}
 									</div>
 									<div class="width200 align-right">
-										<a class="button icon icon-play" onClick="playVideo('${video.hlsvideosource}')" title="Play Video"></a>
+					`;
+					if (!isLive) {
+						h += `
 										<a class="button icon icon-chat" onClick="openChat('${video.vid}')" title="View Message History"></a>
-										<a class="button icon icon-download" onClick="downloadVideo('${video.userid}', '${video.uname}', '${video.vid}', '${video.title.replace("'", "")}', '${video.vtime}', '${video.hlsvideosource}')" title="Download Replay"></a>
+										<a class="button icon icon-download" onClick="downloadVideo('${video.userid}', '${video.uname}', '${video.vid}', '${video.title.replace("'", "")}', '${video.vtime}', '${videoUrl}')" title="Download Replay"></a>
+										<a class="button icon icon-chat" onClick="openChat('${video.vid}')" title="View Message History"></a>
+						`;
+					}
+					h+=`							
 									</div>
 								</div>
 							</div>
@@ -305,23 +320,25 @@ function beginSearch2() {
 									</div>
 								</div>
 								<div class="spacer">&nbsp;</div>
-								<div class="width700">
-									<span>Video URL:</span>
-									<div class="input has-right-button">
-										<input type="text" value="${video.hlsvideosource}" disabled="disabled">
-										<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${video.hlsvideosource}')" title="Copy to Clipboard">
+					`;
+					if (videoUrl.length > 0) {
+						h+=`			
+									<div class="width700">
+										<span>Video URL:</span>
+										<div class="input has-right-button">
+											<input type="text" value="${videoUrl}" disabled="disabled">
+											<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${videoUrl}')" title="Copy to Clipboard">
+										</div>
 									</div>
-								</div>
+						`;
+						}
+					h += `
 							</div>
 						</div>
 					`;
 					$('.list').append(h);						
 					performUserLookup(video.userid);
 				}
-			})
-			.catch(err => {
-				$('panel').hide();
-				$('main').removeClass('with-panel').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div></div>');						
 			});
 
 	} else if (userid.length > 0) {
@@ -414,6 +431,8 @@ function getUsersReplays() {
 	LiveMe.getUserReplays(current_user.uid, current_page, 10)
 		.then(replays => {
 
+			if ((typeof replays == 'undefined') || (replays == null)) return;
+
 			if (replays.length > 0) {
 				for (var i = 0; i < replays.length; i++) {
 
@@ -486,13 +505,19 @@ function getUsersReplays() {
 									</div>
 								</div>
 								<div class="spacer">&nbsp;</div>
-								<div class="width700">
-									<span>Video URL:</span>
-									<div class="input has-right-button">
-										<input type="text" value="${videoUrl}" disabled="disabled">
-										<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${videoUrl}')" title="Copy to Clipboard">
+					`;
+					if (videoUrl.length > 0) {
+						h+=`			
+									<div class="width700">
+										<span>Video URL:</span>
+										<div class="input has-right-button">
+											<input type="text" value="${videoUrl}" disabled="disabled">
+											<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${videoUrl}')" title="Copy to Clipboard">
+										</div>
 									</div>
-								</div>
+						`;
+						}
+					h += `
 							</div>
 						</div>
 					`;
@@ -509,17 +534,11 @@ function getUsersReplays() {
 				has_more = false;
 			} 
 
-			if (replays.length == 0 && current_page == 1) {
+			if ($('.item').length < 1) {
+				console.log('List is empty');
 				$('.list').html('<div class="empty">No visible replays available for this account.</div>');						
 			}
 
-		})
-		.catch(err => {			
-			scroll_busy = false;
-
-			if (current_page == 1) {
-				$('.list').html('<div class="empty">No visible replays available for this account.</div>');	
-			}
 		});
 		
 }
