@@ -573,7 +573,7 @@ function importVideoIdList() {
                     mainwin.send('update-status', { message : 'Import error while accessing the file.' });
                     setTimeout(function(){
                         mainwin.send('hide-status');
-                    }, 2000);
+                    }, 2500);
                 } else {
                     var t = data.split('\n'), i = 0, idlist = [];
 
@@ -582,6 +582,10 @@ function importVideoIdList() {
                     
                     mainwin.send('update-status', { message : 'Found '+idlist.length+' entries to import.' });
                     _importVideoIdList(idlist);
+
+                    setTimeout(function(){
+                        mainwin.send('hide-status');
+                    }, 2500);
                 }
             });
         }
@@ -590,11 +594,11 @@ function importVideoIdList() {
 
 function _importVideoIdList(list) {
     var entry = list.shift();
-    LiveMe.getVideoInfo(vidTest)
+    LiveMe.getVideoInfo(entry)
         .then(video => {
 
             if (video.vid.length > 16) {
-                Downloads.add({
+                Downloader.add({
                     user: {
                         id: video.userid,
                         name: video.uname
