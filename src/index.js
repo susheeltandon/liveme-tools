@@ -590,7 +590,7 @@ function importVideoIdList() {
 
 function _importVideoIdList(list) {
     var entry = list.shift();
-    livemeapi.getVideoInfo(vidTest)
+    LiveMe.getVideoInfo(vidTest)
         .then(video => {
 
             if (video.vid.length > 16) {
