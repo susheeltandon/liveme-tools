@@ -5,6 +5,8 @@
 #### 2017-10-15 - v6.0.10
 **Fixed:**
 - Fixed showing empty fields for Video URL when it wasn't available
+- Fixed rendering issue when replays were unavailable when a search was performed.
+- Fixed VideoID List import bugs.
 
 #### 2017-10-15 - v6.0.9 
 **Fixed:**
