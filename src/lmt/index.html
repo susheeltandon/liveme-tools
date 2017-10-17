@@ -32,6 +32,11 @@
 
 		<overlay>
 			<div class="status"></div>
+			<div class="ffmpeg-error">
+				<span>FFMPEG was not detected, you will be unable to download broadcasts. If you are sure you have FFMPEG installed correctly, open preferences to set its location.</span>
+				<span><a href="#" onClick="shell.openExternal('https://thecoder75.github.io/liveme-tools/ffmpeg')">Click here to see how to set up ffmpeg</a></span>
+				<button onClick="showSettings(); $('div.ffmpeg-error').parent().hide()">Preferences</button> <button onClick="$('div.ffmpeg-error').parent().hide()">Okay</button>
+			</div>
 		</overlay>
 		<panel>
 			<div class="user-panel"></div>
@@ -39,12 +44,5 @@
 		<main class="offset48" id="main"></main>
 
 
-		<overlay>
-			<div class="ffmpeg-error">
-				<span>FFMPEG was not detected, you will be unable to download broadcasts. If you are sure you have FFMPEG installed correctly, open preferences to set its location.</span>
-				<span><a href="#" onClick="shell.openExternal('https://thecoder75.github.io/liveme-tools/ffmpeg')">Click here to see how to set up ffmpeg</a></span>
-				<button onClick="showSettings(); $('div.ffmpeg-error').parent().hide()">Preferences</button> <button onClick="$('div.ffmpeg-error').parent().hide()">Okay</button>
-			</div>
-		</overlay>
 	</body>
 </html>
