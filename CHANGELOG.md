@@ -2,6 +2,11 @@
 
 ### 6.x.x Releases
 
+#### ???? - v6.0.12
+**Added:**
+- Updated the player skin to support displaying total video length 
+- Updated the player progress bar to show a better buffer state and position indicator
+
 #### 2017-10-17 - v6.0.11
 **Fixed:**
 - Fixed Video ID List import bug
