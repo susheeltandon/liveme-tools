@@ -40,10 +40,14 @@
 				video.addEventListener('timeupdate', function(e) {
 					// For larger bar steps only use 100 or 1000, for smoother and smaller bar steps use 1000000 
 					var a = Math.round((video.currentTime / video.duration) * 1000) / 1000, b = $('#progressbar').width() * a;
-					$('#progressbar .bar').css({ width: b });
+					$('#progressbar .position').css({ left: b });
 
 					var h = Math.round(video.currentTime / 3600), m = Math.round(video.currentTime / 60) % 60, s = Math.round(video.currentTime % 60),
 						o = (h>0?h+':':'')+(m>9?'':'0')+m+':'+(s>9?'':'0')+s;
+
+					var h = Math.round(video.duration / 3600), m = Math.round(video.duration / 60) % 60, s = Math.round(video.duration % 60);
+					
+					o += '  /  ' + (h>0?h+':':'')+(m>9?'':'0')+m+':'+(s>9?'':'0')+s;
 					$('.current_time').html(o);
 				}, false);
 
@@ -51,9 +55,9 @@
 					var a = 0;
 					if (video.duration > 0) {
 						var i = video.buffered.length - 1;
-						var b = Math.floor((video.buffered.end(i) / video.duration) * 1000) / 1000, 
-							c = $('#progressbar').width() * b;
-						$('#progressbar .buffer-bar').css({ width: c });
+						var b = Math.floor((video.buffered.start(i) / video.duration) * 100) / 100, c = Math.floor(((video.buffered.end(i) - video.buffered.start(i)) / video.duration) * 100) / 100, 
+							e = $('#progressbar').width() * b, f = $('#progressbar').width() * c;
+						$('#progressbar .buffer-bar').css({ left: e, width: f });
 					}
 				});
 
@@ -123,7 +127,10 @@
 		<div class="message_overlay"></div>
 		<div class="video_controls">
 			<a id="playpause" class="button icon icon-media-pause" onClick="PlayPause()"></a>
-			<div class="progress" id="progressbar"><div class="buffer-bar"></div><div class="bar"></div></div>
+			<div class="progress" id="progressbar">
+				<div class="buffer-bar"></div>
+				<div class="position"></div>
+			</div>
 			<div class="current_time"></div>
 		</div>
 	</body>
