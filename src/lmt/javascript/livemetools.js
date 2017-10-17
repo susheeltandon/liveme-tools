@@ -39,10 +39,13 @@ $(function(){
 	});
 
 	ipcRenderer.on('show-status' , function(event , data) { 
-		$('overlay').html(data.message).show();
+		$('.status').html(data.message);
+		$('overlay .status').show();
+		$('overlay .ffmpeg-error').hide();
+		$('overlay').show();
 	});
 	ipcRenderer.on('update-status' , function(event , data) { 
-		$('overlay').html(data.message);
+		$('.status').html(data.message);
 	});
 	ipcRenderer.on('hide-status' , function(event , data) { 
 		$('overlay').hide();
@@ -52,7 +55,9 @@ $(function(){
 
 	Downloads.detectFFMPEG().then(result => {
 		if (!result) {
-			$('overlay div.ffmpeg-error').parent().show();
+			$('overlay').show();
+			$('overlay .status').hide();
+			$('overlay .ffmpeg-error').show();
 		}
 	});
 
@@ -302,7 +307,7 @@ function beginSearch2() {
 					`;
 					if (!isLive) {
 						h += `
-										<a class="button icon icon-chat" onClick="openChat('${video.vid}')" title="View Message History"></a>
+										<a class="button icon icon-play" onClick="playVideo('${videoUrl}')" title="Play Video"></a>
 										<a class="button icon icon-download" onClick="downloadVideo('${video.userid}', '${video.uname}', '${video.vid}', '${video.title.replace("'", "")}', '${video.vtime}', '${videoUrl}')" title="Download Replay"></a>
 										<a class="button icon icon-chat" onClick="openChat('${video.vid}')" title="View Message History"></a>
 						`;
