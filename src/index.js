@@ -575,10 +575,13 @@ function importVideoIdList() {
                         mainwin.send('hide-status');
                     }, 2500);
                 } else {
-                    var t = data.split('\n'), i = 0, idlist = [];
+                    var tt = data.replace('\r', '');
+                    var t = tt.split('\n'), i = 0, idlist = [];
 
-                    for (i = 0; i < t.length; i++)
-                        idlist.push(t[i].trim());
+                    for (i = 0; i < t.length; i++) {
+                        if (t[i].length > 16)
+                            idlist.push(t[i].trim());
+                    }
                     
                     mainwin.send('update-status', { message : 'Found '+idlist.length+' entries to import.' });
                     _importVideoIdList(idlist);
