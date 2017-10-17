@@ -2,6 +2,12 @@
 
 ### 6.x.x Releases
 
+#### 2017-10-17 - v6.0.11
+**Fixed:**
+- Fixed Video ID List import bug
+- Fixed Replay entry for searched video missing playback button
+- Fixed overlay status message of main window
+
 #### 2017-10-15 - v6.0.10
 **Fixed:**
 - Fixed showing empty fields for Video URL when it wasn't available
