@@ -241,6 +241,8 @@ function beginSearch2() {
 	} else if ($('#type').val() == 'video-lookup') {
 		videoid = $('#query').val();
 	} else if ($('#type').val() == 'user-lookup') {
+		$('panel').hide();
+		$('main').removeClass('with-panel');
 		userid = $('#query').val();
 	}
 

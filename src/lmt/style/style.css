@@ -331,9 +331,9 @@ footer {
 	line-height: 40px;
 	height: 40px;
 	padding: 4px 8px;
-	background-color: rgba(0,0,0,0.0);
+	background-image: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 80%);
 	opacity: 0;
-	-webkit-transition: 0.2s;
+	-webkit-transition: 0;
 	-webkit-app-region: no-drag;
 }
 
@@ -346,19 +346,21 @@ footer {
 	height: 32px !important;
 	opacity: 1 !important;
 	cursor: pointer;
+	position: absolute;
+	left: 12px;
 }
 
 .video_controls .progress {
 	display: block;
 	z-index: 3;
 	position: absolute;
-	left: 48px;
+	left: 64px;
 	right: 128px;
-	bottom: 18px;
-	height: 4px;
-	background-color: rgba(0,120,240,0.20);
+	bottom: 16px;
+	height: 8px;
+	background-color: rgba(255,255,255,0.20);
 	padding: 0px;
-	border-radius: 2px;
+	border-radius: 4px;
 	cursor: pointer;
 	z-index: 3;
 }
@@ -367,39 +369,42 @@ footer {
 	top: 0;
 	left: 0;
 	display: block;
-	background-color: rgba(255,255,255,0.40);
+	background-color: rgba(255,255,255,0.50);
 	height: 100%;
-	border-radius: 1px;
-	-webkit-transition: 0.2s;
+	border-radius: 4px;
+	-webkit-transition: 0.25s;
 	z-index: 4;
 }
 
 .video_controls .progress > .position {
 	position: absolute;
 	top: 50%;
-	left: 50%;
+	left: 0px;
 	transform: translate(-50%, -50%);
 
 	display: block;
-	background-color: rgb(255,0,0);
-	border: solid 3px rgb(255,255,255);
-	height: 12px;
-	width: 12px;
-	border-radius: 6px;
-	-webkit-transition: 0.1s;
+	background-color: rgb(32,32,224);
+	border: solid 3px rgb(128,128,255);
+	height: 16px;
+	width: 16px;
+	border-radius: 8px;
+	-webkit-transition: 0s;
 	z-index: 5;
 }
 
 .video_controls .current_time {
 	position: absolute;
 	display: block;
-	width: 128px;
-	right: 0;
-	bottom: 0;
+	width: 120px;
+	height: 24px;
+	line-height: 25px;
+	right: 4px;
+	bottom: 8px;
 	font-size: 9pt;
-	font-weight: 400;
+	font-weight: 300;
 	text-align: center;
 	color: rgb(255,255,255);
+	letter-spacing: 0.04em;
 }
 
 /*
