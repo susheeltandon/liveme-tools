@@ -2,7 +2,7 @@
 
 ### 6.x.x Releases
 
-#### ???? - v6.0.12
+#### 2017-10-20 - v6.0.12
 **Added:**
 - Updated the player skin to support displaying total video length 
 - Updated the player progress bar to show a better buffer state and position indicator
