@@ -118,6 +118,12 @@ $(function(){
 	    }
 	});
 
+	setTimeout(function(){
+		for (var i = 0; i < cclist.length; i++) {
+			$('#cclist').append('<option value="'+cclist[i][1]+'">'+cclist[i][0]+'</option>');
+		}					
+	}, 100);
+
 });
 
 function copyToClipboard(i) { clipboard.writeText(i); }
@@ -127,11 +133,31 @@ function enterOnSearch(e) { if (e.keyCode == 13) beginSearch(); }
 function onTypeChange() {
 	var t=$('#type').val();
 	switch (t) {
-		case 'user-lookup': $('#query').attr('placeholder', 'Short or Long UserID'); break;
-		case 'video-lookup': $('#query').attr('placeholder', 'Enter VideoID'); break;
-		case 'url-lookup': $('#query').attr('placeholder', 'Enter URL'); break;
-		case 'search': $('#query').attr('placeholder', 'Enter Partial or Full Username'); break;
-		case 'hashtag': $('#query').attr('placeholder', 'Enter a hashtag'); break;
+		case 'user-lookup': 
+			$('#query').attr('placeholder', 'Short or Long UserID'); 
+			$('div.toolbar').removeClass('has-cc-list');
+			$('div.cclist').hide();
+			break;
+		case 'video-lookup': 
+			$('#query').attr('placeholder', 'Enter VideoID'); 
+			$('div.toolbar').removeClass('has-cc-list');
+			$('div.cclist').hide();
+			break;
+		case 'url-lookup':
+			$('#query').attr('placeholder', 'Enter URL'); 
+			$('div.toolbar').removeClass('has-cc-list');
+			$('div.cclist').hide();
+			break;
+		case 'search': 
+			$('#query').attr('placeholder', 'Enter Partial or Full Username'); 
+			$('div.toolbar').addClass('has-cc-list');
+			$('div.cclist').show();
+			break;
+		case 'hashtag': 
+			$('#query').attr('placeholder', 'Enter a hashtag'); 
+			$('div.toolbar').addClass('has-cc-list');
+			$('div.cclist').show();
+			break;
 	}
 }
 
@@ -551,10 +577,10 @@ function getUsersReplays() {
 }
 
 function performUsernameSearch() {
-	LiveMe.performSearch($('#query').val(), current_page, 10, 1 )
+	console.log('CC: ' + $('#cclist').val());
+	
+	LiveMe.performSearch($('#query').val(), current_page, 10, 1, $('#cclist').val() )
 		.then(results => {
-			console.log(JSON.stringify(results[0], null, 2));
-
 			for(var i = 0; i < results.length; i++) {
 				$('.list').append(`
 					<div class="item">
@@ -604,7 +630,7 @@ function performUsernameSearch() {
 }
 
 function performHashtagSearch() {
-	LiveMe.performSearch($('#query').val(), current_page, 10, 2 )
+	LiveMe.performSearch($('#query').val(), current_page, 10, 2, $('#cclist').val() )
 		.then(results => {
 			for(var i = 0; i < results.length; i++) {
 			
