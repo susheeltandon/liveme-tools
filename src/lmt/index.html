@@ -8,6 +8,7 @@
 
 		<link rel="stylesheet" href="style/style.css">
 		<script src="javascript/jquery-3.2.1.min.js"></script>
+		<script src="javascript/cclist.js"></script>
 		<script src="javascript/livemetools.js"></script>
 
 	</head>
@@ -15,8 +16,8 @@
 	<body>
 
 		<toolbar>
-			<div class="input has-left-select has-right-button">
-				<div class="select">
+			<div class="toolbar input has-left-select has-right-button has-cc-list">
+				<div class="select left">
 					<select id="type" onChange="onTypeChange()">
 						<option value="user-lookup">UserID =</option>
 						<option value="video-lookup">VideoID =</option>
@@ -26,6 +27,9 @@
 					</select>
 				</div>
 				<input type="text" id="query" value="" placeholder="Search" onkeypress="enterOnSearch(event)">
+				<div class="select right cclist">
+					<select id="cclist"></select>
+				</div>
 				<input type="button" class="icon icon-search" onClick="beginSearch()" title="Search for Content">
 			</div>			
 		</toolbar>		
