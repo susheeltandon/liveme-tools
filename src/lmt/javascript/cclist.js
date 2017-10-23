@@ -39,6 +39,5 @@ var cclist = [
 	[ "Tunisia", "TN" ], [ "Turkey", "TR" ], [ "Turkmenistan", "TM" ], [ "Turks and Caicos Islands", "TC" ], [ "Tuvalu", "TV" ], [ "U.K.", "UK" ], 
 	[ "USA", "US" ], [ "USA Minor Outlying Islands", "UM" ], [ "Uganda", "UG" ], [ "Ukraine", "UA" ], [ "United Arab Emirates", "AE" ], [ "Uruguay", "UY" ], 
 	[ "Uzbekistan", "UZ" ], [ "Vanuatu", "VU" ], [ "Vatican", "VA" ], [ "Venezuela", "VE" ], [ "Vietnam", "VN" ], [ "Virgin Islands (British)", "VG" ], 
-	[ "Virgin Islands (USA)", "VI" ], [ "Wallis and Futuna Islands", "WF" ], [ "Western Sahara", "EH" ], [ "Yemen", "YE" ], [ "Zambia", "ZM" ], [ "Zimbabwe", "ZW" ], 
-
-}
+	[ "Virgin Islands (USA)", "VI" ], [ "Wallis and Futuna Islands", "WF" ], [ "Western Sahara", "EH" ], [ "Yemen", "YE" ], [ "Zambia", "ZM" ], [ "Zimbabwe", "ZW" ]
+];
