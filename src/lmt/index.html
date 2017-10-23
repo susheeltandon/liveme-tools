@@ -16,7 +16,7 @@
 	<body>
 
 		<toolbar>
-			<div class="toolbar input has-left-select has-right-button has-cc-list">
+			<div class="toolbar input has-left-select has-right-button">
 				<div class="select left">
 					<select id="type" onChange="onTypeChange()">
 						<option value="user-lookup">UserID =</option>
@@ -27,9 +27,11 @@
 					</select>
 				</div>
 				<input type="text" id="query" value="" placeholder="Search" onkeypress="enterOnSearch(event)">
+				<!--
 				<div class="select right cclist">
 					<select id="cclist"></select>
 				</div>
+				-->
 				<input type="button" class="icon icon-search" onClick="beginSearch()" title="Search for Content">
 			</div>			
 		</toolbar>		

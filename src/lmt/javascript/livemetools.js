@@ -118,12 +118,18 @@ $(function(){
 	    }
 	});
 
+	/*
+
+	countryCode search is not working even when directly tested with LiveMe API URLs and calls.
+	Don't know why it quit working now so we're removing until further testing can be done.
+
+	
 	setTimeout(function(){
 		for (var i = 0; i < cclist.length; i++) {
 			$('#cclist').append('<option value="'+cclist[i][1]+'">'+cclist[i][0]+'</option>');
 		}					
 	}, 100);
-
+	*/
 });
 
 function copyToClipboard(i) { clipboard.writeText(i); }
@@ -577,9 +583,7 @@ function getUsersReplays() {
 }
 
 function performUsernameSearch() {
-	console.log('CC: ' + $('#cclist').val());
-	
-	LiveMe.performSearch($('#query').val(), current_page, 10, 1, $('#cclist').val() )
+	LiveMe.performSearch($('#query').val(), current_page, 10, 1)
 		.then(results => {
 			for(var i = 0; i < results.length; i++) {
 				$('.list').append(`
@@ -630,7 +634,7 @@ function performUsernameSearch() {
 }
 
 function performHashtagSearch() {
-	LiveMe.performSearch($('#query').val(), current_page, 10, 2, $('#cclist').val() )
+	LiveMe.performSearch($('#query').val(), current_page, 10, 2)
 		.then(results => {
 			for(var i = 0; i < results.length; i++) {
 			
