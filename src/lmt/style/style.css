@@ -558,6 +558,10 @@ div.input.has-right-button > input[type=text], input[type=password] {
 	padding-right: 32px;
 }
 
+div.input.has-cc-list > input[type=text], input[type=password] {
+	padding-right: 352px;
+}
+
 div.input.has-right-button > input[type=button] {
 	position: absolute;
 	z-index: 5;
@@ -571,17 +575,34 @@ div.input.has-right-button > input[type=button] {
 	width: 32px;
 	border-radius: 0 4px 4px 0;
 }
-div.input.has-left-select > .select {
+
+div.input.has-left-select > .select.left {
 	position: absolute;
 	z-index: 6;
 	border-radius: 4px 0 0 4px;
 	width: 112px;
 	height: 28px;	
 }
-div.input.has-left-select > .select select {
+
+div.input > .select select {
 	height: 26px;
 	line-height: 26px;
 }
+
+div.input.has-cc-list > .select.right {
+	position: absolute;
+	border-radius: 0px;
+	top: 0;
+	right: 32px;
+	display: block;
+	width: 320px;
+
+}
+
+div.input.has-cc-list > .select.right {
+	position: absolute;
+}
+
 
 .switch {
 	display: inline-block;
