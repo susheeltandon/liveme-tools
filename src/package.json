@@ -2,7 +2,7 @@
   "name": "LiveMeTools",
   "title": "LiveMe Tools",
   "version": "6.1.0",
-  "minversion": "6.0.12",
+  "minversion": "6.1.0",
   "description": "A tool designed to help in searching and viewing of LiveMe broadcasts.",
   "main": "index.js",
   "author": {
