@@ -2,6 +2,14 @@
 
 ### 6.x.x Releases
 
+#### 2017-10-24 - v6.1.0
+**Added:**
+- Added search option to Fans, Followings and Favorites windows
+- Added countryCode list to source for future implementation or use
+
+**Fixed:**
+- Cleanup of some of the visual stylings code
+
 #### 2017-10-20 - v6.0.12
 **Added:**
 - Updated the player skin to support displaying total video length 
