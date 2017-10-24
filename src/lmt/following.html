@@ -22,8 +22,23 @@
 				doFetch();				
 			})
 
+			function enterOnSearch(e) { if (e.keyCode == 13) beginSearch(); } 
+			function beginSearch() {
+				var q = $('#query').val();
+
+				$('.item').removeClass('highlight');
+				$('.item:contains(\''+q+'\')').addClass('highlight');
+
+				var f = $('.item:contains(\''+q+'\')');
+				if (f != null) {
+					$('main').animate({
+						scrollTop: f.offset().top - f.height()
+					}, 400);
+				}
+			}
+
             function doFetch() {
-				LiveMe.getFollowing(userid, page, 10)
+				LiveMe.getFollowing(userid, page, 20)
 					.then(results => {
 						for(var i = 0; i < results.length; i++) {
 
@@ -45,7 +60,7 @@
 								</div>
 							`);
 						}
-						if (results.length == 10) {
+						if (results.length == 20) {
 							page++;
 							setTimeout(() => {
 								doFetch();
@@ -67,7 +82,13 @@
 		
 	</head>
 	<body>
-		<main>
+		<toolbar>
+			<div class="toolbar input has-right-button">
+				<input type="text" id="query" value="" placeholder="Search" onkeypress="enterOnSearch(event)">
+				<input type="button" class="icon icon-search" onClick="beginSearch()" title="Search for Content">
+			</div>			
+		</toolbar>
+		<main class="offset48">
 			<div class="list"></div>
 		</main>
 	</body>

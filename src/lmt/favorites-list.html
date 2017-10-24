@@ -14,7 +14,13 @@
 	</head>
 
 	<body>
-		<main class="">
+		<toolbar>
+			<div class="toolbar input has-right-button">
+				<input type="text" id="query" value="" placeholder="Search" onkeypress="enterOnSearch(event)">
+				<input type="button" class="icon icon-search" onClick="beginSearch()" title="Search for Content">
+			</div>			
+		</toolbar>
+		<main class="offset48">
 			<div id="small_user_list" class="list">
 				<div class="empty">Loading, please wait...</div>
 			</div>

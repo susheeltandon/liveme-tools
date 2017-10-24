@@ -27,9 +27,23 @@ $(function(){
 
 	Favorites.refresh();	
 
+
 });
 
 function getVideos(e) {
 	ipcRenderer.send('submit-search', { userid: e });
 }
+function enterOnSearch(e) { if (e.keyCode == 13) beginSearch(); } 
+function beginSearch() {
+	var q = $('#query').val();
 
+	$('.item').removeClass('highlight');
+	$('.item:contains(\''+q+'\')').addClass('highlight');
+
+	var f = $('.item:contains(\''+q+'\')');
+	if (f != null) {
+		$('main').animate({
+			scrollTop: f.offset().top - f.height()
+		}, 400);
+	}
+}
