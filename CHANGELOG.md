@@ -2,6 +2,10 @@
 
 ### 6.x.x Releases
 
+#### ???? - v6.1.1
+**Fixed:**
+- Fixed broken hashtag search.
+
 #### 2017-10-24 - v6.1.0
 **Added:**
 - Added search option to Fans, Followings and Favorites windows
