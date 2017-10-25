@@ -9,10 +9,11 @@
 		<link rel="stylesheet" href="style/style.css">
 		<script src="javascript/jquery-3.2.1.min.js"></script>
 		<script src="javascript/jquery.scrollmore.js"></script>
+		<script src="javascript/cclist.js"></script>
 
 		<script>
 			const LiveMe = require('liveme-api'), { ipcRenderer } = require('electron');
-			var current_mode = 'all', current_page = 1, has_more = false, debounce = false;
+			var current_mode = 'all', current_page = 1, countryCode = '', has_more = false, debounce = false;
 
 
 			$(function() {
@@ -31,6 +32,23 @@
 						}
 					}
 				});
+
+				/*
+
+					When tested, only a few countries actually worked on filtering but most failed by returning
+					the same data as no country selected option.  It's too unreliable to really have if its
+					behavior cannot be predicted 100% or function fully without causing people to think there
+					are errors or bugs in the code.  
+
+					Mainstream build WILL NOT have this option active and visible by default.
+
+				setTimeout(function(){
+					for (var i = 0; i < cclist.length; i++) {
+						$('#countryCode').append('<option value="'+cclist[i][1]+'">'+cclist[i][0]+'</option>');
+					}					
+				}, 25);
+				*/
+
 			});			
 
 			function doSearch(n) {
@@ -39,6 +57,7 @@
 				has_more = false;
 				current_page = 1;
 				current_mode = n;
+				// countryCode = $('#countryCode').val();
 
 				if (n=='all') {
 					loadAll()
@@ -49,7 +68,7 @@
 				}
 			}
 			function loadAll() {
-				LiveMe.getLive(current_page, 10)
+				LiveMe.getLive(current_page, 10, countryCode)
 					.then(results => {
 						for (var i = 0; i < results.length; i++) {
 							$('.list').append(`
@@ -77,7 +96,7 @@
 
 			}
 			function loadGirl() {
-				LiveMe.getLiveGirls(current_page, 10)
+				LiveMe.getLiveGirls(current_page, 10, countryCode)
 					.then(raw => {
 						var results = raw.video_info;
 
@@ -108,7 +127,7 @@
 
 			}
 			function loadBoy() {
-				LiveMe.getLiveBoys(current_page, 10)
+				LiveMe.getLiveBoys(current_page, 10, countryCode)
 					.then(raw => {
 						var results = raw.video_info;
 
@@ -160,6 +179,14 @@
 			<input type="button" class="small" value="Top Live" onClick="doSearch('all')">
 			<input type="button" class="small" value="Only Girls" onClick="doSearch('girl')">
 			<input type="button" class="small" value="Only Boys" onClick="doSearch('boy')">
+			<!--
+
+				NOT ALL COUNTRIES WORK WHEN APPLIED AS A FILTER - TOO UNRELIABLE AT THIS TIME
+
+			<div class="select" style="margin-left: 64px;">
+				<select id="countryCode"></select>
+			</div>
+			-->
 		</toolbar>		
 
 		<overlay>
