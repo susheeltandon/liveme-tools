@@ -2,7 +2,7 @@
 
 ### 6.x.x Releases
 
-#### ???? - v6.1.1
+#### 2017-10-25 - v6.1.1
 **Fixed:**
 - Fixed broken hashtag search.
 
