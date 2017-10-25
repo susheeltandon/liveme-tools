@@ -160,7 +160,7 @@ function onTypeChange() {
 			$('div.cclist').show();
 			break;
 		case 'hashtag': 
-			$('#query').attr('placeholder', 'Enter a hashtag'); 
+			$('#query').attr('placeholder', 'Enter a hashtag without any #\'s'); 
 			$('div.toolbar').addClass('has-cc-list');
 			$('div.cclist').show();
 			break;
@@ -625,11 +625,6 @@ function performUsernameSearch() {
 				$('.list').html('<div class="empty">No accounts were found matching your search.</div>');						
 			}
 
-		})
-		.catch(err => {
-			console.log(err);
-			isSearching = false;
-			$('.list').html('<div class="empty">No accounts were found matching your search.</div>');						
 		});	
 }
 
@@ -647,10 +642,10 @@ function performHashtagSearch() {
 				var length = lh + ':' + (lm < 10 ? '0' : '') + lm + ':' + (ls < 10 ? '0' : '') + ls;
 				var downloaded = Downloads.hasBeenDownloaded(results[i].vid) ? 'downloaded' : '';
 
-				let isLive = replays[i].hlsvideosource.endsWith('flv') || replays[i].hlsvideosource.indexOf('liveplay') > 0, videoUrl = replays[i].hlsvideosource;
+				let isLive = results[i].hlsvideosource.endsWith('flv') || results[i].hlsvideosource.indexOf('liveplay') > 0, videoUrl = results[i].hlsvideosource;
 				
-				if (!isLive && replays[i].hlsvideosource.indexOf('hlslive') > 0) {
-					videoUrl = replays[i].videosource;
+				if (!isLive && results[i].hlsvideosource.indexOf('hlslive') > 0) {
+					videoUrl = results[i].videosource;
 				}
 
 				var h = `
@@ -734,11 +729,6 @@ function performHashtagSearch() {
 				$('.list').html('<div class="empty">No videos were found on LiveMe matching the specified hashtag.</div>');
 			}
 			
-		})
-		.catch(err => {
-			console.log(err);
-			isSearching = false;
-			$('.list').html('<div class="empty">No videos were found on LiveMe matching the specified hashtag.</div>');
 		});	
 }
 
