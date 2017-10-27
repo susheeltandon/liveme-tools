@@ -62,7 +62,7 @@ $(function(){
 	});
 
 	$('main').scroll(function() {
-		if ($(this).scrollTop() + $(this).height() == $('.list').height()) {
+		if (($(this).scrollTop() + $(this).height()) > ($('.list').height() - 80)) {
 			if (has_more == false) return;
 			if (scroll_busy == true) return;
 
