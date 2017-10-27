@@ -2,6 +2,10 @@
 
 ### 6.x.x Releases
 
+#### 2017-10-26 - v6.1.2
+**Fixed:**
+- Updated auto load on scroll to now trigger near the end to avoid issues experienced by some users on Windows
+
 #### 2017-10-25 - v6.1.1
 **Fixed:**
 - Fixed broken hashtag search.
