@@ -12,6 +12,7 @@
 
 		<script>
 			const { ipcRenderer } = require('electron');
+			const fmtDuration = require('format-duration');
 
 			$(function(){
 				var t=window.location.href.split('#'), u=t[1], uu = t[1].split('/'), f=uu[uu.length - 1];
@@ -42,12 +43,9 @@
 					var a = Math.round((video.currentTime / video.duration) * 1000) / 1000, b = $('#progressbar').width() * a;
 					$('#progressbar .position').css({ left: b });
 
-					var h = Math.round(video.currentTime / 3600), m = Math.round(video.currentTime / 60) % 60, s = Math.round(video.currentTime % 60),
-						o = (h>0?h+':':'')+(m>9?'':'0')+m+':'+(s>9?'':'0')+s;
+					var ct = fmtDuration(video.currentTime * 1000), td = fmtDuration(video.duration * 1000),
+					o = ct + '  /  ' + td;
 
-					var h = Math.round(video.duration / 3600), m = Math.round(video.duration / 60) % 60, s = Math.round(video.duration % 60);
-					
-					o += '  /  ' + (h>0?h+':':'')+(m>9?'':'0')+m+':'+(s>9?'':'0')+s;
 					$('.current_time').html(o);
 				}, false);
 
