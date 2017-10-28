@@ -2,6 +2,10 @@
 
 ### 6.x.x Releases
 
+#### 2017-10-28 - v6.1.3
+**Fixed:**
+- Rebuilt using updated LiveMe-API with fix for VideoID search and Message History issues.
+
 #### 2017-10-26 - v6.1.2
 **Fixed:**
 - Updated auto load on scroll to now trigger near the end to avoid issues experienced by some users on Windows
