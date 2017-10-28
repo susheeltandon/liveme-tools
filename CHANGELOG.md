@@ -2,6 +2,10 @@
 
 ### 6.x.x Releases
 
+#### 2017-10-28 - v6.1.4
+**Fixed:**
+- Thanks to @zp for fixing the duration bug in the video player
+
 #### 2017-10-28 - v6.1.3
 **Fixed:**
 - Rebuilt using updated LiveMe-API with fix for VideoID search and Message History issues.
