@@ -41,6 +41,7 @@ requests to us.
 ## Developers/Maintainers
 * [thecoder75](https://github.com/thecoder75)
 * [polydragon](https://github.com/polydragon)
+* [zp](https://github.com/zp)
 
 ## Bug Hunters and Beta Testers
 * [slyfox99](https://github.com/slyfox99)
