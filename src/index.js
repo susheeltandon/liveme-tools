@@ -34,6 +34,7 @@ let mainwin = null,
     chatWindow = null,
     importwin = null,
     aboutwin = null,
+    upgradewin = null,
     livemeomg = null;
 
 function startApplication() {
@@ -153,7 +154,39 @@ function startApplication() {
         appSettings.set('windowsize.queue', JSON.stringify(queuewin.getSize()) );
     });
         
+
+    upgradewin = new BrowserWindow({
+        width: 480,
+        height: 400,
+        resizable: false,
+        darkTheme: true,
+        autoHideMenuBar: true,
+        show: false,
+        skipTaskbar: true,
+        disableAutoHideCursor: true,
+        titleBarStyle: 'default',
+        fullscreen: false,
+        minimizable: false,
+        maximizable: false,
+        closable: false,
+        frame: false,
+        vibrancy: 'ultra-dark',
+        backgroundColor: '#000000',
+        webPreferences: {
+            webSecurity: false,
+            plugins: true,
+            devTools: true
+        }
+    });
+    upgradewin.setMenu(null);
+    upgradewin
+        .on('closed', () => {
+            upgradewin = null;
+        })
+        .loadURL(`file://${__dirname}/lmt/upgrade.html`);
+        
     
+
     // Build our custom menubar
     Menu.setApplicationMenu(Menu.buildFromTemplate(getMenuTemplate()));
 
@@ -182,17 +215,17 @@ function startApplication() {
     }, 250);
     
 
-
-    if (fs.existsSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db'))) {
-        console.log('Found a NeDB file, no upgrade needed (version > 6.2.0)...');
-        aboutwin.on('close', () => {
-            mainwin.show();
-        });
-    } else {
-        console.log('Missing DB file, need to upgrade!');
-        // Show Upgrade Dialog
-
-    }
+    setTimeout(function() {
+        if (fs.existsSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db'))) {
+            aboutwin.on('close', () => {
+                mainwin.show();
+            });
+        } else {
+            aboutwin.on('close', () => {
+                upgradewin.show();
+            });
+        }
+    }, 1500);
 
 }
 
