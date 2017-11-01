@@ -52,10 +52,10 @@ function startApplication() {
 
     if (!appSettings.get('windowpos.main')) {
         appSettings.set('windowpos', {
-            main: JSON.stringify({ x: -1, y: -1}),
-            queue: JSON.stringify({ x: -1, y: -1}),
-            player: JSON.stringify({ x: -1, y: -1}),
-            favorites: JSON.stringify({ x: -1, y: -1}),
+            main: JSON.stringify([ -1, -1]),
+            queue: JSON.stringify([ -1, -1]),
+            player: JSON.stringify([ -1, -1]),
+            favorites: JSON.stringify([ -1, -1]),
         });
     } else {
         mainpos = JSON.parse(appSettings.get('windowpos.main'));
@@ -65,8 +65,8 @@ function startApplication() {
 
     mainwin = new BrowserWindow({
         icon: __dirname + '/appicon.ico',
-        x: mainpos.x != -1 ? mainpos.x : null,
-        y: mainpos.y != -1 ? mainpos.y : null,
+        x: mainpos[0] != -1 ? mainpos[0] : null,
+        y: mainpos[1] != -1 ? mainpos[1] : null,
         width: 980,
         height: 560,
         minWidth: 980,
@@ -104,8 +104,8 @@ function startApplication() {
     mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
 
     queuewin = new BrowserWindow({
-        x: queuepos.x != -1 ? queuepos.x : null,
-        y: queuepos.y != -1 ? queuepos.y : null,
+        x: queuepos[0] != -1 ? queuepos[0] : null,
+        y: queuepos[1] != -1 ? queuepos[1] : null,
         width: 640,
         height: 400,
         resizable: true,
@@ -323,8 +323,8 @@ function openFavoritesWindow() {
         var favpos = JSON.parse(appSettings.get('windowpos.favorites'));
 
         favoritesWindow = new BrowserWindow({
-            x: favpos.x != -1 ? favpos.x : null,
-            y: favpos.y != -1 ? favpos.y : null,
+            x: favpos[0] != -1 ? favpos[0] : null,
+            y: favpos[1] != -1 ? favpos[1] : null,
             width: 360,
             height: 720,
             resizable: false,
@@ -437,8 +437,8 @@ ipcMain.on('play-video', (event, arg) => {
         var playerpos = JSON.parse(appSettings.get('windowpos.player'));
 
         playerWindow = new BrowserWindow({
-            x: playerpos.x != -1 ? playerpos.x : null,
-            y: playerpos.y != -1 ? playerpos.y : null,
+            x: playerpos[0] != -1 ? playerpos[0] : null,
+            y: playerpos[1] != -1 ? playerpos[1] : null,
             width: 368,
             height: process.platform == 'darwin' ?  640 : 664,
             minWidth: 368,
