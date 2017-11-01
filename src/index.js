@@ -48,7 +48,7 @@ function startApplication() {
         });
     }
 
-    var mainpos = { x: -1, y: -1 }, queuepos = { x: -1, y: -1 };
+    var mainpos = { x: -1, y: -1 }, queuepos = { x: -1, y: -1 }, mainsize = [980, 540], queuesize = [640, 400];
 
     if (!appSettings.get('windowpos.main')) {
         appSettings.set('windowpos', {
@@ -124,7 +124,7 @@ function startApplication() {
         maxHeight: 1600,
         darkTheme: true,
         autoHideMenuBar: true,
-        show: true,
+        show: false,
         skipTaskbar: false,
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
@@ -154,11 +154,6 @@ function startApplication() {
     });
         
     
-    setTimeout(function(){
-        queuewin.minimize();
-    }, 100);
-
-
     // Build our custom menubar
     Menu.setApplicationMenu(Menu.buildFromTemplate(getMenuTemplate()));
 
@@ -175,6 +170,10 @@ function startApplication() {
         }
     });
 
+    setTimeout(function() {
+        queuewin.minimize();
+    }, 50);
+
     global.Favorites = Favorites;
     global.Downloader = Downloader;
 
@@ -184,15 +183,14 @@ function startApplication() {
     
 
 
-
-
-
-
-
-
-
-    if (!appSettings.get('windowpos.main')) {
-        // Trigger upgrade window
+    if (fs.existsSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db'))) {
+        console.log('Found a NeDB file, no upgrade needed (version > 6.2.0)...');
+        aboutwin.on('close', () => {
+            mainwin.show();
+        });
+    } else {
+        console.log('Missing DB file, need to upgrade!');
+        // Show Upgrade Dialog
 
     }
 
@@ -222,7 +220,7 @@ app
 function showSplash() {
     aboutwin = new BrowserWindow({
         width: 640,
-        height: 128,
+        height: 224,
         resizable: false,
         darkTheme: true,
         autoHideMenuBar: true,
@@ -245,10 +243,6 @@ function showSplash() {
             aboutwin.show();
         })
         .loadURL(`file://${__dirname}/lmt/splash.html`);
-
-    aboutwin.on('close', () => {
-        mainwin.show();
-    });
 
 }
 
