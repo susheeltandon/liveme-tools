@@ -48,8 +48,25 @@ function startApplication() {
         });
     }
 
+    var mainpos = { x: -1, y: -1 }, queuepos = { x: -1, y: -1 };
+
+    if (!appSettings.get('windowpos.main')) {
+        appSettings.set('windowpos', {
+            main: JSON.stringify({ x: -1, y: -1}),
+            queue: JSON.stringify({ x: -1, y: -1}),
+            player: JSON.stringify({ x: -1, y: -1}),
+            favorites: JSON.stringify({ x: -1, y: -1}),
+        });
+    } else {
+        mainpos = JSON.parse(appSettings.get('windowpos.main'));
+        queuepos = JSON.parse(appSettings.get('windowpos.main'));
+    }
+    
+
     mainwin = new BrowserWindow({
         icon: __dirname + '/appicon.ico',
+        x: mainpos.x != -1 ? mainpos.x : null,
+        y: mainpos.y != -1 ? mainpos.y : null,
         width: 980,
         height: 560,
         minWidth: 980,
@@ -74,9 +91,12 @@ function startApplication() {
 
     mainwin
         .on('ready-to-show', () => {
-            mainwin.show();
+            // mainwin.show();
         });
 
+    mainwin.on('close', () => {
+        appSettings.set('windowpos.main', JSON.stringify(mainwin.getPosition()) );
+    });
     mainwin.on('closed', () => {
         shutdownApp();
     });
@@ -84,6 +104,8 @@ function startApplication() {
     mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
 
     queuewin = new BrowserWindow({
+        x: queuepos.x != -1 ? queuepos.x : null,
+        y: queuepos.y != -1 ? queuepos.y : null,
         width: 640,
         height: 400,
         resizable: true,
@@ -117,6 +139,9 @@ function startApplication() {
             queuewin = null;
         })
         .loadURL(`file://${__dirname}/lmt/queue.html`);
+    queuewin.on('close', () => {
+        appSettings.set('windowpos.queue', JSON.stringify(queuewin.getPosition()) );
+    });
         
     
     setTimeout(function(){
@@ -147,6 +172,20 @@ function startApplication() {
         showSplash();
     }, 250);
     
+
+
+
+
+
+
+
+
+
+    if (!appSettings.get('windowpos.main')) {
+        // Trigger upgrade window
+
+    }
+
 }
 
 var shouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
@@ -197,7 +236,9 @@ function showSplash() {
         })
         .loadURL(`file://${__dirname}/lmt/splash.html`);
 
-        
+    aboutwin.on('close', () => {
+        mainwin.show();
+    });
 
 }
 
@@ -278,7 +319,12 @@ function showLiveMeOMG() {
 */
 function openFavoritesWindow() {
     if (favoritesWindow == null) {
+
+        var favpos = JSON.parse(appSettings.get('windowpos.favorites'));
+
         favoritesWindow = new BrowserWindow({
+            x: favpos.x != -1 ? favpos.x : null,
+            y: favpos.y != -1 ? favpos.y : null,
             width: 360,
             height: 720,
             resizable: false,
@@ -307,6 +353,9 @@ function openFavoritesWindow() {
             })
             .on('closed', () => {
                 favoritesWindow = null;
+            })
+            .on('close', () => {
+                appSettings.set('windowpos.favorites', JSON.stringify(favoritesWindow.getPosition()) );
             })
             .loadURL(`file://${__dirname}/lmt/favorites-list.html`);
             
@@ -366,7 +415,6 @@ ipcMain.on('open-window', (event, arg) => {
     });
     win.setMenu(null);
 
-
     win.on('ready-to-show', () => {
         win.show();
     }).loadURL(`file://${__dirname}/lmt/` + arg.url);
@@ -385,7 +433,12 @@ ipcMain.on('open-window', (event, arg) => {
 */
 ipcMain.on('play-video', (event, arg) => {
     if (playerWindow == null) {
+
+        var playerpos = JSON.parse(appSettings.get('windowpos.player'));
+
         playerWindow = new BrowserWindow({
+            x: playerpos.x != -1 ? playerpos.x : null,
+            y: playerpos.y != -1 ? playerpos.y : null,
             width: 368,
             height: process.platform == 'darwin' ?  640 : 664,
             minWidth: 368,
@@ -414,6 +467,9 @@ ipcMain.on('play-video', (event, arg) => {
         playerWindow
             .on('ready-to-show', () => {
                 playerWindow.show();
+            })
+            .on('close', () => {
+                appSettings.set('windowpos.player', JSON.stringify(playerWindow.getPosition()) );
             })
             .on('closed', () => {
                 playerWindow = null;
