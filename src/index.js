@@ -57,9 +57,17 @@ function startApplication() {
             player: JSON.stringify([ -1, -1]),
             favorites: JSON.stringify([ -1, -1]),
         });
+        appSettings.set('windowsize', {
+            main: JSON.stringify([ 980, 560]),
+            queue: JSON.stringify([ 640, 400]),
+            player: JSON.stringify([ 368, process.platform == 'darwin' ? 640 : 664]),
+            favorites: JSON.stringify([ 360, 720]),
+        });
     } else {
         mainpos = JSON.parse(appSettings.get('windowpos.main'));
-        queuepos = JSON.parse(appSettings.get('windowpos.main'));
+        queuepos = JSON.parse(appSettings.get('windowpos.queue'));
+        mainsize = JSON.parse(appSettings.get('windowsize.main'));
+        queuesize = JSON.parse(appSettings.get('windowsize.queue'));
     }
     
 
@@ -67,8 +75,8 @@ function startApplication() {
         icon: __dirname + '/appicon.ico',
         x: mainpos[0] != -1 ? mainpos[0] : null,
         y: mainpos[1] != -1 ? mainpos[1] : null,
-        width: 980,
-        height: 560,
+        width: mainsize[0],
+        height: mainsize[1],
         minWidth: 980,
         minHeight: 560,
         darkTheme: true,
@@ -96,6 +104,7 @@ function startApplication() {
 
     mainwin.on('close', () => {
         appSettings.set('windowpos.main', JSON.stringify(mainwin.getPosition()) );
+        appSettings.set('windowsize.main', JSON.stringify(mainwin.getSize()) );
     });
     mainwin.on('closed', () => {
         shutdownApp();
@@ -106,8 +115,8 @@ function startApplication() {
     queuewin = new BrowserWindow({
         x: queuepos[0] != -1 ? queuepos[0] : null,
         y: queuepos[1] != -1 ? queuepos[1] : null,
-        width: 640,
-        height: 400,
+        width: queuesize[0],
+        height: queuesize[1],
         resizable: true,
         minWidth: 640,
         maxWidth: 640,
@@ -141,6 +150,7 @@ function startApplication() {
         .loadURL(`file://${__dirname}/lmt/queue.html`);
     queuewin.on('close', () => {
         appSettings.set('windowpos.queue', JSON.stringify(queuewin.getPosition()) );
+        appSettings.set('windowsize.queue', JSON.stringify(queuewin.getSize()) );
     });
         
     
@@ -320,13 +330,14 @@ function showLiveMeOMG() {
 function openFavoritesWindow() {
     if (favoritesWindow == null) {
 
-        var favpos = JSON.parse(appSettings.get('windowpos.favorites'));
+        var favpos = JSON.parse(appSettings.get('windowpos.favorites')), 
+            favsize = JSON.parse(appSettings.get('windowsize.favorites'));
 
         favoritesWindow = new BrowserWindow({
             x: favpos[0] != -1 ? favpos[0] : null,
             y: favpos[1] != -1 ? favpos[1] : null,
-            width: 360,
-            height: 720,
+            width: favsize[0],
+            height: favsize[1],
             resizable: false,
             darkTheme: true,
             autoHideMenuBar: true,
@@ -356,6 +367,7 @@ function openFavoritesWindow() {
             })
             .on('close', () => {
                 appSettings.set('windowpos.favorites', JSON.stringify(favoritesWindow.getPosition()) );
+                appSettings.set('windowsize.favorites', JSON.stringify(favoritesWindow.getSize()) );
             })
             .loadURL(`file://${__dirname}/lmt/favorites-list.html`);
             
@@ -434,13 +446,14 @@ ipcMain.on('open-window', (event, arg) => {
 ipcMain.on('play-video', (event, arg) => {
     if (playerWindow == null) {
 
-        var playerpos = JSON.parse(appSettings.get('windowpos.player'));
+        var playerpos = JSON.parse(appSettings.get('windowpos.player')),
+            playersize = JSON.parse(appSettings.get('windowsize.player'));
 
         playerWindow = new BrowserWindow({
             x: playerpos[0] != -1 ? playerpos[0] : null,
             y: playerpos[1] != -1 ? playerpos[1] : null,
-            width: 368,
-            height: process.platform == 'darwin' ?  640 : 664,
+            width: playersize[0],
+            height: playersize[1],
             minWidth: 368,
             minHeight: process.platform == 'darwin' ?  640 : 664,
             resizable: true,
@@ -470,6 +483,7 @@ ipcMain.on('play-video', (event, arg) => {
             })
             .on('close', () => {
                 appSettings.set('windowpos.player', JSON.stringify(playerWindow.getPosition()) );
+                appSettings.set('windowsize.player', JSON.stringify(playerWindow.getSize()) );
             })
             .on('closed', () => {
                 playerWindow = null;
