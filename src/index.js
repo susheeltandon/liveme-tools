@@ -183,7 +183,7 @@ function startApplication() {
         .on('closed', () => {
             upgradewin = null;
         })
-        .loadURL(`file://${__dirname}/lmt/upgrade.html`);
+        .loadURL(`file://${__dirname}/lmt/update.html`);
         
     
 
