@@ -57,12 +57,14 @@ function startApplication() {
             queue: JSON.stringify([ -1, -1]),
             player: JSON.stringify([ -1, -1]),
             favorites: JSON.stringify([ -1, -1]),
+            messages: JSON.stringify([ -1, -1])
         });
         appSettings.set('windowsize', {
             main: JSON.stringify([ 980, 560]),
             queue: JSON.stringify([ 640, 400]),
             player: JSON.stringify([ 368, process.platform == 'darwin' ? 640 : 664]),
             favorites: JSON.stringify([ 360, 720]),
+            messages: JSON.stringify([ 360, 480])
         });
     } else {
         mainpos = JSON.parse(appSettings.get('windowpos.main'));
@@ -194,8 +196,15 @@ function startApplication() {
         CheckForUpgrade();
     }, 10000);
 
-    Favorites.load();
-    Downloader.init(appSettings);
+    setTimeout(function() {
+        queuewin.minimize();
+    }, 50);
+
+    setTimeout(() => {
+        showSplash();
+    }, 500);
+    
+
 
     Downloader.events.on('show-queue', () => {
         if (queuewin) {
@@ -204,25 +213,29 @@ function startApplication() {
     });
 
     setTimeout(function() {
-        queuewin.minimize();
-    }, 50);
+        if (!fs.existsSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db'))) {
+            Favorites.load();
+            Downloader.init(appSettings);
+            global.Favorites = Favorites;
+            global.Downloader = Downloader;
 
-    global.Favorites = Favorites;
-    global.Downloader = Downloader;
-
-    setTimeout(() => {
-        showSplash();
-    }, 250);
-    
-
-    setTimeout(function() {
-        if (fs.existsSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db'))) {
             aboutwin.on('close', () => {
                 mainwin.show();
             });
         } else {
             aboutwin.on('close', () => {
                 upgradewin.show();
+            });
+            upgradewin.on('close', () => {
+                Favorites.load();
+                Downloader.init(appSettings);
+                global.Favorites = Favorites;
+                global.Downloader = Downloader;
+    
+                setTimeout(function(){
+                    mainwin.show();
+                }, 500);     
+                
             });
         }
     }, 1500);
@@ -435,6 +448,7 @@ ipcMain.on('livemesearch', (event, arg) => {
 	Popup Windows (Followings/Fans)
 */
 ipcMain.on('open-window', (event, arg) => {
+
     let win = new BrowserWindow({
         width: 320,
         height: 720,
@@ -527,11 +541,20 @@ ipcMain.on('video-set-time', (event, arg) => {
 	Chat Window 
 */
 ipcMain.on('open-chat', (event, arg) => {
+
+    var msgpos = JSON.parse(appSettings.get('windowpos.messages')), 
+        msgsize = JSON.parse(appSettings.get('windowsize.messages'));
+
+
     chatWindow = new BrowserWindow({
-        width: 340,
+        x: msgpos[0] != -1 ? msgpos[0] : null,
+        y: msgpos[1] != -1 ? msgpos[1] : null,
+        width: msgsize[0],
+        height: msgsize[1],
+        width: 360,
         height: 480,
-        minWidth: 340,
-        maxWidth: 340,
+        minWidth: 360,
+        maxWidth: 360,
         minHeight: 240,
         maxHeight: 1600,
         resizable: true,
@@ -552,6 +575,10 @@ ipcMain.on('open-chat', (event, arg) => {
     chatWindow.setMenu(null);
 
     chatWindow
+        .on('close', () => {
+            appSettings.set('windowpos.messages', JSON.stringify(chatWindow.getPosition()) );
+            appSettings.set('windowsize.messages', JSON.stringify(chatWindow.getSize()) );
+        })
         .on('closed', () => {
             chatWindow = null;
         })
