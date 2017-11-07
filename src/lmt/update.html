@@ -9,21 +9,48 @@
 		<link rel="stylesheet" href="style/style.css">
 		<script src="javascript/jquery-3.2.1.min.js"></script>
 		<script>
-			$(function(){
-				$('overlay').show();
-				
-			});
+
+var path = require('path'),
+	{ remote } = require('electron'),
+	datastore = null, 
+	db = null;
+
+$(function(){
+	$('overlay').show();
+
+	Datastore = require('nedb');
+	db = new Datastore({ 
+		filename: path.join(remote.app.getPath('appData'), remote.app.getName(), 'livemetools_db'), 
+		autoload: true 
+	});
+
+});
+
+function buildTables() {
+	
+}
+
+function convertFavorites() {
+
+}
+
+function convertHistory() {
+
+}
+
+
+
 		</script>
 		<style>
-			#main { padding: 10px 20px; font-size: 10pt; }
+			.status { font-size: 14pt; }
 		</style>
 	</head>
 
 	<body>
 		<overlay>
-			<status>
-				Updating data files to new format, please wait...
-			<status>
+			<div class="status">
+				Updating data files to new format...
+			</div>
 		</overlay>
 	</body>
 </html>

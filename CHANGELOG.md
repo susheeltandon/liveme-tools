@@ -2,6 +2,17 @@
 
 ### 6.x.x Releases
 
+#### 2017-11-06 - v6.2.1
+**Fixed:**
+- Fixed bug that was causing the main window to not show.
+
+#### 2017-11-06 - v6.2.0
+**Added:**
+- Added support for saving and restoring size and position of the main, queue, player and favorite windows.
+
+**Fixed:**
+- Fixed rendering bug when displaying replays that would occasionally occur.
+
 #### 2017-10-28 - v6.1.4
 **Fixed:**
 - Thanks to @zp for fixing the duration bug in the video player

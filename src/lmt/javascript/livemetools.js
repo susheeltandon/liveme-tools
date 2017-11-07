@@ -242,7 +242,7 @@ function beginSearch2() {
 
 		} else if (u.indexOf('videoid') > -1) {
 			var a=t[t.length - 1].split('?'),b=a[1].split('&');
-			console.log(a);
+			
 			for (i = 0; i < b.length; i++) {
 				if (b[i].indexOf('videoid') > -1) {
 					var c=b[i].split('=');
@@ -255,7 +255,7 @@ function beginSearch2() {
 			}
 		} else if (u.indexOf('userid') > -1) {
 			var a=t[t.length - 1].split('?'),b=a[1].split('&');
-			console.log(a);
+			
 			for (i = 0; i < b.length; i++) {
 				if (b[i].indexOf('userid') > -1) {
 					var c=b[i].split('=');
@@ -439,11 +439,6 @@ function performUserLookup(uid) {
 				<input type="hidden" id="sex" value="${sex}">
 			`);
 
-			setTimeout(function(){
-				if (Favorites.isOnList($('#useridtf').val()) == true) {
-					$('#favorites_button').addClass('active');
-				}
-			}, 250);
 
 			scroll_busy = false;
 			current_page = 1;
@@ -456,9 +451,14 @@ function performUserLookup(uid) {
 			};
 			getUsersReplays();
 
+			setTimeout(function(){
+				if (Favorites.isOnList(current_user.uid) == true) {
+					$('#favorites_button').addClass('active');
+				}
+			}, 250);
+
 		})
 		.catch(err => {
-			console.log(err);
 			isSearching = false;
 			$('main').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div>');
 		});
@@ -473,9 +473,12 @@ function getUsersReplays() {
 			if ((typeof replays == 'undefined') || (replays == null)) return;
 
 			if (replays.length > 0) {
+				
+				$('.empty').remove();
+
 				for (var i = 0; i < replays.length; i++) {
 
-					if (current_user.uid == replays[i].uid) {
+					if (current_user.uid == replays[i].userid) {
 
 						let dt = new Date(replays[i].vtime * 1000);
 						var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
@@ -576,9 +579,11 @@ function getUsersReplays() {
 				has_more = false;
 			} 
 
-			if ($('.item').length < 1) {
-				$('.list').html('<div class="empty">No visible replays available for this account.</div>');						
-			}
+			setTimeout(function(){
+				if ($('.item').length < 1) {
+					$('.list').html('<div class="empty">No visible replays available for this account.</div>');						
+				}
+			}, 1000);
 
 		});
 		

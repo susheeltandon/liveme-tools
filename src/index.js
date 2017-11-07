@@ -34,7 +34,7 @@ let mainwin = null,
     chatWindow = null,
     importwin = null,
     aboutwin = null,
-    upgradewin = null,
+    updatewin = null,
     livemeomg = null;
 
 function startApplication() {
@@ -157,9 +157,9 @@ function startApplication() {
     });
         
 
-    upgradewin = new BrowserWindow({
+    updatewin = new BrowserWindow({
         width: 480,
-        height: 400,
+        height: 80,
         resizable: false,
         darkTheme: true,
         autoHideMenuBar: true,
@@ -170,7 +170,7 @@ function startApplication() {
         fullscreen: false,
         minimizable: false,
         maximizable: false,
-        closable: false,
+        closable: true,
         frame: false,
         vibrancy: 'ultra-dark',
         backgroundColor: '#000000',
@@ -180,10 +180,10 @@ function startApplication() {
             devTools: true
         }
     });
-    upgradewin.setMenu(null);
-    upgradewin
+    updatewin.setMenu(null);
+    updatewin
         .on('closed', () => {
-            upgradewin = null;
+            updatewin = null;
         })
         .loadURL(`file://${__dirname}/lmt/update.html`);
         
@@ -203,8 +203,12 @@ function startApplication() {
     setTimeout(() => {
         showSplash();
     }, 500);
-    
 
+    
+    Favorites.load();
+    Downloader.init(appSettings);
+    global.Favorites = Favorites;
+    global.Downloader = Downloader;
 
     Downloader.events.on('show-queue', () => {
         if (queuewin) {
@@ -212,26 +216,34 @@ function startApplication() {
         }
     });
 
-    setTimeout(function() {
-        if (!fs.existsSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db'))) {
-            Favorites.load();
-            Downloader.init(appSettings);
-            global.Favorites = Favorites;
-            global.Downloader = Downloader;
 
+    // Temporary:
+    setTimeout(function(){
+        aboutwin.on('close', () => {
+            mainwin.show();
+        });
+    }, 1500);
+
+    /*
+
+
+
+        When the changeover is made to use a database type file vs the current file structure,
+        then this code will be executed to launch the update windoow which will handle all 
+        the data conversions and cleanup.
+
+
+
+    setTimeout(function() {
+        if (fs.existsSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db'))) {
             aboutwin.on('close', () => {
                 mainwin.show();
             });
         } else {
             aboutwin.on('close', () => {
-                upgradewin.show();
+                updatewin.show();
             });
-            upgradewin.on('close', () => {
-                Favorites.load();
-                Downloader.init(appSettings);
-                global.Favorites = Favorites;
-                global.Downloader = Downloader;
-    
+            updatewin.on('close', () => {
                 setTimeout(function(){
                     mainwin.show();
                 }, 500);     
@@ -239,6 +251,7 @@ function startApplication() {
             });
         }
     }, 1500);
+    */
 
 }
 
@@ -772,6 +785,11 @@ function shutdownApp() {
     if (queuewin != null) {
         queuewin.setClosable(true);
         queuewin.close();
+    }
+
+    if (updatewin != null) {
+        updatewin.setClosable(true);
+        updatewin.close();
     }
 
     Favorites.forceSave();
