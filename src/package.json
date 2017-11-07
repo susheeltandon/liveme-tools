@@ -33,5 +33,53 @@
     "polydragon",
     "zp"
   ],
-  "license": "GPL3"
+  "license": "GPL3",
+  "devDependencies": {
+    "electron": "^1.8.1",
+    "electron-builder": "^19.36.0"
+  },
+  "keywords": [
+    "node",
+    "electron",
+    "video",
+    "tools",
+    "liveme"
+  ],
+  "license": "GPL3",
+  "build": {
+    "appId": "com.thecoderstoolbox.livemetools",
+    "productName": "LiveMeTools",
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
+    "asar": true,
+    "compression": "maximum",
+    "mac": {
+      "category": "public.app-category.video",
+      "target": [
+        "dmg"
+      ],
+      "identity": null,
+      "icon": "build/appicon.icns"
+    },
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "icon": "build/appicon.ico"
+    },
+    "linux": {
+      "target": [
+        "tar.bz2"
+      ],
+      "maintainer": "thecoder1975@gmail.com"
+    }
+  },
+  "scripts": {
+    "postinstall": "install-app-deps",
+    "start": "./node_modules/.bin/electron . --enable-logging",
+    "dev": "NODE_ENV='development' npm run start",
+    "dist-win": "build -w --ia32 --x64",
+    "dist-linux": "build -l",
+    "dist-mac": "build -m",
+    "dist": "rm -rd dist/* && npm run dist-mac && npm run dist-linux && npm run dist-win"
+  }
 }
