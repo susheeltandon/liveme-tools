@@ -475,93 +475,96 @@ function getUsersReplays() {
 			if (replays.length > 0) {
 				for (var i = 0; i < replays.length; i++) {
 
-					let dt = new Date(replays[i].vtime * 1000);
-					var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
-					var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == replays[i].hlsvideosource ? true : false) : false;
-					var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == replays[i].vid ? true : false) : false;
+					if (current_user.uid == replays[i].uid) {
 
-					var ls = (replays[i].videolength - Math.round(replays[i].videolength / 60)) % 60, lm = Math.round(replays[i].videolength / 60);
-					var length = lm + ':' + (ls < 10 ? '0' : '') + ls;
-					var deleted = replays[i].private == true ? '[PRIVATE] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
-					var downloaded = Downloads.hasBeenDownloaded(replays[i].vid) ? 'downloaded' : '';
+						let dt = new Date(replays[i].vtime * 1000);
+						var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
+						var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == replays[i].hlsvideosource ? true : false) : false;
+						var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == replays[i].vid ? true : false) : false;
 
-					let isLive = replays[i].hlsvideosource.endsWith('flv') || replays[i].hlsvideosource.indexOf('liveplay') > 0, videoUrl = replays[i].hlsvideosource;
+						var ls = (replays[i].videolength - Math.round(replays[i].videolength / 60)) % 60, lm = Math.round(replays[i].videolength / 60);
+						var length = lm + ':' + (ls < 10 ? '0' : '') + ls;
+						var deleted = replays[i].private == true ? '[PRIVATE] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
+						var downloaded = Downloads.hasBeenDownloaded(replays[i].vid) ? 'downloaded' : '';
 
-					if (!isLive && replays[i].hlsvideosource.indexOf('hlslive') > 0) {
-						videoUrl = replays[i].videosource;
-					}
+						let isLive = replays[i].hlsvideosource.endsWith('flv') || replays[i].hlsvideosource.indexOf('liveplay') > 0, videoUrl = replays[i].hlsvideosource;
 
-					var h = `
-						<div class="item ${highlight} ${downloaded}">
-							<div class="header">${deleted}${replays[i].title}&nbsp;</div>
-							<div class="content">
-								<div class="meta">
-									<div class="width180">
-										<span>Posted on:</span>
-										${ds}
-									</div>
-									<div class="width75">
-										<span>Length:</span>
-										${length}
-									</div>
-									<div class="width100">
-										<span>Views:</span>
-										${replays[i].playnumber}
-									</div>
-									<div class="width100">
-										<span>Likes:</span>
-										${replays[i].likenum}
-									</div>
-									<div class="width100">
-										<span>Shares:</span>
-										${replays[i].sharenum}
-									</div>
-									<div class="width60">
-										<span>Country</span>
-										${replays[i].countryCode}
-									</div>
-									<div class="width200 align-right">
-										<a class="button icon icon-play" onClick="playVideo('${videoUrl}')" title="Play Video"></a>
-						`;
-					
-					if (!isLive) {
-						h += `
-										<a class="button icon icon-chat" onClick="openChat('${replays[i].vid}')" title="View Message History"></a>
-										<a class="button icon icon-download" onClick="downloadVideo('${replays[i].userid}', '${replays[i].uname}', '${replays[i].vid}', '${replays[i].title.replace("'", "")}', '${replays[i].vtime}', '${videoUrl}')" title="Download Replay"></a>
-						`;
-					}
+						if (!isLive && replays[i].hlsvideosource.indexOf('hlslive') > 0) {
+							videoUrl = replays[i].videosource;
+						}
+
+						var h = `
+							<div class="item ${highlight} ${downloaded}">
+								<div class="header">${deleted}${replays[i].title}&nbsp;</div>
+								<div class="content">
+									<div class="meta">
+										<div class="width180">
+											<span>Posted on:</span>
+											${ds}
+										</div>
+										<div class="width75">
+											<span>Length:</span>
+											${length}
+										</div>
+										<div class="width100">
+											<span>Views:</span>
+											${replays[i].playnumber}
+										</div>
+										<div class="width100">
+											<span>Likes:</span>
+											${replays[i].likenum}
+										</div>
+										<div class="width100">
+											<span>Shares:</span>
+											${replays[i].sharenum}
+										</div>
+										<div class="width60">
+											<span>Country</span>
+											${replays[i].countryCode}
+										</div>
+										<div class="width200 align-right">
+											<a class="button icon icon-play" onClick="playVideo('${videoUrl}')" title="Play Video"></a>
+							`;
 						
-					h += `
-									</div>
-								</div>
-							</div>
-							<div class="footer">
-								<div class="width200">
-									<span>Video ID:</span>
-									<div class="input has-right-button">
-										<input type="text" value="${replays[i].vid}" disabled="disabled">
-										<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${replays[i].vid}')" title="Copy to Clipboard">
-									</div>
-								</div>
-								<div class="spacer">&nbsp;</div>
-					`;
-					if (videoUrl.length > 0) {
-						h+=`			
-									<div class="width700">
-										<span>Video URL:</span>
-										<div class="input has-right-button">
-											<input type="text" value="${videoUrl}" disabled="disabled">
-											<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${videoUrl}')" title="Copy to Clipboard">
+						if (!isLive) {
+							h += `
+											<a class="button icon icon-chat" onClick="openChat('${replays[i].vid}')" title="View Message History"></a>
+											<a class="button icon icon-download" onClick="downloadVideo('${replays[i].userid}', '${replays[i].uname}', '${replays[i].vid}', '${replays[i].title.replace("'", "")}', '${replays[i].vtime}', '${videoUrl}')" title="Download Replay"></a>
+							`;
+						}
+							
+						h += `
 										</div>
 									</div>
+								</div>
+								<div class="footer">
+									<div class="width200">
+										<span>Video ID:</span>
+										<div class="input has-right-button">
+											<input type="text" value="${replays[i].vid}" disabled="disabled">
+											<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${replays[i].vid}')" title="Copy to Clipboard">
+										</div>
+									</div>
+									<div class="spacer">&nbsp;</div>
 						`;
-						}
-					h += `
+						if (videoUrl.length > 0) {
+							h+=`			
+										<div class="width700">
+											<span>Video URL:</span>
+											<div class="input has-right-button">
+												<input type="text" value="${videoUrl}" disabled="disabled">
+												<input type="button" class="icon icon-copy" value="" onClick="copyToClipboard('${videoUrl}')" title="Copy to Clipboard">
+											</div>
+										</div>
+							`;
+							}
+						h += `
+								</div>
 							</div>
-						</div>
-					`;
-					$('.list').append(h);	
-				}	
+						`;
+						$('.list').append(h);	
+					}	
+				}
 			}
 
 			current_search = 'getUsersReplays';
@@ -574,7 +577,6 @@ function getUsersReplays() {
 			} 
 
 			if ($('.item').length < 1) {
-				console.log('List is empty');
 				$('.list').html('<div class="empty">No visible replays available for this account.</div>');						
 			}
 

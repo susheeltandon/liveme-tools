@@ -34,6 +34,7 @@ let mainwin = null,
     chatWindow = null,
     importwin = null,
     aboutwin = null,
+    upgradewin = null,
     livemeomg = null;
 
 function startApplication() {
@@ -48,10 +49,37 @@ function startApplication() {
         });
     }
 
+    var mainpos = { x: -1, y: -1 }, queuepos = { x: -1, y: -1 }, mainsize = [980, 540], queuesize = [640, 400];
+
+    if (!appSettings.get('windowpos.main')) {
+        appSettings.set('windowpos', {
+            main: JSON.stringify([ -1, -1]),
+            queue: JSON.stringify([ -1, -1]),
+            player: JSON.stringify([ -1, -1]),
+            favorites: JSON.stringify([ -1, -1]),
+            messages: JSON.stringify([ -1, -1])
+        });
+        appSettings.set('windowsize', {
+            main: JSON.stringify([ 980, 560]),
+            queue: JSON.stringify([ 640, 400]),
+            player: JSON.stringify([ 368, process.platform == 'darwin' ? 640 : 664]),
+            favorites: JSON.stringify([ 360, 720]),
+            messages: JSON.stringify([ 360, 480])
+        });
+    } else {
+        mainpos = JSON.parse(appSettings.get('windowpos.main'));
+        queuepos = JSON.parse(appSettings.get('windowpos.queue'));
+        mainsize = JSON.parse(appSettings.get('windowsize.main'));
+        queuesize = JSON.parse(appSettings.get('windowsize.queue'));
+    }
+    
+
     mainwin = new BrowserWindow({
         icon: __dirname + '/appicon.ico',
-        width: 980,
-        height: 560,
+        x: mainpos[0] != -1 ? mainpos[0] : null,
+        y: mainpos[1] != -1 ? mainpos[1] : null,
+        width: mainsize[0],
+        height: mainsize[1],
         minWidth: 980,
         minHeight: 560,
         darkTheme: true,
@@ -74,9 +102,13 @@ function startApplication() {
 
     mainwin
         .on('ready-to-show', () => {
-            mainwin.show();
+            // mainwin.show();
         });
 
+    mainwin.on('close', () => {
+        appSettings.set('windowpos.main', JSON.stringify(mainwin.getPosition()) );
+        appSettings.set('windowsize.main', JSON.stringify(mainwin.getSize()) );
+    });
     mainwin.on('closed', () => {
         shutdownApp();
     });
@@ -84,8 +116,10 @@ function startApplication() {
     mainwin.loadURL(`file://${__dirname}/lmt/index.html`);
 
     queuewin = new BrowserWindow({
-        width: 640,
-        height: 400,
+        x: queuepos[0] != -1 ? queuepos[0] : null,
+        y: queuepos[1] != -1 ? queuepos[1] : null,
+        width: queuesize[0],
+        height: queuesize[1],
         resizable: true,
         minWidth: 640,
         maxWidth: 640,
@@ -93,7 +127,7 @@ function startApplication() {
         maxHeight: 1600,
         darkTheme: true,
         autoHideMenuBar: true,
-        show: true,
+        show: false,
         skipTaskbar: false,
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
@@ -117,12 +151,43 @@ function startApplication() {
             queuewin = null;
         })
         .loadURL(`file://${__dirname}/lmt/queue.html`);
+    queuewin.on('close', () => {
+        appSettings.set('windowpos.queue', JSON.stringify(queuewin.getPosition()) );
+        appSettings.set('windowsize.queue', JSON.stringify(queuewin.getSize()) );
+    });
+        
+
+    upgradewin = new BrowserWindow({
+        width: 480,
+        height: 400,
+        resizable: false,
+        darkTheme: true,
+        autoHideMenuBar: true,
+        show: false,
+        skipTaskbar: true,
+        disableAutoHideCursor: true,
+        titleBarStyle: 'default',
+        fullscreen: false,
+        minimizable: false,
+        maximizable: false,
+        closable: false,
+        frame: false,
+        vibrancy: 'ultra-dark',
+        backgroundColor: '#000000',
+        webPreferences: {
+            webSecurity: false,
+            plugins: true,
+            devTools: true
+        }
+    });
+    upgradewin.setMenu(null);
+    upgradewin
+        .on('closed', () => {
+            upgradewin = null;
+        })
+        .loadURL(`file://${__dirname}/lmt/update.html`);
         
     
-    setTimeout(function(){
-        queuewin.minimize();
-    }, 100);
-
 
     // Build our custom menubar
     Menu.setApplicationMenu(Menu.buildFromTemplate(getMenuTemplate()));
@@ -131,8 +196,15 @@ function startApplication() {
         CheckForUpgrade();
     }, 10000);
 
-    Favorites.load();
-    Downloader.init(appSettings);
+    setTimeout(function() {
+        queuewin.minimize();
+    }, 50);
+
+    setTimeout(() => {
+        showSplash();
+    }, 500);
+    
+
 
     Downloader.events.on('show-queue', () => {
         if (queuewin) {
@@ -140,13 +212,34 @@ function startApplication() {
         }
     });
 
-    global.Favorites = Favorites;
-    global.Downloader = Downloader;
+    setTimeout(function() {
+        if (!fs.existsSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db'))) {
+            Favorites.load();
+            Downloader.init(appSettings);
+            global.Favorites = Favorites;
+            global.Downloader = Downloader;
 
-    setTimeout(() => {
-        showSplash();
-    }, 250);
+            aboutwin.on('close', () => {
+                mainwin.show();
+            });
+        } else {
+            aboutwin.on('close', () => {
+                upgradewin.show();
+            });
+            upgradewin.on('close', () => {
+                Favorites.load();
+                Downloader.init(appSettings);
+                global.Favorites = Favorites;
+                global.Downloader = Downloader;
     
+                setTimeout(function(){
+                    mainwin.show();
+                }, 500);     
+                
+            });
+        }
+    }, 1500);
+
 }
 
 var shouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
@@ -173,7 +266,7 @@ app
 function showSplash() {
     aboutwin = new BrowserWindow({
         width: 640,
-        height: 128,
+        height: 224,
         resizable: false,
         darkTheme: true,
         autoHideMenuBar: true,
@@ -196,8 +289,6 @@ function showSplash() {
             aboutwin.show();
         })
         .loadURL(`file://${__dirname}/lmt/splash.html`);
-
-        
 
 }
 
@@ -278,9 +369,15 @@ function showLiveMeOMG() {
 */
 function openFavoritesWindow() {
     if (favoritesWindow == null) {
+
+        var favpos = JSON.parse(appSettings.get('windowpos.favorites')), 
+            favsize = JSON.parse(appSettings.get('windowsize.favorites'));
+
         favoritesWindow = new BrowserWindow({
-            width: 360,
-            height: 720,
+            x: favpos[0] != -1 ? favpos[0] : null,
+            y: favpos[1] != -1 ? favpos[1] : null,
+            width: favsize[0],
+            height: favsize[1],
             resizable: false,
             darkTheme: true,
             autoHideMenuBar: true,
@@ -307,6 +404,10 @@ function openFavoritesWindow() {
             })
             .on('closed', () => {
                 favoritesWindow = null;
+            })
+            .on('close', () => {
+                appSettings.set('windowpos.favorites', JSON.stringify(favoritesWindow.getPosition()) );
+                appSettings.set('windowsize.favorites', JSON.stringify(favoritesWindow.getSize()) );
             })
             .loadURL(`file://${__dirname}/lmt/favorites-list.html`);
             
@@ -347,6 +448,7 @@ ipcMain.on('livemesearch', (event, arg) => {
 	Popup Windows (Followings/Fans)
 */
 ipcMain.on('open-window', (event, arg) => {
+
     let win = new BrowserWindow({
         width: 320,
         height: 720,
@@ -366,7 +468,6 @@ ipcMain.on('open-window', (event, arg) => {
     });
     win.setMenu(null);
 
-
     win.on('ready-to-show', () => {
         win.show();
     }).loadURL(`file://${__dirname}/lmt/` + arg.url);
@@ -385,9 +486,15 @@ ipcMain.on('open-window', (event, arg) => {
 */
 ipcMain.on('play-video', (event, arg) => {
     if (playerWindow == null) {
+
+        var playerpos = JSON.parse(appSettings.get('windowpos.player')),
+            playersize = JSON.parse(appSettings.get('windowsize.player'));
+
         playerWindow = new BrowserWindow({
-            width: 368,
-            height: process.platform == 'darwin' ?  640 : 664,
+            x: playerpos[0] != -1 ? playerpos[0] : null,
+            y: playerpos[1] != -1 ? playerpos[1] : null,
+            width: playersize[0],
+            height: playersize[1],
             minWidth: 368,
             minHeight: process.platform == 'darwin' ?  640 : 664,
             resizable: true,
@@ -415,6 +522,10 @@ ipcMain.on('play-video', (event, arg) => {
             .on('ready-to-show', () => {
                 playerWindow.show();
             })
+            .on('close', () => {
+                appSettings.set('windowpos.player', JSON.stringify(playerWindow.getPosition()) );
+                appSettings.set('windowsize.player', JSON.stringify(playerWindow.getSize()) );
+            })
             .on('closed', () => {
                 playerWindow = null;
             });
@@ -430,11 +541,20 @@ ipcMain.on('video-set-time', (event, arg) => {
 	Chat Window 
 */
 ipcMain.on('open-chat', (event, arg) => {
+
+    var msgpos = JSON.parse(appSettings.get('windowpos.messages')), 
+        msgsize = JSON.parse(appSettings.get('windowsize.messages'));
+
+
     chatWindow = new BrowserWindow({
-        width: 340,
+        x: msgpos[0] != -1 ? msgpos[0] : null,
+        y: msgpos[1] != -1 ? msgpos[1] : null,
+        width: msgsize[0],
+        height: msgsize[1],
+        width: 360,
         height: 480,
-        minWidth: 340,
-        maxWidth: 340,
+        minWidth: 360,
+        maxWidth: 360,
         minHeight: 240,
         maxHeight: 1600,
         resizable: true,
@@ -455,6 +575,10 @@ ipcMain.on('open-chat', (event, arg) => {
     chatWindow.setMenu(null);
 
     chatWindow
+        .on('close', () => {
+            appSettings.set('windowpos.messages', JSON.stringify(chatWindow.getPosition()) );
+            appSettings.set('windowsize.messages', JSON.stringify(chatWindow.getSize()) );
+        })
         .on('closed', () => {
             chatWindow = null;
         })
