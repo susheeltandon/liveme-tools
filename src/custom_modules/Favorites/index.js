@@ -103,7 +103,7 @@ module.exports = {
 	import: function(file) {
 		fs.readFile(file, 'utf8', (err, data) => {
 			if (err) {
-				dialog.showErrorBox('Export Error', 'There was an error when attempting to export your favorites');
+				dialog.showErrorBox('Import Error', 'There was an error when attempting to import your favorites');
 				console.error(err);
 			} else {
 				for (let id of data.split("\n")) {
@@ -183,6 +183,7 @@ function update_single_user(index) {
 }
 
 function update_favorites_list() {
+	if (fav_list.length == 0) return;
 
 	axios.get('http://live.ksmobile.net/user/getinfo',{
 		params: { 
