@@ -781,6 +781,19 @@ function exportFavorites() {
     );
 }
 
+function importFavorites() {
+    let d = dialog.showOpenDialog(
+        {
+            filters: [ { name: "Text File", extensions: ["txt"] }, { name: 'All Files', extensions: ['*'] } ],
+            defaultPath: 'Exported Favorites UserID List.txt'
+        }, 
+        (filePath) => {
+            if (filePath != null)
+                Favorites.import(filePath[0]);
+        }
+    );
+}
+
 function shutdownApp() {
     if (queuewin != null) {
         queuewin.setClosable(true);
@@ -852,6 +865,10 @@ function getMenuTemplate() {
                 {
                     label: 'Export Favorites List',
                     click: () => exportFavorites()
+                },
+                {
+                    label: 'Import Favorites List',
+                    click: () => importFavorites()
                 }
             ]
         },
