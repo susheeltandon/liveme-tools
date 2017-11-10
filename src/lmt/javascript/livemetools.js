@@ -10,7 +10,7 @@
 */
 
 const 	{ electron, BrowserWindow, remote, ipcRenderer, shell, clipboard } = require('electron'),
-		fs = require('fs'), path = require('path'), 
+		fs = require('fs'), path = require('path'), fmtDuration = require('format-duration'),
 		appSettings = remote.require('electron-settings'),
 		Favorites = remote.getGlobal('Favorites'),
 		Downloads = remote.getGlobal('Downloader'),
@@ -296,8 +296,6 @@ function beginSearch2() {
 					var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == video.hlsvideosource ? true : false) : false;
 					var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == video.vid ? true : false) : false;
 
-					var ls = (video.videolength - Math.round(video.videolength / 60)) % 60, lm = Math.round(video.videolength / 60);
-					var length = lm + ':' + (ls < 10 ? '0' : '') + ls;
 					var deleted = '[SEARCHED] ', highlight = hi1 || hi2 ? 'highlight' : '';
 					var downloaded = Downloads.hasBeenDownloaded(video.vid) ? 'downloaded' : '';
 
@@ -319,7 +317,7 @@ function beginSearch2() {
 									</div>
 									<div class="width75">
 										<span>Length:</span>
-										${length}
+										${fmtDuration(+video.videolength * 1000)}
 									</div>
 									<div class="width100">
 										<span>Views:</span>
@@ -485,8 +483,6 @@ function getUsersReplays() {
 						var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == replays[i].hlsvideosource ? true : false) : false;
 						var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == replays[i].vid ? true : false) : false;
 
-						var ls = (replays[i].videolength - Math.round(replays[i].videolength / 60)) % 60, lm = Math.round(replays[i].videolength / 60);
-						var length = lm + ':' + (ls < 10 ? '0' : '') + ls;
 						var deleted = replays[i].private == true ? '[PRIVATE] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
 						var downloaded = Downloads.hasBeenDownloaded(replays[i].vid) ? 'downloaded' : '';
 
@@ -507,7 +503,7 @@ function getUsersReplays() {
 										</div>
 										<div class="width75">
 											<span>Length:</span>
-											${length}
+											${fmtDuration(+replays[i].videolength * 1000)}
 										</div>
 										<div class="width100">
 											<span>Views:</span>
@@ -645,8 +641,6 @@ function performHashtagSearch() {
 				var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == results[i].hlsvideosource ? true : false) : false;
 				var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == results[i].vid ? true : false) : false;
 
-				var ll = parseFloat(results[i].videolength), lh = Math.round(ll / 3600), lm = Math.round(ll / 60) % 60, ls = ll % 60;
-				var length = lh + ':' + (lm < 10 ? '0' : '') + lm + ':' + (ls < 10 ? '0' : '') + ls;
 				var downloaded = Downloads.hasBeenDownloaded(results[i].vid) ? 'downloaded' : '';
 
 				let isLive = results[i].hlsvideosource.endsWith('flv') || results[i].hlsvideosource.indexOf('liveplay') > 0, videoUrl = results[i].hlsvideosource;
@@ -667,7 +661,7 @@ function performHashtagSearch() {
 								</div>
 								<div class="width75">
 									<span>Length:</span>
-									${length}
+									${fmtDuration(+results[i].videolength * 1000)}
 								</div>
 								<div class="width100">
 									<span>Views:</span>
