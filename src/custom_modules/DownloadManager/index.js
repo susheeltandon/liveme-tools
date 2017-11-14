@@ -23,6 +23,7 @@ const path = require("path");
 const fs = require("fs-extra");
 const ffmpeg = require("fluent-ffmpeg");
 const events = require("events");
+
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -126,6 +127,7 @@ class DownloadManager {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             this._emit('download-started', { uuid: uuid });
             let chunkProgress = new Map();
+            let downloadedChunks = 0;
             this._emit('download-status', { uuid: uuid, status: 'Getting chunks to download...' });
             let urls = yield this._getUrlsFromPlaylist(playlist.video.url).catch(err => {
                 return reject(`Couldn't get chunks to download: ${err}`);
@@ -139,9 +141,13 @@ class DownloadManager {
                 }
                 total = Math.floor((total / urls.length) * 100);
                 this._emit('download-progress', { uuid: uuid, percent: total });
+            }).then((result) => {
+                downloadedChunks++;
+                this._emit('download-status', { uuid: uuid, status: `Downloading chunks [${downloadedChunks}/${urls.length}]` });
+                return result;
             });
-            this._emit('download-status', { uuid: uuid, status: 'Downloading chunks' });
-            pMap(urls, mapper, { concurrency: 4 }).then(result => {
+            this._emit('download-status', { uuid: uuid, status: `Downloading chunks [0/${urls.length}]` });
+            pMap(urls, mapper, { concurrency: (this._appSettings.get('downloads.concurrency') || 4) }).then(result => {
                 this._emit('download-status', { uuid: uuid, status: 'Merging chunks' });
                 let concatStr = '';
                 for (let res of result) {
