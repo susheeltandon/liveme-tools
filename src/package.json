@@ -17,12 +17,15 @@
     "electron-settings": "^3.1.2",
     "fluent-ffmpeg": "^2.1.2",
     "format-duration": "^1.0.0",
-    "fs-extra": "^4.0.1",
+    "fs-extra": "^4.0.2",
     "init": "^0.1.2",
     "liveme-api": "^1.2.4",
     "nedb": "^1.8.0",
+    "p-map": "^1.2.0",
+    "p-progress": "^0.1.1",
     "request": "^2.83.0",
-    "shelljs": "^0.7.8"
+    "shelljs": "^0.7.8",
+    "wget-improved": "^1.5.0"
   },
   "repository": {
     "type": "git",

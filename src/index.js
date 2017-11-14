@@ -24,7 +24,7 @@ const { app, BrowserWindow, ipcMain, Menu, shell, dialog } = require('electron')
     request = require('request'),
     appSettings = require('electron-settings'),
     Favorites = require('./custom_modules/Favorites'),
-    Downloader = require('./custom_modules/Downloader'),
+    DownloadManager = new (require('./custom_modules/DownloadManager').DownloadManager)(),
     LiveMe = require('liveme-api');
 
 let mainwin = null,
@@ -204,13 +204,12 @@ function startApplication() {
         showSplash();
     }, 500);
 
-    
     Favorites.load();
-    Downloader.init(appSettings);
+    DownloadManager.init(appSettings);
     global.Favorites = Favorites;
-    global.Downloader = Downloader;
+    global.DownloadManager = DownloadManager;
 
-    Downloader.events.on('show-queue', () => {
+    DownloadManager.events.on('show-queue', () => {
         if (queuewin) {
             queuewin.showInactive();
         }
@@ -738,7 +737,7 @@ function _importVideoIdList(list) {
         .then(video => {
 
             if (video.vid.length > 16) {
-                Downloader.add({
+                DownloadManager.add({
                     user: {
                         id: video.userid,
                         name: video.uname
@@ -806,8 +805,8 @@ function shutdownApp() {
     }
 
     Favorites.forceSave();
-    Downloader.forceSave();
-    Downloader.killActiveDownload();
+    DownloadManager.save();
+    //Downloader.killActiveDownload();
 
     setTimeout(function(){
         app.quit();

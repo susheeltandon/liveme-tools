@@ -1,4 +1,4 @@
-const {electron, remote, ipcRenderer} = require('electron'), appSettings = remote.require('electron-settings'), Downloader = remote.getGlobal('Downloader');
+const {electron, remote, ipcRenderer} = require('electron'), appSettings = remote.require('electron-settings'), DownloadManager = remote.getGlobal('DownloadManager');
 const path = require('path');
 
 $(function() {
@@ -53,8 +53,8 @@ function saveSettings(close=true) {
 		ffprobe: $('#ffprobepath').val()
 	});
 
-	Downloader.setFfmpegPath(appSettings.get('downloads.ffmpeg'));
-	Downloader.setFfprobePath(appSettings.get('downloads.ffprobe'));
+	DownloadManager.setFfmpegPath(appSettings.get('downloads.ffmpeg'));
+	DownloadManager.setFfprobePath(appSettings.get('downloads.ffprobe'));
 
 	if (oldHistory && !appSettings.get('downloads.history')) {
 		ipcRenderer.send('history-delete');
@@ -111,7 +111,7 @@ function setFfprobePath() {
 function checkFfmpeg() {
 	saveSettings(false);
 
-	Downloader.detectFFMPEG().then(result => {
+	DownloadManager.detectFFMPEG().then(result => {
 		if (result) {
 			remote.dialog.showMessageBox(null, { type: "info", buttons: [ "OK" ], title: "LiveMe Tools", message: "FFMPEG check passed" });
 		} else {

@@ -13,7 +13,7 @@ const 	{ electron, BrowserWindow, remote, ipcRenderer, shell, clipboard } = requ
 		fs = require('fs'), path = require('path'), fmtDuration = require('format-duration'),
 		appSettings = remote.require('electron-settings'),
 		Favorites = remote.getGlobal('Favorites'),
-		Downloads = remote.getGlobal('Downloader'),
+		DownloadManager = remote.getGlobal('DownloadManager'),
 		LiveMe = require('liveme-api');
 
 var 	favorites_list = [], debounced = false, current_user = {}, current_page = 1, has_more = false, 
@@ -34,8 +34,8 @@ $(function(){
 
 	ipcRenderer.on('do-shutdown' , function(event , data) { 
 		Favorites.forceSave();
-        Downloads.forceSave();
-        Downloads.killActiveDownload();
+        DownloadManager.save();
+        //Downloads.killActiveDownload();
 	});
 
 	ipcRenderer.on('show-status' , function(event , data) { 
@@ -51,9 +51,9 @@ $(function(){
 		$('overlay').hide();
 	});
 
-	Downloads.load();
+	DownloadManager.load();
 
-	Downloads.detectFFMPEG().then(result => {
+	DownloadManager.detectFFMPEG().then(result => {
 		if (!result) {
 			$('overlay').show();
 			$('overlay .status').hide();
@@ -297,7 +297,7 @@ function beginSearch2() {
 					var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == video.vid ? true : false) : false;
 
 					var deleted = '[SEARCHED] ', highlight = hi1 || hi2 ? 'highlight' : '';
-					var downloaded = Downloads.hasBeenDownloaded(video.vid) ? 'downloaded' : '';
+					var downloaded = DownloadManager.hasBeenDownloaded(video.vid) ? 'downloaded' : '';
 
 					let isLive = video.hlsvideosource.endsWith('flv') || video.hlsvideosource.indexOf('liveplay') > 0, videoUrl = video.hlsvideosource;
 
@@ -484,7 +484,7 @@ function getUsersReplays() {
 						var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == replays[i].vid ? true : false) : false;
 
 						var deleted = replays[i].private == true ? '[PRIVATE] ' : '', highlight = hi1 || hi2 ? 'highlight' : '';
-						var downloaded = Downloads.hasBeenDownloaded(replays[i].vid) ? 'downloaded' : '';
+						var downloaded = DownloadManager.hasBeenDownloaded(replays[i].vid) ? 'downloaded' : '';
 
 						let isLive = replays[i].hlsvideosource.endsWith('flv') || replays[i].hlsvideosource.indexOf('liveplay') > 0, videoUrl = replays[i].hlsvideosource;
 
@@ -641,7 +641,7 @@ function performHashtagSearch() {
 				var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == results[i].hlsvideosource ? true : false) : false;
 				var hi2 = $('#type').val() == 'video-lookup' ? ($('#query').val() == results[i].vid ? true : false) : false;
 
-				var downloaded = Downloads.hasBeenDownloaded(results[i].vid) ? 'downloaded' : '';
+				var downloaded = DownloadManager.hasBeenDownloaded(results[i].vid) ? 'downloaded' : '';
 
 				let isLive = results[i].hlsvideosource.endsWith('flv') || results[i].hlsvideosource.indexOf('liveplay') > 0, videoUrl = results[i].hlsvideosource;
 				
@@ -773,7 +773,7 @@ function downloadVideo(userid, username, videoid, videotitle, videotime, videour
 	debounced = true;
 	setTimeout(function(){ debounced = false; }, 500);
 
-	Downloads.add({
+	DownloadManager.add({
 		user: {
 			id: userid,
 			name: username

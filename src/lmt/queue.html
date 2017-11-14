@@ -10,93 +10,92 @@
 		
 		<script src="javascript/jquery-3.2.1.min.js"></script>
 		<script type="text/javascript">
-			const { ipcRenderer, remote } = require('electron'), Downloader = remote.getGlobal('Downloader');
+			const { ipcRenderer, remote } = require('electron'), DownloadManager = remote.getGlobal('DownloadManager');
 
 			$(function() {
-				Downloader.events.on('add', (arg) => {
+				DownloadManager.events.on('download-queued', (arg) => {
 					$('#queuelist').append(`
-						<div class="item small" id="${arg.id}">
-							<div class="content">
-								<div style="display: inline-block; width: 572px; text-overflow: ellipsis; overflow: hidden; line-height: 28px">
-									${arg.value}
+						<div class="item small" id="id-${arg.uuid}">
+							<div class="content" style="width: 100%; display: block;">
+								<div style="display: flex; flex-flow: row; flex-wrap: nowrap;">
+									<div style="flex-grow: 1; flex-shrink: 1; text-overflow: ellipsis; overflow: hidden; line-height: 28px">
+										${arg.display}
+									</div>
+									<div style="flex-grow: 0; flex-shrink: 0; padding-top: 2px;">
+										<a class="button icon icon-remove" style="margin-right: 0;" onClick="remove('${arg.uuid}')"></a>
+									</div>
 								</div>
-								<div style="display: inline-block; text-align: right;">
-									<a class="button icon icon-remove float-right" onClick="remove('${arg.id}')"></a>
+								<div class="section with-progress-bar" style="margin-top: 0; width: 100%;">
+									<label>Waiting...</label>
+									<div class="progress"><div class="bar" style="background: white;"></div></div>				
 								</div>
 							</div>
 						</div>
 					`);
 				});
+				
+				DownloadManager.events.on('download-errored', (arg) => {
+					$(`#id-${arg.uuid}`).addClass("error");
+					$(`#id-${arg.uuid} > div > div.section.with-progress-bar > div > div.bar`).css({ width: '0%' });
 
-				Downloader.events.on('fail', (arg) => {
-					$('#' + arg.id).addClass("error");
-					$('.progress .bar').css({ width: '0%' });
-					$('.active_url').html('&nbsp;');
-
-					setTimeout(() => {
-						$('#' + arg.id).slideUp(400).remove();
-                    }, 4000);
-                    
-                    $('#cancelActiveButton').hide();
+					// TODO: RETRY BUTTON
 				});
 
-				Downloader.events.on('clear-queue', () => {
+				DownloadManager.events.on('download-queue-clear', () => {
 					$('#queuelist').empty();
 				});
 
-				Downloader.events.on('progress', (arg) => {
-					$('.progress .bar').css({ width: arg.value + '%' });
-					$('.active_url').html(arg.url);
+				DownloadManager.events.on('download-progress', (arg) => {
+					$(`#id-${arg.uuid} > div > div.section.with-progress-bar > div > div.bar`).css({ width: arg.percent + '%' });
 				});
 
-				Downloader.events.on('start', (arg) => {
-					$('#' + arg.id).remove();
-					$('.progress .bar').css({ width: '0%' });
-                    $('.active_url').html(arg.url);
-                    $('#cancelActiveButton').show();
+				DownloadManager.events.on('download-status', (arg) => {
+					$(`#id-${arg.uuid} > div > div.section.with-progress-bar > label`).text(arg.status);
 				});
 
-				Downloader.events.on('finish', (arg) => {
-					$('#' + arg.id).addClass("finished");
-					$('.progress .bar').css({ width: '0%' });
-					$('.active_url').html('&nbsp;');
+				DownloadManager.events.on('download-started', (arg) => {
+					$(`#id-${arg.uuid}`).addClass('inProgress');
+					$(`#id-${arg.uuid} > div > div.section.with-progress-bar > div > div.bar`).css({ width: '0%' });
+				
+					$(`#id-${arg.uuid} > div > div > div > a.button.icon-remove`).remove();
+				});
+
+				DownloadManager.events.on('download-completed', (arg) => {
+					$(`#id-${arg.uuid}`).removeClass('inProgress');
+					$(`#id-${arg.uuid}`).addClass('finished');
+					$(`#id-${arg.uuid} > div > div.section.with-progress-bar > div > div.bar`).css({ width: '0%' });
+					$(`#id-${arg.uuid} > div > div.section.with-progress-bar > label`).text('Finished');
 
 					setTimeout(() => {
-						$('#' + arg.id).slideUp(400).remove();
+						$(`#id-${arg.uuid}`).slideUp(400).remove();
                     }, 4000);
-                    
-                    $('#cancelActiveButton').hide();
 				});
 
-				Downloader.events.on('resume', () => {
-					$('a.button.icon-play').removeClass('icon-play').addClass('icon-pause');
+				DownloadManager.events.on('download-global-resume', () => {
+					$('#pauseResume').val('Pause');
 				});
 
-				Downloader.events.on('pause', () => {
-					$('a.button.icon-pause').removeClass('icon-pause').addClass('icon-play');
+				DownloadManager.events.on('download-global-pause', () => {
+					$('#pauseResume').val('Resume');
 				});
 
-				Downloader.events.on('remove', (arg) => {
-					$('#' + arg.id).remove();
+				DownloadManager.events.on('download-deleted', (arg) => {
+					$(`#id-${arg.uuid}`).remove();
 				});
 			});
 
 			function pauseResume() {
-				if (!Downloader.isPaused()) {
-					Downloader.pause();
+				if (!DownloadManager.isPaused()) {
+					DownloadManager.pause();
 				} else {
-					Downloader.resume();
+					DownloadManager.resume();
 				}
 			}
 
 			function remove(vid) {
-				Downloader.remove(vid);
+				DownloadManager.delete(vid);
             }
             
-            function killDownload() {
-                Downloader.killActiveDownload();
-            }
-
 			function hideQueue() {
 				ipcRenderer.send('hide-queue');
 			}
@@ -108,7 +107,7 @@
 				$('#prompt1').hide();
 
 				if (u != null) {
-					Downloader.add({
+					DownloadManager.add({
 						user: {
 							id: null,
 							name: null
@@ -140,7 +139,7 @@
 			}
 
 			function emptyQueueYes() {
-				Downloader.purgeQueue();
+				DownloadManager.purgeQueue();
 				hideEmptyPrompt();
 			}
 
@@ -153,28 +152,16 @@
 	</head>
 	<body>
 		<overlay></overlay>
-		<toolbar>
-			<div class="section width48">
-				<a class="button icon icon-pause" onClick="pauseResume()"></a>
-			</div>
-			<div class="section with-progress-bar width520">
-				<label class="active_url">&nbsp;</label>
-				<div class="progress"><div class="bar"></div></div>				
-			</div>
-			<div class="section width48 align-right">
-				<a id="cancelActiveButton" class="button icon icon-cancel" style="display: none;" onClick="killDownload()"></a>
-			</div>
-		</toolbar>
 
-		<main class="offset48 with-footer">
+		<main class="with-footer">
 			<div id="queuelist" class="list"></div>
 		</main>
 
 		<footer class="align-right">
+			<input id="pauseResume" type="button" class="tiny" value="Pause" class="tiny" onClick="pauseResume()">
 			<input type="button" class="tiny" value="Add URL" class="tiny" onClick="showURLPrompt()">
 			<input type="button" class="tiny" value="Empty Queue" class="tiny" onClick="emptyQueue()">
 		</footer>
-
 		
 		<div id="prompt1" class="modal small">
 			<div class="content">
