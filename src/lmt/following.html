@@ -35,6 +35,7 @@
 						scrollTop: f.offset().top - f.height()
 					}, 400);
 				}
+
 			}
 
             function doFetch() {
@@ -46,6 +47,7 @@
 
 							$(".list").append(`
 								<div class="item small clickable" onClick="getVideos('${results[i].uid}')" id="${results[i].uid}">
+									<!-- UserID: ${results[i].uid} -->
 									<div class="avatar">
 										<img src="${results[i].face}" class="${sex}" onerror="this.src='images/blank.png'">
 									</div>
@@ -54,7 +56,9 @@
 										<div class="meta">
 											<div>Country: ${results[i].countryCode} &nbsp;&nbsp;- </div>
 											<div>Level: ${results[i].level} </div>
-
+										</div>
+										<div class="meta">
+											<div style="font-size: 7pt;">User ID: ${results[i].uid}</div>
 										</div>
 									</div>
 								</div>
