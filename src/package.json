@@ -70,7 +70,7 @@
     },
     "linux": {
       "target": [
-        "tar.bz2", "github"
+        "tar.bz2"
       ],
       "maintainer": "thecoder1975@gmail.com"
     },
