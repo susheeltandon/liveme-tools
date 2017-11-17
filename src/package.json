@@ -57,14 +57,14 @@
     "mac": {
       "category": "public.app-category.video",
       "target": [
-        "dmg", "github"
+        "dmg"
       ],
       "identity": null,
       "icon": "build/appicon.icns"
     },
     "win": {
       "target": [
-        "portable", "github"
+        "portable"
       ],
       "icon": "build/appicon.ico"
     },
