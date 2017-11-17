@@ -24,6 +24,7 @@ cache:
 
 before_install:
   - mkdir -p /tmp/git-lfs && curl -L https://github.com/github/git-lfs/releases/download/v2.2.0/git-lfs-$([ "$TRAVIS_OS_NAME" == "linux" ] && echo "linux" || echo "darwin")-amd64-2.2.0.tar.gz | tar -xz -C /tmp/git-lfs --strip-components 1 && /tmp/git-lfs/git-lfs pull
+  - curl -L https://yarnpkg.com/latest.tar.gz | tar xvz && mv dist $HOME/.yarn
   - export PATH="$HOME/.yarn/bin:$PATH"
 
 install:
@@ -31,13 +32,13 @@ install:
 
 script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then yarn release; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then yarn release -- --mac --win; fi
-  - npm run dist
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then yarn release -- --mac; fi
+
+before_script: 
+  - cd src
 
 before_cache:
   - rm -rf $HOME/.cache/electron-builder/wine
-
-before_script: cd src
 
 branches:
   except:
