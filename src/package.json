@@ -57,23 +57,30 @@
     "mac": {
       "category": "public.app-category.video",
       "target": [
-        "dmg"
+        "dmg", "github"
       ],
       "identity": null,
       "icon": "build/appicon.icns"
     },
     "win": {
       "target": [
-        "portable"
+        "portable", "github"
       ],
       "icon": "build/appicon.ico"
     },
     "linux": {
       "target": [
-        "tar.bz2"
+        "tar.bz2", "github"
       ],
       "maintainer": "thecoder1975@gmail.com"
-    }
+    },
+    "publish": [
+      {
+        "provider":"github",
+        "owner":"Autobuild",
+        "releaseType": "release"
+      }
+    ]
   },
   "scripts": {
     "postinstall": "install-app-deps",
