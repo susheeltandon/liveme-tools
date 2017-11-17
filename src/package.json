@@ -77,7 +77,8 @@
     "publish": [
       {
         "provider":"github",
-        "releaseType": "release"
+        "vPrefixedTagName" : false,
+        "releaseType": "prerelease"
       }
     ]
   },
@@ -86,6 +87,7 @@
     "start": "./node_modules/.bin/electron . --enable-logging",
     "dev": "NODE_ENV='development' npm run start",
     "dist-win": "build -w --ia32 --x64",
-    "dist": "build"
+    "dist": "build",
+    "release": "build"
   }
 }
