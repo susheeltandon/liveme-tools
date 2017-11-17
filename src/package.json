@@ -77,7 +77,6 @@
     "publish": [
       {
         "provider":"github",
-        "owner":"Autobuild",
         "releaseType": "release"
       }
     ]
