@@ -1006,7 +1006,7 @@ function CheckForUpgrade() {
     var r = new Date().getTime();
 
     request({ url: 'https://raw.githubusercontent.com/thecoder75/liveme-tools/master/src/package.json?random=' + r, timeout: 15000 }, function (err, response, body) {
-        var js = JSON.parse(body), nv = parseFloat(js.minversion.replace('.', '')), ov = parseFloat(app.getVersion().replace('.', '')), isCurrent = nv > ov;
+        var js = JSON.parse(body), nv = parseFloat(js.version.replace('.', '')), ov = parseFloat(app.getVersion().replace('.', '')), isCurrent = nv > ov;
 
         if (nv > ov) {
             let win = new BrowserWindow({
