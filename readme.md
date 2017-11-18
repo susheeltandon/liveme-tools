@@ -1,10 +1,10 @@
 # LiveMe Tools
 
-AppVeyor: [![Build status](https://ci.appveyor.com/api/projects/status/al0lo5cr41ssqd74/branch/master)](https://ci.appveyor.com/project/thecoder75/liveme-tools/branch/master)
+AppVeyor: [![Build status](https://img.shields.io/appveyor/ci/thecoder75/liveme-tools.svg?style=for-the-badge)](https://ci.appveyor.com/project/thecoder75/liveme-tools/branch/master)
+Travis-CI: [![Build Status](https://img.shields.io/travis/thecoder75/liveme-tools.svg?style=for-the-badge)](https://travis-ci.org/thecoder75/liveme-tools)
 
-Travis-CI: [![Build Status](https://travis-ci.org/thecoder75/liveme-tools.svg?branch=master)](https://travis-ci.org/thecoder75/liveme-tools)
-
-**Please note releases and prereleases are now automatically built using AppVeyor and Travis-CI!**
+Latest Release: [![Latest Release Downloads](https://img.shields.io/github/downloads/atom/atom/latest/total.svg?style=for-the-badge)]
+All-Time [![All Downloads](https://img.shields.io/github/downloads/atom/atom/total.svg?style=for-the-badge)]
 
 This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux designed to:
 - Allow viewing a list of live videos with filter options
