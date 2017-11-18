@@ -1,8 +1,8 @@
 # LiveMe Tools
 
-AppVeyor: [![Build status](https://img.shields.io/appveyor/ci/thecoder75/liveme-tools.svg?style=flat)](https://ci.appveyor.com/project/thecoder75/liveme-tools/branch/master)
-Travis-CI: [![Build Status](https://img.shields.io/travis/thecoder75/liveme-tools.svg?style=flat)](https://travis-ci.org/thecoder75/liveme-tools)
-[![All Downloads](https://img.shields.io/github/downloads/atom/atom/total.svg?style=for-the-badge)](https://github.com/thecoder75/liveme-tools)
+### Build Status
+[![Build status](https://ci.appveyor.com/api/projects/status/al0lo5cr41ssqd74/branch/master?svg=true)](https://ci.appveyor.com/project/thecoder75/liveme-tools/branch/master)
+[![Build Status](https://travis-ci.org/thecoder75/liveme-tools.svg?branch=master)](https://travis-ci.org/thecoder75/liveme-tools)
 
 This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux designed to:
 - Allow viewing a list of live videos with filter options
@@ -20,10 +20,11 @@ This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux design
 
 ### Downloading and Installing
 
-You can download the [latest release](https://github.com/thecoder75/liveme-tools/releases/latest)
-if you wish to not compile it yourself.
+[![All Downloads](https://img.shields.io/github/downloads/atom/atom/total.svg?style=for-the-badge)](https://github.com/thecoder75/liveme-tools/releases)
 
-**This project now uses the `yarn` package manager instead of `npm`.
+You can download the [latest release](https://github.com/thecoder75/liveme-tools/releases/latest)
+
+**This project now uses the `yarn` package manager instead of `npm`.**
 
 **This uses the custom [LiveMe API](https://github.com/thecoder75/liveme-api) module also developed by our developers and contributors.**
 
@@ -43,8 +44,9 @@ requests to us.
 
 ## Bug Hunters and Beta Testers
 * [slyfox99](https://github.com/slyfox99)
+* [thegeezer9999](https://github.com/thegeezer9999)
 
 ## License
-This project is licensed under the GPL3 License - see the [LICENSE](LICENSE) 
+This project is licensed under the GPL-3 License - see the [LICENSE](LICENSE) 
 file for details
 
