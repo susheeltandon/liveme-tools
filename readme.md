@@ -12,25 +12,22 @@ This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux design
 - View details on users and their replays
 - Watch and download replay videos
 - Create local Favorites lists without an account
+- Import and Export Favorites lists
 - Import a list of Replay URLs or VideoIDs for downloading
 - Ability to add a single URL
-- Uses [FFMPEG](ffmpeg.md) to download playlists
+- Uses a custom chunk downloader and [FFMPEG](ffmpeg.md) to download replays
 - and much more!
 
 ## Getting Started
 
 ### Downloading and Installing
 
-**Thanks to Facebook a couple modules used by this project can now only be installed using `yarn` 
-package manager.  The rest can still be installed using `npm`.**
-
-**This uses the custom [LiveMe API](https://github.com/thecoder75/liveme-api) module also developed by our developers and contributors.**
-
 You can download the [latest release](https://github.com/thecoder75/liveme-tools/releases/latest)
 if you wish to not compile it yourself.
 
-Also you will need to manually install FFMPEG on your computer.  For Linux users, please get it from your distribution's repository.
-For Windows and macOS users, please download a prebuilt binary from [here](http://ffmpeg.org) and install in a folder in your path.
+**This project now uses the `yarn` package manager instead of `npm`.
+
+**This uses the custom [LiveMe API](https://github.com/thecoder75/liveme-api) module also developed by our developers and contributors.**
 
 ## Built With
 * [Electron](http://electron.atom.io)

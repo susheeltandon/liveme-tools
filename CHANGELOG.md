@@ -2,6 +2,15 @@
 
 ### 6.x.x Releases
 
+#### 2016-11-17 - v6.3.1
+**Fixed:**
+- Fixed file name issue in download module causing some playlists to download as `playlist.mp4` or `playlist_eof.mp4`
+
+#### 2017-11-17 - v6.3.0
+**Added:**
+- Added new download manager with chunk support speeding update downloads
+- Added ability to search Fans and Followings by UserID
+
 #### 2017-11-06 - v6.2.1
 **Fixed:**
 - Fixed bug that was causing the main window to not show.
