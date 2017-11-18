@@ -28,11 +28,11 @@ before_install:
   - cd src
 
 install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then yarn install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then npm install; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm install; fi
 
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then yarn dist-travis; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then npm run dist-travis; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm run dist-travis; fi
 
 before_cache:
