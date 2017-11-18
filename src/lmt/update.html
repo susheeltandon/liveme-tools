@@ -10,19 +10,14 @@
 		<script src="javascript/jquery-3.2.1.min.js"></script>
 		<script>
 
-var path = require('path'),
-	{ remote } = require('electron'),
-	datastore = null, 
-	db = null;
+const 	path = require('path'),
+		{ remote } = require('electron'),
+		DataManager = remote.getGlobal('DataManager');
 
 $(function(){
 	$('overlay').show();
-
-	Datastore = require('nedb');
-	db = new Datastore({ 
-		filename: path.join(remote.app.getPath('appData'), remote.app.getName(), 'livemetools_db'), 
-		autoload: true 
-	});
+	
+	
 
 });
 
@@ -42,14 +37,14 @@ function convertHistory() {
 
 		</script>
 		<style>
-			.status { font-size: 14pt; }
+			.status { font-size: 13pt; }
 		</style>
 	</head>
 
 	<body>
 		<overlay>
 			<div class="status">
-				Updating data files to new format...
+				Updating data files to new format, please wait...
 			</div>
 		</overlay>
 	</body>
