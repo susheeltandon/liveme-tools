@@ -1,8 +1,8 @@
 # LiveMe Tools
 
-[![Build status](https://ci.appveyor.com/api/projects/status/al0lo5cr41ssqd74/branch/master?svg=true)](https://ci.appveyor.com/project/thecoder75/liveme-tools/branch/master)
-[![Build Status](https://travis-ci.org/thecoder75/liveme-tools.svg?branch=master)](https://travis-ci.org/thecoder75/liveme-tools)
-[![Downloads](https://img.shields.io/github/downloads/thecoder75/liveme-tools/total.svg)]()
+AppVeyor: [![Build status](https://ci.appveyor.com/api/projects/status/al0lo5cr41ssqd74/branch/master)](https://ci.appveyor.com/project/thecoder75/liveme-tools/branch/master)
+
+Travis-CI: [![Build Status](https://travis-ci.org/thecoder75/liveme-tools.svg?branch=master)](https://travis-ci.org/thecoder75/liveme-tools)
 
 **Please note releases and prereleases are now automatically built using AppVeyor and Travis-CI!**
 
