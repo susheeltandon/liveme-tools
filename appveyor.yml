@@ -10,9 +10,7 @@ install:
   - ps: Install-Product node $env:nodejs_version
   - set CI=true
   - cd src
-  - npm install -g npm@latest
-  - set PATH=%APPDATA%\npm;%PATH%
-  - npm install
+  - yarn install
 matrix:
   fast_finish: true
 build: off
@@ -20,4 +18,4 @@ version: '{branch}-{build}'
 shallow_clone: true
 clone_depth: 1
 test_script:
-  - npm run dist-win
+  - yarn dist-win
