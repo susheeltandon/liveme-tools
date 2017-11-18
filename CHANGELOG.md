@@ -2,6 +2,11 @@
 
 ### 6.x.x Releases
 
+#### 2016-11-17 - v6.3.2
+**Fixed:**
+- Fixed some minor code bugs
+- Fixed autobuild process bugs
+
 #### 2016-11-17 - v6.3.1
 **Fixed:**
 - Fixed file name issue in download module causing some playlists to download as `playlist.mp4` or `playlist_eof.mp4`
