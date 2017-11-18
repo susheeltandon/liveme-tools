@@ -1035,6 +1035,10 @@ a.button.icon {
 	border-bottom-color: rgb(66,66,66);
 }
 
+.list .item.visited {
+	opacity: 0.4;
+}
+
 .list .item.highlighted {
 	background-color: rgb(48,48,48);
 }
