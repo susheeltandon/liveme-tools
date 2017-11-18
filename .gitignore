@@ -67,3 +67,4 @@ src/.DS_Store
 
 dist/*
 
+*.lock
