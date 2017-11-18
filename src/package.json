@@ -87,7 +87,7 @@
     "start": "./node_modules/.bin/electron . --enable-logging",
     "dev": "NODE_ENV='development' npm run start",
     "dist-win": "build -w --ia32 --x64",
-    "dist": "build",
-    "release": "build"
+    "dist": "build -p always",
+    "release": "build -p always"
   }
 }
