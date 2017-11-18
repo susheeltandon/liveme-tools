@@ -86,7 +86,7 @@
     "postinstall": "install-app-deps",
     "start": "./node_modules/.bin/electron . --enable-logging",
     "dev": "NODE_ENV='development' npm run start",
-    "dist-win": "build --publish publish -w --ia32 --x64",
+    "dist-win": "build --publish always -w --ia32 --x64",
     "dist": "build --publish always",
     "release": "build --publish always"
   }
