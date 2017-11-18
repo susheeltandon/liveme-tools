@@ -23,7 +23,7 @@ const { app, BrowserWindow, ipcMain, Menu, shell, dialog } = require('electron')
     path = require('path'),
     request = require('request'),
     appSettings = require('electron-settings'),
-    Favorites = require('./custom_modules/Favorites'),
+    DataManager = new(require('./custom_modules/DataManager').DataManager)(),
     DownloadManager = new (require('./custom_modules/DownloadManager').DownloadManager)(),
     LiveMe = require('liveme-api');
 
@@ -204,9 +204,9 @@ function startApplication() {
         showSplash();
     }, 500);
 
-    Favorites.load();
+    //DataManager.load();
     DownloadManager.init(appSettings);
-    global.Favorites = Favorites;
+    global.DataManager = DataManager;
     global.DownloadManager = DownloadManager;
 
     DownloadManager.events.on('show-queue', () => {
@@ -216,25 +216,20 @@ function startApplication() {
     });
 
 
+    /*
     // Temporary:
     setTimeout(function(){
         aboutwin.on('close', () => {
             mainwin.show();
         });
-    }, 1500);
-
-    /*
-
-
-
-        When the changeover is made to use a database type file vs the current file structure,
-        then this code will be executed to launch the update windoow which will handle all 
-        the data conversions and cleanup.
-
-
-
+    }, 1000);
+    */
+  
     setTimeout(function() {
-        if (fs.existsSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db'))) {
+
+        var stats = fs.statSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db.json')); 
+
+        if (stats.size > 64) {
             aboutwin.on('close', () => {
                 mainwin.show();
             });
@@ -249,8 +244,8 @@ function startApplication() {
                 
             });
         }
-    }, 1500);
-    */
+    }, 500);
+    
 
 }
 
@@ -759,10 +754,6 @@ function _importVideoIdList(list) {
                     mainwin.send('hide-status');
                 }, 1000);
             }
-        })
-        .catch(err => {
-            console.log(`getVideoInfo() failed, ${err}`);
-            return_code = 1;
         });
 }
 
@@ -775,7 +766,7 @@ function exportFavorites() {
         (filePath) => {
 
             if (filePath != null)
-                Favorites.export(filePath);
+                DataManager.exportFavorites(filePath);
         }
     );
 }
@@ -788,7 +779,7 @@ function importFavorites() {
         }, 
         (filePath) => {
             if (filePath != null)
-                Favorites.import(filePath[0]);
+                DataManager.importFavorites(filePath[0]);
         }
     );
 }
@@ -804,7 +795,7 @@ function shutdownApp() {
         updatewin.close();
     }
 
-    Favorites.forceSave();
+    DataManager.commitDatabases();
     DownloadManager.save();
     //Downloader.killActiveDownload();
 
@@ -859,7 +850,7 @@ function getMenuTemplate() {
                 },
                 {
                     label: 'Refresh Entries',
-                    click: () => Favorites.update()
+                    click: () => DataManager.updateFavorites()
                 },
                 {
                     label: 'Export Favorites List',
@@ -1006,7 +997,7 @@ function CheckForUpgrade() {
     var r = new Date().getTime();
 
     request({ url: 'https://raw.githubusercontent.com/thecoder75/liveme-tools/master/src/package.json?random=' + r, timeout: 15000 }, function (err, response, body) {
-        var js = JSON.parse(body), nv = parseFloat(js.minversion.replace('.', '')), ov = parseFloat(app.getVersion().replace('.', '')), isCurrent = nv > ov;
+        var js = JSON.parse(body), nv = parseFloat(js.version.replace('.', '')), ov = parseFloat(app.getVersion().replace('.', '')), isCurrent = nv > ov;
 
         if (nv > ov) {
             let win = new BrowserWindow({

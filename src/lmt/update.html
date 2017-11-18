@@ -10,31 +10,63 @@
 		<script src="javascript/jquery-3.2.1.min.js"></script>
 		<script>
 
-var path = require('path'),
-	{ remote } = require('electron'),
-	datastore = null, 
-	db = null;
+const 	path = require('path'),
+		fs = require('fs'),
+		{ remote } = require('electron'),
+		DataManager = remote.getGlobal('DataManager');
 
 $(function(){
 	$('overlay').show();
 
-	Datastore = require('nedb');
-	db = new Datastore({ 
-		filename: path.join(remote.app.getPath('appData'), remote.app.getName(), 'livemetools_db'), 
-		autoload: true 
-	});
+	var stats = fs.statSync(path.join(remote.app.getPath('appData'), remote.app.getName(), 'livemetools_db.json')); 
+	if (stats.size < 64) {
+		setTimeout(function(){
+			buildTables();
+		}, 500);
+	} else {
+		setTimeout(function(){
+			window.close();
+		}, 500);
+	}
+
 
 });
 
 function buildTables() {
-	
+	$('.status').html('Initializing data storage...');
+	DataManager.ResetDB();
+	setTimeout(function(){
+		convertFavorites();
+	}, 500);
 }
 
 function convertFavorites() {
+	$('.status').html('Converting Favorites, please wait...');
 
-}
+	fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), 'utf8', function (err,data) {
+		if (err) {
+			fav_list = [];
+		} else {
+			var i, j = JSON.parse(data);
+			for (i = 0; i < j.length; i++) {
 
-function convertHistory() {
+				DataManager.addFavorite({
+					'uid' : j[i].uid,
+					'face' : j[i].face,
+					'nickname' : j[i].nickname,
+					'sex' : j[i].sex,
+					'level' : j[i].level,
+					'video_count' : j[i].video_count,
+					'usign' : j[i].usign,
+					'stars' : j[i].stars
+				});
+			}
+		}
+		setTimeout(function(){
+			window.close();
+		}, 500);
+
+	});
 
 }
 
@@ -42,14 +74,14 @@ function convertHistory() {
 
 		</script>
 		<style>
-			.status { font-size: 14pt; }
+			.status { font-size: 13pt; }
 		</style>
 	</head>
 
 	<body>
 		<overlay>
 			<div class="status">
-				Updating data files to new format...
+				Preparing to begin update...
 			</div>
 		</overlay>
 	</body>
