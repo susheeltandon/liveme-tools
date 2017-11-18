@@ -1,7 +1,7 @@
 {
   "name": "LiveMeTools",
   "title": "LiveMe Tools",
-  "version": "6.3.0-beta2",
+  "version": "6.3.1",
   "minversion": "6.2.1",
   "description": "A tool designed to help in searching and viewing of LiveMe broadcasts.",
   "main": "index.js",
@@ -78,7 +78,7 @@
       {
         "provider":"github",
         "vPrefixedTagName" : false,
-        "releaseType": "prerelease"
+        "releaseType": "release"
       }
     ]
   },
@@ -86,8 +86,8 @@
     "postinstall": "install-app-deps",
     "start": "./node_modules/.bin/electron . --enable-logging",
     "dev": "NODE_ENV='development' npm run start",
-    "dist-win": "build -w --ia32 --x64",
-    "dist": "build -p always",
-    "release": "build -p always"
+    "dist-win": "build --publish publish -w --ia32 --x64",
+    "dist": "build --publish always",
+    "release": "build --publish always"
   }
 }
