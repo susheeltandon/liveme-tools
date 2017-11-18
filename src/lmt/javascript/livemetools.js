@@ -12,11 +12,11 @@
 const 	{ electron, BrowserWindow, remote, ipcRenderer, shell, clipboard } = require('electron'),
 		fs = require('fs'), path = require('path'), fmtDuration = require('format-duration'),
 		appSettings = remote.require('electron-settings'),
-		Favorites = remote.getGlobal('Favorites'),
+		DataManager = remote.getGlobal('DataManager'),
 		DownloadManager = remote.getGlobal('DownloadManager'),
 		LiveMe = require('liveme-api');
 
-var 	favorites_list = [], debounced = false, current_user = {}, current_page = 1, has_more = false, 
+var 	debounced = false, current_user = {}, current_page = 1, has_more = false, 
 		current_search = '', scroll_busy = false;
 
 $(function(){
@@ -33,9 +33,7 @@ $(function(){
 	});
 
 	ipcRenderer.on('do-shutdown' , function(event , data) { 
-		Favorites.forceSave();
-        DownloadManager.save();
-        //Downloads.killActiveDownload();
+		DownloadManager.save();
 	});
 
 	ipcRenderer.on('show-status' , function(event , data) { 
@@ -168,11 +166,11 @@ function onTypeChange() {
 }
 
 function toggleFavorite() {
-	if (Favorites.isOnList(current_user.uid) == true) {
-		Favorites.remove(current_user.uid);
+	if (DataManager.isInFavorites(current_user.uid) == true) {
+		DataManager.removeFavorite(current_user.uid);
 		$('#favorites_button').removeClass('active');
 	} else {
-		Favorites.add(current_user);
+		DataManager.addFavorite(current_user);
 		$('#favorites_button').addClass('active');
 	}
 }
@@ -402,6 +400,8 @@ function performUserLookup(uid) {
 
 			var sex = user.user_info.sex < 0 ? '' : (user.user_info.sex == 0 ? 'female' : 'male');
 
+			DataManager.addTrackedVisited(user.user_info.uid);
+
 			$('.user-panel').html(`
 				<img class="avatar" src="${user.user_info.face}" onerror="this.src='images/blank.png'">
 				<div class="meta">
@@ -450,7 +450,7 @@ function performUserLookup(uid) {
 			getUsersReplays();
 
 			setTimeout(function(){
-				if (Favorites.isOnList(current_user.uid) == true) {
+				if (DataManager.isInFavorites(current_user.uid) == true) {
 					$('#favorites_button').addClass('active');
 				}
 			}, 250);
