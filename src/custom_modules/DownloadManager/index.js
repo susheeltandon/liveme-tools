@@ -91,7 +91,7 @@ class DownloadManager {
             }
         }
         let basename = path.basename(finalPath);
-        if (basename == 'playlist.ts' || basename == 'playlist_eof.ts') {
+        if (basename == 'playlist.mp4' || basename == 'playlist_eof.mp4') {
             let parentName = path.basename(path.dirname(playlist.video.url));
             finalPath = finalPath.replace(basename, parentName + '.mp4');
         }
