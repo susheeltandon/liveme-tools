@@ -87,6 +87,6 @@
     "start": "./node_modules/.bin/electron . --enable-logging",
     "dev": "NODE_ENV='development' npm run start",
     "dist-appveyor": "build --publish always -w --ia32 --x64",
-    "dist-travis": "build --publish always",
+    "dist-travis": "build --publish always"
   }
 }
