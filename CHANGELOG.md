@@ -2,7 +2,7 @@
 
 ### 7.x.x Releases
 
-#### ---- - v7.0.1
+#### 2017-11-19 - v7.0.1
 **Added:**
 - Added settings option to change visited profile timeout with custom options
 - Added commands to DataManager module for download tracking (Need to update Downloads Module)
@@ -10,7 +10,7 @@
 **Fixed:**
 - Updated DataManager module for better handling of lookups and storage formats
 
-#### ---- - v7.0.0
+#### 2017-11-18 - v7.0.0
 **Added:**
 - Changed data storage system to using lowDB for easier management and stability
 - Added ability to track previously visited UserIDs
