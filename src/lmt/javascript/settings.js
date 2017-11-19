@@ -1,5 +1,9 @@
-const {electron, remote, ipcRenderer} = require('electron'), appSettings = remote.require('electron-settings'), DownloadManager = remote.getGlobal('DownloadManager');
-const path = require('path');
+const 	{electron, remote, ipcRenderer} = require('electron'), 
+		appSettings = remote.require('electron-settings'), 
+		DownloadManager = remote.getGlobal('DownloadManager'),
+		DataManager = remote.getGlobal('DataManager');
+
+const	path = require('path');
 
 $(function() {
 
@@ -11,6 +15,16 @@ $(function() {
 			history: true,
 			ffmpeg: 'ffmpeg',
 			ffprobe: 'ffprobe'
+		});
+		appSettings.set('profiles', {
+			visitedtimeout: 86400
+		});
+	}
+
+	// 7.0.1 upgrade
+	if (appSettings.has('profiles.visitedtimeout') == false) {
+		appSettings.set('profiles', {
+			visitedtimeout: 86400
 		});
 	}
 
@@ -24,6 +38,9 @@ $(function() {
 			ffmpeg: 'ffmpeg',
 			ffprobe: 'ffprobe'
 		});
+		appSettings.set('profiles', {
+			visitedtimeout: 86400
+		});
 	}
 
 	setTimeout(function(){
@@ -33,6 +50,7 @@ $(function() {
 		$('#history').prop('checked', appSettings.get('downloads.history'));
 		$('#ffmpegpath').val(appSettings.get('downloads.ffmpeg'));
 		$('#ffprobepath').val(appSettings.get('downloads.ffprobe'));
+		$('#timeout').val(appSettings.get('profiles.visitedtimeout'));
 		checkType();
 	}, 1);
 });
@@ -50,7 +68,8 @@ function saveSettings(close=true) {
 		filetemplate: $('#filetemplate').val(),
 		history: $('#history').is(':checked') ? 1 : 0,
 		ffmpeg: $('#ffmpegpath').val(),
-		ffprobe: $('#ffprobepath').val()
+		ffprobe: $('#ffprobepath').val(),
+		visitedtimeout: $('#timeout').val(),
 	});
 
 	DownloadManager.setFfmpegPath(appSettings.get('downloads.ffmpeg'));
