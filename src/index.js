@@ -215,16 +215,6 @@ function startApplication() {
         }
     });
 
-
-    /*
-    // Temporary:
-    setTimeout(function(){
-        aboutwin.on('close', () => {
-            mainwin.show();
-        });
-    }, 1000);
-    */
-  
     setTimeout(function() {
 
         var stats = fs.statSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db.json')); 
@@ -244,7 +234,7 @@ function startApplication() {
                 
             });
         }
-    }, 500);
+    }, 1500);
     
 
 }
