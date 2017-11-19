@@ -399,7 +399,7 @@ function performUserLookup(uid) {
 		.then(user => {
 
 			var sex = user.user_info.sex < 0 ? '' : (user.user_info.sex == 0 ? 'female' : 'male'),
-				dt = Math.floor(new Date().getTime() / 1000) + appSettings.get('profiles.visitedtimeout');
+				dt = Math.floor(new Date().getTime() / 1000) + parseInt(appSettings.get('profiles.visitedtimeout'));
 
 			DataManager.addTrackedVisited({ id: user.user_info.uid, dt: dt });
 
