@@ -9,6 +9,7 @@
 
 **Fixed:**
 - Updated DataManager module for better handling of lookups and storage formats
+- Fixed crash when running first time after upgrading to 7.0.x release.
 
 #### 2017-11-18 - v7.0.0
 **Added:**
