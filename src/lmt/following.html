@@ -42,7 +42,8 @@
 					.then(results => {
 						for(var i = 0; i < results.length; i++) {
 
-	                		var sex = results[i].sex < 0 ? '' : (results[i].sex == 0 ? 'female' : 'male'), visited = DataManager.wasVisited({ id: results[i].uid }) ? 'visited' : '';
+	                		var sex = results[i].sex < 0 ? '' : (results[i].sex == 0 ? 'female' : 'male'),
+	                			visited = DataManager.wasVisited(id: results[i].uid) ? 'visited' : '';
 
 							$(".list").append(`
 								<div class="item small clickable ${visited}" onClick="getVideos('${results[i].uid}')" id="${results[i].uid}">
