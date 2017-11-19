@@ -190,21 +190,26 @@ class DataManager {
 	*/
 	addTrackedVisited(e) {
 		var t = db.get('visited').find({ id: e.id }).value();
+		
 		if (t == 'undefined' || typeof t == 'undefined' || t == null) {
 			db.get('visited').push({
 				id: e.id,
-				dt: e.dt / 1000
+				dt: e.dt
 			}).write();
 		}
+
 	}
 	dropTrackedVisited(e) {
 		db.get('visited').remove({ id: e.id }).write();
 	}
 	wasVisited(e) {
-		var dt = new Date().getTime() / 1000, t = db.get('visited').find({ id: e }).value();
+		var dt = Math.floor(new Date().getTime() / 1000), 
+			t = db.get('visited').find({ id: e }).value();
+
 		if (t == 'undefined' || typeof t == 'undefined' || t == null) return false; 
+		
 		if ((dt - t.dt) > 0) {
-			db.get('visited').remove({ id: e }).write();
+			db.get('visited').remove({ id: e.id }).write();
 			return false;
 		} else {
 			return true;
