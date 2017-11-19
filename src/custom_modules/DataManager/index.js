@@ -191,9 +191,12 @@ class DataManager {
 	*/
 	addTrackedVisited(e) {
 		db.get('visited').push({
-			id: e,
-			dt: (new Date().getTime() / 1000) + 86400
+			id: e.id,
+			dt: e.dt / 1000
 		}).write();
+	}
+	dropTrackedVisited(e) {
+		db.get('visited').remove({ id: e.id }).write();
 	}
 	wasVisited(e) {
 		var dt = new Date().getTime() / 1000, t = db.get('visited').find({ id: e }).value();
