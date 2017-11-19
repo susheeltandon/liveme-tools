@@ -116,8 +116,7 @@ class DataManager {
 
 	isInFavorites(e) {
 		var t = db.get('favorites').find({ id: e }).value();
-		if (t == 'undefined' || typeof t == 'undefined' || t == null) return false; 
-		return true;
+		return (t == 'undefined' || typeof t == 'undefined' || t == null) ? false : true;
 	}
 
 
@@ -190,10 +189,13 @@ class DataManager {
 		Tracking of Visited UserIds
 	*/
 	addTrackedVisited(e) {
-		db.get('visited').push({
-			id: e.id,
-			dt: e.dt / 1000
-		}).write();
+		var t = db.get('visited').find({ id: e.id }).value();
+		if (t == 'undefined' || typeof t == 'undefined' || t == null) {
+			db.get('visited').push({
+				id: e.id,
+				dt: e.dt / 1000
+			}).write();
+		}
 	}
 	dropTrackedVisited(e) {
 		db.get('visited').remove({ id: e.id }).write();
@@ -207,6 +209,25 @@ class DataManager {
 		} else {
 			return true;
 		}
+	}
+	
+
+
+	/*
+		Tracking of Downloaded Replays
+	*/
+	addDownloaded(e) {
+		var t = db.get('downloaded').find({ id: e }).value();
+		if (t == 'undefined' || typeof t == 'undefined' || t == null) {
+			db.get('downloaded').push({
+				id: e,
+				dt: Math.floor(new Date().getTime() / 1000)
+			}).write();
+		}
+	}
+	wasDownloaded(e) {
+		var t = db.get('downloaded').find({ id: e }).value();
+		return (t == 'undefined' || typeof t == 'undefined' || t == null) ? false : true;
 	}
 	
 
