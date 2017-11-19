@@ -1,5 +1,13 @@
 ## CHANGELOG
 
+### 7.x.x Releases
+
+#### ---- - v7.0.0
+**Added:**
+- Changed data storage system to using lowDB for easier management and stability
+- Added ability to track previously visited UserIDs
+- Speed improvements for Favorites window and functions
+
 ### 6.x.x Releases
 
 #### 2016-11-17 - v6.3.2

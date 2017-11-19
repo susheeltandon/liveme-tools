@@ -8,6 +8,7 @@ This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux design
 - Allow viewing a list of live videos with filter options
 - Search for users or videos tagged with hashtags
 - View details on users and their replays
+- Track previously viewed users
 - Watch and download replay videos
 - Create local Favorites lists without an account
 - Import and Export Favorites lists
@@ -45,6 +46,7 @@ requests to us.
 ## Bug Hunters and Beta Testers
 * [slyfox99](https://github.com/slyfox99)
 * [thegeezer9999](https://github.com/thegeezer9999)
+* [jaylittt](https://github.com/jaylittt)
 
 ## License
 This project is licensed under the GPL-3 License - see the [LICENSE](LICENSE) 
