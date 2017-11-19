@@ -398,9 +398,11 @@ function performUserLookup(uid) {
 	LiveMe.getUserInfo(uid)
 		.then(user => {
 
-			var sex = user.user_info.sex < 0 ? '' : (user.user_info.sex == 0 ? 'female' : 'male');
+			var sex = user.user_info.sex < 0 ? '' : (user.user_info.sex == 0 ? 'female' : 'male'),
+				dt = (new Date().getTime() / 1000) + appSettings.get('profiles.visitedtimeout');
 
-			DataManager.addTrackedVisited(user.user_info.uid);
+			DataManager.dropTrackedVisited({ id: user.user_info.uid });
+			DataManager.addTrackedVisited({ id: user.user_info.uid, dt: dt });
 
 			$('.user-panel').html(`
 				<img class="avatar" src="${user.user_info.face}" onerror="this.src='images/blank.png'">
