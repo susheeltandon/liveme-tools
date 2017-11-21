@@ -38,6 +38,7 @@
 					$(`#id-${arg.uuid}`).addClass("error");
 					$(`#id-${arg.uuid} > div > div.section.with-progress-bar > div > div.bar`).css({ width: '0%' });
 
+					$(`#id-${arg.uuid} > div > div.section.with-progress-bar > label`).text(arg.error);
 					// TODO: RETRY BUTTON
 				});
 
