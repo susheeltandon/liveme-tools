@@ -34,19 +34,21 @@ $(function(){
 
 function buildTables() {
 	$('.status').html('Initializing data storage...');
+
 	DataManager.ResetDB();
 	setTimeout(function(){
 		convertFavorites();
-	}, 500);
+	}, 500);	
 }
 
 function convertFavorites() {
-	$('.status').html('Converting Favorites, please wait...');
-
 	fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), 'utf8', function (err,data) {
 		if (err) {
-			fav_list = [];
+			setTimeout(function(){
+				window.close();
+			}, 500);
 		} else {
+			$('.status').html('Converting Favorites, please wait...');
 			var i, j = JSON.parse(data);
 			for (i = 0; i < j.length; i++) {
 
