@@ -2,6 +2,10 @@
 
 ### 7.x.x Releases
 
+#### 2017-11-21 - v7.0.2
+**Fixed:**
+- Fixed download issue #111 and issue #107
+
 #### 2017-11-19 - v7.0.1
 **Added:**
 - Added settings option to change visited profile timeout with custom options
