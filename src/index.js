@@ -228,10 +228,7 @@ function startApplication() {
                 updatewin.show();
             });
             updatewin.on('close', () => {
-                setTimeout(function(){
-                    mainwin.show();
-                }, 500);     
-                
+                mainwin.show();               
             });
         }
     }, 1500);
