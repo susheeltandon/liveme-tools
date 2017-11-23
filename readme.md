@@ -21,7 +21,7 @@ This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux design
 
 ### Downloading and Installing
 
-[![All Downloads](https://img.shields.io/github/downloads/atom/atom/total.svg)](https://github.com/thecoder75/liveme-tools/releases)
+[![All Downloads](https://img.shields.io/github/downloads/thecoder75/liveme-tools/total.svg)](https://github.com/thecoder75/liveme-tools/releases)
 
 You can download the [latest release](https://github.com/thecoder75/liveme-tools/releases/latest)
 
@@ -34,8 +34,8 @@ You can download the [latest release](https://github.com/thecoder75/liveme-tools
 * [NodeJS](http://nodejs.org)
 
 ## Contributing
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) 
-for details on our code of conduct, and the process for submitting pull 
+Please read [CONTRIBUTING.md](CONTRIBUTING.md)
+for details on our code of conduct, and the process for submitting pull
 requests to us.
 
 ## Developers/Maintainers
@@ -53,5 +53,5 @@ requests to us.
 
 
 ## License
-This project is licensed under the GPL-3 License - see the [LICENSE](LICENSE) 
+This project is licensed under the GPL-3 License - see the [LICENSE](LICENSE)
 file for details
