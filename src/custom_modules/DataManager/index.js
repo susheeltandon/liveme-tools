@@ -6,22 +6,24 @@
 
 const 	low = require('lowdb'),
 		FileSync = require('lowdb/adapters/FileSync'),
-		fs = require('fs'),
+		fs = require('fs-extra'),
 		path = require('path'),
 		events = require('events'),
 		axios = require('axios'),
-		{ app } = require('electron'),
-		adapter = new FileSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db.json')),
-		db = low(adapter);
+		{ app } = require('electron');
 
-var		index = 0;
+var		index = 0, adapter, db;
 
 class DataManager {
 
     constructor() {
     	this._favorites = [];
     	this._visited = [];
-			this.events = new (events.EventEmitter)();
+		this.events = new (events.EventEmitter)();
+
+		fs.ensureDirSync(path.join(app.getPath('appData'), app.getName()));
+		adapter = new FileSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db.json'));
+		db = low(adapter);
     }
 
 	ResetDB() {
@@ -42,7 +44,6 @@ class DataManager {
 		Favorites
 	*/
 	addFavorite(e) {
-
 		db.get('favorites')
 			.push({
 				id: e.uid,
