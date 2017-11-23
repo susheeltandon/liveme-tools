@@ -1,8 +1,3 @@
-/*
-    Generated from TypeScript
-    https://github.com/polydragon/lmt-downloadmanager
-*/
-
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,6 +29,7 @@ class DownloadManager {
         this._history = [];
         this._paused = false;
         this._running = false;
+        this._ffmpegPath = 'ffmpeg';
         this.events = new (events.EventEmitter)();
     }
     _emit(channel, obj) {
@@ -185,6 +181,8 @@ class DownloadManager {
     }
     init(appSettings) {
         this._appSettings = appSettings;
+        this._downloadQueuePath = path.join(app.getPath('appData'), app.getName(), 'download-queue-v2.json');
+        this._downloadHistoryPath = path.join(app.getPath('appData'), app.getName(), 'downloadHistory.json');
         let mpeg = appSettings.get('downloads.ffmpeg'), probe = appSettings.get('downloads.ffprobe');
         if (mpeg && mpeg != 'ffmpeg') {
             this._ffmpegPath = mpeg;
@@ -257,7 +255,7 @@ class DownloadManager {
         return this._history.indexOf(videoid) != -1;
     }
     purgeHistory() {
-        fs.removeSync(path.join(app.getPath('appData'), app.getName(), 'downloadHistory.json'));
+        fs.removeSync(this._downloadHistoryPath);
         this._history = [];
     }
     purgeQueue() {
@@ -272,9 +270,12 @@ class DownloadManager {
     }
     detectFFMPEG() {
         return new Promise((resolve, reject) => {
-            exec(`${this._ffmpegPath} --help`, (error, stdout, stderr) => {
+            exec(`${this._ffmpegPath} -codecs`, (error, stdout, stderr) => {
                 if (error) {
+                    console.log('--------------------');
+                    console.log('FFMPEG CHECK FAILED:');
                     console.log(error);
+                    console.log('--------------------');
                     return resolve(false);
                 }
                 return resolve(true);
@@ -283,7 +284,7 @@ class DownloadManager {
     }
     saveQueue() {
         let spread = JSON.stringify([...this._queue]);
-        fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'download-queue-v2.json'), spread, 'utf8', (err) => {
+        fs.writeFile(this._downloadQueuePath, spread, 'utf8', (err) => {
             if (err) {
                 console.error(err);
             }
@@ -293,14 +294,18 @@ class DownloadManager {
         if (!this._appSettings.get('downloads.history')) {
             return;
         }
-        fs.writeFile(path.join(app.getPath('appData'), app.getName(), 'downloadHistory.json'), JSON.stringify(this._history), 'utf8', (err) => {
+        fs.writeFile(this._downloadHistoryPath, JSON.stringify(this._history), 'utf8', (err) => {
             if (err) {
                 console.log(err);
             }
         });
     }
     loadQueue() {
-        fs.readFile(path.join(app.getPath('appData'), app.getName(), 'download-queue-v2.json'), 'utf8', (err, data) => {
+        if (!fs.existsSync(this._downloadQueuePath)) {
+            this._queue = new Map();
+            return;
+        }
+        fs.readFile(this._downloadQueuePath, 'utf8', (err, data) => {
             if (err) {
                 console.error(err);
             }
@@ -324,7 +329,11 @@ class DownloadManager {
         if (!this._appSettings.get('downloads.history')) {
             return;
         }
-        fs.readFile(path.join(app.getPath('appData'), app.getName(), 'downloadHistory.json'), 'utf8', (err, data) => {
+        if (!fs.existsSync(this._downloadHistoryPath)) {
+            this._history = [];
+            return;
+        }
+        fs.readFile(this._downloadHistoryPath, 'utf8', (err, data) => {
             if (err) {
                 console.log(err);
                 this._history = [];
