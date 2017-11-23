@@ -1,5 +1,5 @@
-const 	{electron, remote, ipcRenderer} = require('electron'), 
-		appSettings = remote.require('electron-settings'), 
+const 	{electron, remote, ipcRenderer} = require('electron'),
+		appSettings = remote.require('electron-settings'),
 		DownloadManager = remote.getGlobal('DownloadManager'),
 		DataManager = remote.getGlobal('DataManager');
 
@@ -50,7 +50,7 @@ $(function() {
 		$('#history').prop('checked', appSettings.get('downloads.history'));
 		$('#ffmpegpath').val(appSettings.get('downloads.ffmpeg'));
 		$('#ffprobepath').val(appSettings.get('downloads.ffprobe'));
-		$('#timeout').val(appSettings.get('profiles.visitedtimeout'));
+		$('#ptimeout').val(appSettings.get('profiles.visitedtimeout'));
 		checkType();
 	}, 1);
 });
@@ -62,14 +62,16 @@ function closeWindow() {
 function saveSettings(close=true) {
 	let oldHistory = appSettings.get('downloads.history');
 
-	appSettings.set('downloads', { 
-		directory: $('#download_folder').val(), 
+	appSettings.set('downloads', {
+		directory: $('#download_folder').val(),
 		filemode: $('#filemode').is(':checked') ? 1 : 0,
 		filetemplate: $('#filetemplate').val(),
 		history: $('#history').is(':checked') ? 1 : 0,
 		ffmpeg: $('#ffmpegpath').val(),
-		ffprobe: $('#ffprobepath').val(),
-		visitedtimeout: $('#timeout').val(),
+		ffprobe: $('#ffprobepath').val()
+	});
+	appSettings.set('profiles', {
+		visitedtimeout: $('#ptimeout').val()
 	});
 
 	DownloadManager.setFfmpegPath(appSettings.get('downloads.ffmpeg'));
@@ -78,7 +80,7 @@ function saveSettings(close=true) {
 	if (oldHistory && !appSettings.get('downloads.history')) {
 		ipcRenderer.send('history-delete');
 	}
-	
+
 	if (close) {
 		closeWindow();
 	}
