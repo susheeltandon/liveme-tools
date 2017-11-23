@@ -1,13 +1,13 @@
 /*
 
-	  _      _           __  __        _______          _     
-	 | |    (_)         |  \/  |      |__   __|        | |    
-	 | |     ___   _____| \  / | ___     | | ___   ___ | |___ 
+	  _      _           __  __        _______          _
+	 | |    (_)         |  \/  |      |__   __|        | |
+	 | |     ___   _____| \  / | ___     | | ___   ___ | |___
 	 | |    | \ \ / / _ \ |\/| |/ _ \    | |/ _ \ / _ \| / __|
 	 | |____| |\ V /  __/ |  | |  __/    | | (_) | (_) | \__ \
 	 |______|_| \_/ \___|_|  |_|\___|    |_|\___/ \___/|_|___/
 
-		
+
 		 			Licensed under GPL3 now
 
 	Developers:
@@ -72,7 +72,7 @@ function startApplication() {
         mainsize = JSON.parse(appSettings.get('windowsize.main'));
         queuesize = JSON.parse(appSettings.get('windowsize.queue'));
     }
-    
+
 
     mainwin = new BrowserWindow({
         icon: __dirname + '/appicon.ico',
@@ -90,8 +90,7 @@ function startApplication() {
         maximizable: true,
         closable: true,
         frame: true,
-        vibrancy: 'ultra-dark',
-        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
+        backgroundColor: '#000000',
         show: false,
         webPreferences: {
             webSecurity: false,
@@ -136,8 +135,7 @@ function startApplication() {
         maximizable: false,
         closable: false,
         frame: true,
-        vibrancy: 'ultra-dark',
-        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
+        backgroundColor: '#000000',
         webPreferences: {
             webSecurity: false,
             plugins: true,
@@ -155,7 +153,7 @@ function startApplication() {
         appSettings.set('windowpos.queue', JSON.stringify(queuewin.getPosition()) );
         appSettings.set('windowsize.queue', JSON.stringify(queuewin.getSize()) );
     });
-        
+
 
     updatewin = new BrowserWindow({
         width: 480,
@@ -186,8 +184,8 @@ function startApplication() {
             updatewin = null;
         })
         .loadURL(`file://${__dirname}/lmt/update.html`);
-        
-    
+
+
 
     // Build our custom menubar
     Menu.setApplicationMenu(Menu.buildFromTemplate(getMenuTemplate()));
@@ -217,7 +215,7 @@ function startApplication() {
 
     setTimeout(function() {
 
-        var stats = fs.statSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db.json')); 
+        var stats = fs.statSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db.json'));
 
         if (stats.size > 64) {
             aboutwin.on('close', () => {
@@ -228,11 +226,11 @@ function startApplication() {
                 updatewin.show();
             });
             updatewin.on('close', () => {
-                mainwin.show();               
+                mainwin.show();
             });
         }
     }, 1500);
-    
+
 
 }
 
@@ -269,8 +267,7 @@ function showSplash() {
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
-        vibrancy: 'ultra-dark',
-        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
+        backgroundColor: '#000000',
         maximizable: false,
         frame: false,
         movable: false,
@@ -296,8 +293,7 @@ function showSettings() {
         show: false,
         skipTaskbar: false,
         center: true,
-        vibrancy: 'ultra-dark',
-        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
+        backgroundColor: '#000000',
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
@@ -328,8 +324,7 @@ function showLiveMeOMG() {
         show: false,
         skipTaskbar: false,
         center: true,
-        vibrancy: 'ultra-dark',
-        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
+        backgroundColor: '#000000',
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
@@ -364,7 +359,7 @@ function showLiveMeOMG() {
 function openFavoritesWindow() {
     if (favoritesWindow == null) {
 
-        var favpos = JSON.parse(appSettings.get('windowpos.favorites')), 
+        var favpos = JSON.parse(appSettings.get('windowpos.favorites')),
             favsize = JSON.parse(appSettings.get('windowsize.favorites'));
 
         favoritesWindow = new BrowserWindow({
@@ -377,8 +372,7 @@ function openFavoritesWindow() {
             autoHideMenuBar: true,
             show: false,
             skipTaskbar: false,
-            vibrancy: 'ultra-dark',
-            backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
+            backgroundColor: '#000000',
             disableAutoHideCursor: true,
             titleBarStyle: 'default',
             fullscreen: false,
@@ -404,7 +398,7 @@ function openFavoritesWindow() {
                 appSettings.set('windowsize.favorites', JSON.stringify(favoritesWindow.getSize()) );
             })
             .loadURL(`file://${__dirname}/lmt/favorites-list.html`);
-            
+
     }
 };
 
@@ -416,7 +410,7 @@ ipcMain.on('show-settings', (event, arg) => {
 
 /*
     Search Related
-    ?? - Called from Following/Fans/Favorites windows when an entry is clicked.  Will 
+    ?? - Called from Following/Fans/Favorites windows when an entry is clicked.  Will
     need to clean up and standardize as a single command
 */
 
@@ -450,8 +444,7 @@ ipcMain.on('open-window', (event, arg) => {
         darkTheme: true,
         autoHideMenuBar: false,
         skipTaskbar: false,
-        vibrancy: 'ultra-dark',
-        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
+        backgroundColor: '#000000',
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
@@ -472,7 +465,7 @@ ipcMain.on('open-window', (event, arg) => {
 /*
 	Video Player Related
 
-    macOS allows us to still have window controls but no titlebar 
+    macOS allows us to still have window controls but no titlebar
     and overlay the controls on the content of the page.
 
     This allows us to have a window just like QuickTime Player
@@ -531,12 +524,12 @@ ipcMain.on('video-set-time', (event, arg) => {
     playerWindow.webContents.send('jump-to-time', { time: arg.time, label: arg.label });
 });
 
-/* 
-	Chat Window 
+/*
+	Chat Window
 */
 ipcMain.on('open-chat', (event, arg) => {
 
-    var msgpos = JSON.parse(appSettings.get('windowpos.messages')), 
+    var msgpos = JSON.parse(appSettings.get('windowpos.messages')),
         msgsize = JSON.parse(appSettings.get('windowsize.messages'));
 
 
@@ -556,8 +549,7 @@ ipcMain.on('open-chat', (event, arg) => {
         autoHideMenuBar: false,
         show: false,
         skipTaskbar: false,
-        vibrancy: 'ultra-dark',
-        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
+        backgroundColor: '#000000',
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
@@ -647,7 +639,7 @@ function importUrlList() {
                     }, 2000);
                 } else {
                     var filelist = data.split('\n');
-                    
+
                     for (i = 0; i < filelist.length; i++)  {
                         if (filelist[i].indexOf('http') > -1) {
                             Downloads.add({
@@ -700,7 +692,7 @@ function importVideoIdList() {
                         if (t[i].length > 16)
                             idlist.push(t[i].trim());
                     }
-                    
+
                     mainwin.send('update-status', { message : 'Found '+idlist.length+' entries to import.' });
                     _importVideoIdList(idlist);
 
@@ -733,7 +725,7 @@ function _importVideoIdList(list) {
                 });
             }
 
-            if (list.length > 0) 
+            if (list.length > 0)
                 _importVideoIdList(list);
             else {
                 mainwin.send('update-status', { message : 'Import complete.' });
@@ -749,7 +741,7 @@ function exportFavorites() {
         {
             filters: [ { name: "Text File", extensions: ["txt"] }, { name: 'All Files', extensions: ['*'] } ],
             defaultPath: 'Exported Favorites UserID List.txt'
-        }, 
+        },
         (filePath) => {
 
             if (filePath != null)
@@ -763,7 +755,7 @@ function importFavorites() {
         {
             filters: [ { name: "Text File", extensions: ["txt"] }, { name: 'All Files', extensions: ['*'] } ],
             defaultPath: 'Exported Favorites UserID List.txt'
-        }, 
+        },
         (filePath) => {
             if (filePath != null)
                 DataManager.importFavorites(filePath[0]);
@@ -805,7 +797,7 @@ function shutdownApp() {
 
 
 /*
-    
+
     Main Window/macOS Menubar menu template
 
 */
@@ -915,7 +907,7 @@ function getMenuTemplate() {
             submenu: [
                 {
                     label: 'About ' + app.getName(),
-                    click: () => showSplash()  
+                    click: () => showSplash()
                 },
                 { type: 'separator' },
                 {
@@ -930,7 +922,7 @@ function getMenuTemplate() {
                 { role: 'hideothers' },
                 { role: 'unhide' },
                 { type: 'separator' },
-                { 
+                {
                     label: 'Quit ' + app.getName(),
                     accelerator: 'CommandOrControl+Q',
                     click: () => shutdownApp()
@@ -964,17 +956,17 @@ function getMenuTemplate() {
                 { type: 'separator' },
                 {
                     label : 'Preferences',
-                    click: () => showSettings() 
+                    click: () => showSettings()
                 },
                 { type: 'separator' },
-                { 
+                {
                     label: 'Quit',
                     accelerator: 'CommandOrControl+F4',
                     click: () => shutdownApp()
                 }
             ]
         });
-    } 
+    }
 
     return template;
 }
@@ -1011,5 +1003,3 @@ function CheckForUpgrade() {
         }
     });
 }
-
-
