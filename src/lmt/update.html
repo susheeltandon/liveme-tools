@@ -11,14 +11,14 @@
 		<script>
 
 const 	path = require('path'),
-		fs = require('fs'),
+		fs = require('fs-extra'),
 		{ remote } = require('electron'),
 		DataManager = remote.getGlobal('DataManager');
 
 $(function(){
 	$('overlay').show();
 
-	var stats = fs.statSync(path.join(remote.app.getPath('appData'), remote.app.getName(), 'livemetools_db.json')); 
+	/*var stats = fs.statSync(path.join(remote.app.getPath('appData'), remote.app.getName(), 'livemetools_db.json')); 
 	if (stats.size < 64) {
 		setTimeout(function(){
 			buildTables();
@@ -27,22 +27,27 @@ $(function(){
 		setTimeout(function(){
 			window.close();
 		}, 500);
-	}
+	}*/
 
-
+	setTimeout(function(){
+		buildTables();
+	}, 500);
 });
 
 function buildTables() {
 	$('.status').html('Initializing data storage...');
 
 	DataManager.ResetDB();
+
 	setTimeout(function(){
 		convertFavorites();
 	}, 500);	
 }
 
 function convertFavorites() {
-	fs.readFile(path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json'), 'utf8', function (err,data) {
+	let favPath = path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json');
+
+	fs.readFile(favPath, 'utf8', function (err,data) {
 		if (err) {
 			setTimeout(function(){
 				window.close();
@@ -64,9 +69,11 @@ function convertFavorites() {
 				});
 			}
 		}
+
 		setTimeout(function(){
+			fs.moveSync(favPath, favPath.replace('.json', '-backup.json'));
 			window.close();
-		}, 500);
+		}, 2000);
 
 	});
 

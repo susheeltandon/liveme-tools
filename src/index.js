@@ -214,19 +214,17 @@ function startApplication() {
     });
 
     setTimeout(function() {
-
-        var stats = fs.statSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db.json'));
-
-        if (stats.size > 64) {
+        if (!fs.existsSync(path.join(app.getPath('appData'), app.getName(), 'favorites.json'))) {
             aboutwin.on('close', () => {
                 mainwin.show();
             });
         } else {
-            aboutwin.on('close', () => {
-                updatewin.show();
-            });
             updatewin.on('close', () => {
                 mainwin.show();
+            });
+
+            aboutwin.on('close', () => {
+                updatewin.show();
             });
         }
     }, 1500);
