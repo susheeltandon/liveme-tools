@@ -227,7 +227,7 @@ function startApplication() {
                 updatewin.show();
             });
         }
-    }, 1500);
+    }, 500);
 
 
 }
