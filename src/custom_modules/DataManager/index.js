@@ -60,13 +60,17 @@ class DataManager {
 		var list = db.get('favorites').cloneDeep().value();
 		this.events.emit('refresh_favorites', list);
 	}
+	
 	loadFavorites() {
 		var list = db.get('favorites').cloneDeep().value();
 		this.events.emit('refresh_favorites', list);
 	}
+
 	removeFavorite(u) {
 		db.get('favorites').remove({ id: u.uid }).write();
 	}
+
+
 	updateFavorites() {
 		var count = db.get('favorites').size().value();
 		if (count == index) {
@@ -136,7 +140,7 @@ class DataManager {
 
 					/*
 						TODO:
-						
+
 						Need to update this to use the LiveMe-API module for getting the user info
 						instead of doing it directly like this.
 					*/
