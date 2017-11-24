@@ -1,8 +1,8 @@
 /*
 
-	  _      _           __  __        _______          _     
-	 | |    (_)         |  \/  |      |__   __|        | |    
-	 | |     ___   _____| \  / | ___     | | ___   ___ | |___ 
+	  _      _           __  __        _______          _
+	 | |    (_)         |  \/  |      |__   __|        | |
+	 | |     ___   _____| \  / | ___     | | ___   ___ | |___
 	 | |    | \ \ / / _ \ |\/| |/ _ \    | |/ _ \ / _ \| / __|
 	 | |____| |\ V /  __/ |  | |  __/    | | (_) | (_) | \__ \
 	 |______|_| \_/ \___|_|  |_|\___|    |_|\___/ \___/|_|___/
@@ -16,7 +16,7 @@ const 	{ electron, BrowserWindow, remote, ipcRenderer, shell, clipboard } = requ
 		DownloadManager = remote.getGlobal('DownloadManager'),
 		LiveMe = require('liveme-api');
 
-var 	debounced = false, current_user = {}, current_page = 1, has_more = false, 
+var 	debounced = false, current_user = {}, current_page = 1, has_more = false,
 		current_search = '', scroll_busy = false;
 
 $(function(){
@@ -26,26 +26,26 @@ $(function(){
 	onTypeChange();
 
 	// Remote search calls
-	ipcRenderer.on('do-search' , function(event , data) { 
+	ipcRenderer.on('do-search' , function(event , data) {
 		$('#query').val(data.userid);
 		$('#type').val('user-lookup');
 		beginSearch2();
 	});
 
-	ipcRenderer.on('do-shutdown' , function(event , data) { 
+	ipcRenderer.on('do-shutdown' , function(event , data) {
 		DownloadManager.save();
 	});
 
-	ipcRenderer.on('show-status' , function(event , data) { 
+	ipcRenderer.on('show-status' , function(event , data) {
 		$('.status').html(data.message);
 		$('overlay .status').show();
 		$('overlay .ffmpeg-error').hide();
 		$('overlay').show();
 	});
-	ipcRenderer.on('update-status' , function(event , data) { 
+	ipcRenderer.on('update-status' , function(event , data) {
 		$('.status').html(data.message);
 	});
-	ipcRenderer.on('hide-status' , function(event , data) { 
+	ipcRenderer.on('hide-status' , function(event , data) {
 		$('overlay').hide();
 	});
 
@@ -121,44 +121,44 @@ $(function(){
 	countryCode search is not working even when directly tested with LiveMe API URLs and calls.
 	Don't know why it quit working now so we're removing until further testing can be done.
 
-	
+
 	setTimeout(function(){
 		for (var i = 0; i < cclist.length; i++) {
 			$('#cclist').append('<option value="'+cclist[i][1]+'">'+cclist[i][0]+'</option>');
-		}					
+		}
 	}, 100);
 	*/
 });
 
 function copyToClipboard(i) { clipboard.writeText(i); }
 function cancelAction() { cancelLMTweb = true; }
-function enterOnSearch(e) { if (e.keyCode == 13) beginSearch(); } 
+function enterOnSearch(e) { if (e.keyCode == 13) beginSearch(); }
 
 function onTypeChange() {
 	var t=$('#type').val();
 	switch (t) {
-		case 'user-lookup': 
-			$('#query').attr('placeholder', 'Short or Long UserID'); 
+		case 'user-lookup':
+			$('#query').attr('placeholder', 'Short or Long UserID');
 			$('div.toolbar').removeClass('has-cc-list');
 			$('div.cclist').hide();
 			break;
-		case 'video-lookup': 
-			$('#query').attr('placeholder', 'Enter VideoID'); 
+		case 'video-lookup':
+			$('#query').attr('placeholder', 'Enter VideoID');
 			$('div.toolbar').removeClass('has-cc-list');
 			$('div.cclist').hide();
 			break;
 		case 'url-lookup':
-			$('#query').attr('placeholder', 'Enter URL'); 
+			$('#query').attr('placeholder', 'Enter URL');
 			$('div.toolbar').removeClass('has-cc-list');
 			$('div.cclist').hide();
 			break;
-		case 'search': 
-			$('#query').attr('placeholder', 'Enter Partial or Full Username'); 
+		case 'search':
+			$('#query').attr('placeholder', 'Enter Partial or Full Username');
 			$('div.toolbar').addClass('has-cc-list');
 			$('div.cclist').show();
 			break;
-		case 'hashtag': 
-			$('#query').attr('placeholder', 'Enter a hashtag without any #\'s'); 
+		case 'hashtag':
+			$('#query').attr('placeholder', 'Enter a hashtag without any #\'s');
 			$('div.toolbar').addClass('has-cc-list');
 			$('div.cclist').show();
 			break;
@@ -200,13 +200,13 @@ function beginSearch() {
 			$('#query').val($('#query').val().replace('#', ''));
 			onTypeChange();
 		}
-/*		
+/*
 	} else {
 		if (($('#type').val() != 'search') || ($('#type').val() != 'hashtag')) {
 			$('#type').val('search');
 			onTypeChange();
 		}
-*/		
+*/
 	}
 	beginSearch2();
 }
@@ -220,10 +220,10 @@ function beginSearch2() {
 	current_page = 1;
 
 	var videoid = '', userid = '';
-	
+
 	$('overlay').show();
 	$('main').html('');
-	
+
 	if ($('#type').val() == 'url-lookup') {
 		var q = '', u=$('#query').val(), t=u.split('/');
 
@@ -236,15 +236,15 @@ function beginSearch2() {
 			var a=t[t.length - 1].split('-');
 			$('#type').val('video-lookup');
 			$('#query').val(a[1]);
-			videoid = a[1];			
+			videoid = a[1];
 
 		} else if (u.indexOf('videoid') > -1) {
 			var a=t[t.length - 1].split('?'),b=a[1].split('&');
-			
+
 			for (i = 0; i < b.length; i++) {
 				if (b[i].indexOf('videoid') > -1) {
 					var c=b[i].split('=');
-					
+
 					$('#type').val('video-lookup');
 					$('#query').val(c[1]);
 					videoid = c[1];
@@ -253,11 +253,11 @@ function beginSearch2() {
 			}
 		} else if (u.indexOf('userid') > -1) {
 			var a=t[t.length - 1].split('?'),b=a[1].split('&');
-			
+
 			for (i = 0; i < b.length; i++) {
 				if (b[i].indexOf('userid') > -1) {
 					var c=b[i].split('=');
-					
+
 					$('#type').val('user-lookup');
 					$('#query').val(c[1]);
 					videoid = c[1];
@@ -267,7 +267,7 @@ function beginSearch2() {
 		} else {
 			$('main').html('<div class="list"><div class="empty">Unsupported URL was specified.</div></div>');
 		}
-		$('overlay').hide();		
+		$('overlay').hide();
 	} else if ($('#type').val() == 'video-lookup') {
 		videoid = $('#query').val();
 	} else if ($('#type').val() == 'user-lookup') {
@@ -287,7 +287,7 @@ function beginSearch2() {
 
 				if (video.videosource.length < 1) {
 					$('panel').hide();
-					$('main').removeClass('with-panel').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div></div>');						
+					$('main').removeClass('with-panel').html('<div class="list"><div class="empty">Search returned no data, account may be closed.</div></div>');
 				} else {
 					let dt = new Date(video.vtime * 1000);
 					var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
@@ -342,7 +342,7 @@ function beginSearch2() {
 										<a class="button icon icon-chat" onClick="openChat('${video.vid}')" title="View Message History"></a>
 						`;
 					}
-					h+=`							
+					h+=`
 									</div>
 								</div>
 							</div>
@@ -357,7 +357,7 @@ function beginSearch2() {
 								<div class="spacer">&nbsp;</div>
 					`;
 					if (videoUrl.length > 0) {
-						h+=`			
+						h+=`
 									<div class="width700">
 										<span>Video URL:</span>
 										<div class="input has-right-button">
@@ -371,13 +371,13 @@ function beginSearch2() {
 							</div>
 						</div>
 					`;
-					$('.list').append(h);						
+					$('.list').append(h);
 					performUserLookup(video.userid);
 				}
 			});
 
 	} else if (userid.length > 0) {
-		$('panel').hide();		
+		$('panel').hide();
 		$('main').addClass('with-panel').html('<div id="videolist" class="list"></div>');
 		performUserLookup(userid);
 	} else {
@@ -472,7 +472,7 @@ function getUsersReplays() {
 			if ((typeof replays == 'undefined') || (replays == null)) return;
 
 			if (replays.length > 0) {
-				
+
 				$('.empty').remove();
 
 				for (var i = 0; i < replays.length; i++) {
@@ -525,14 +525,14 @@ function getUsersReplays() {
 										<div class="width200 align-right">
 											<a class="button icon icon-play" onClick="playVideo('${videoUrl}')" title="Play Video"></a>
 							`;
-						
+
 						if (!isLive) {
 							h += `
 											<a class="button icon icon-chat" onClick="openChat('${replays[i].vid}')" title="View Message History"></a>
 											<a class="button icon icon-download" onClick="downloadVideo('${replays[i].userid}', '${replays[i].uname}', '${replays[i].vid}', '${replays[i].title.replace("'", "")}', '${replays[i].vtime}', '${videoUrl}')" title="Download Replay"></a>
 							`;
 						}
-							
+
 						h += `
 										</div>
 									</div>
@@ -548,7 +548,7 @@ function getUsersReplays() {
 									<div class="spacer">&nbsp;</div>
 						`;
 						if (videoUrl.length > 0) {
-							h+=`			
+							h+=`
 										<div class="width700">
 											<span>Video URL:</span>
 											<div class="input has-right-button">
@@ -562,8 +562,8 @@ function getUsersReplays() {
 								</div>
 							</div>
 						`;
-						$('.list').append(h);	
-					}	
+						$('.list').append(h);
+					}
 				}
 			}
 
@@ -574,16 +574,16 @@ function getUsersReplays() {
 				has_more = true;
 			} else if (replays.length < 10) {
 				has_more = false;
-			} 
+			}
 
 			setTimeout(function(){
 				if ($('.item').length < 1) {
-					$('.list').html('<div class="empty">No visible replays available for this account.</div>');						
+					$('.list').html('<div class="empty">No visible replays available for this account.</div>');
 				}
 			}, 1000);
 
 		});
-		
+
 }
 
 function performUsernameSearch() {
@@ -623,20 +623,20 @@ function performUsernameSearch() {
 				has_more = true;
 			} else if (results.length < 10) {
 				has_more = false;
-			} 
-
-			if (results.length == 0 && current_page == 1) {
-				$('.list').html('<div class="empty">No accounts were found matching your search.</div>');						
 			}
 
-		});	
+			if (results.length == 0 && current_page == 1) {
+				$('.list').html('<div class="empty">No accounts were found matching your search.</div>');
+			}
+
+		});
 }
 
 function performHashtagSearch() {
 	LiveMe.performSearch($('#query').val(), current_page, 10, 2)
 		.then(results => {
 			for(var i = 0; i < results.length; i++) {
-			
+
 				var dt = new Date(results[i].vtime * 1000);
 				var ds = (dt.getMonth() + 1) + '-' + dt.getDate() + '-' + dt.getFullYear() + ' ' + (dt.getHours() < 10 ? '0' : '') + dt.getHours() + ':' + (dt.getMinutes() < 10 ? '0' : '') + dt.getMinutes();
 				var hi1 = $('#type').val() == 'url-lookup' ? ($('#query').val() == results[i].hlsvideosource ? true : false) : false;
@@ -645,7 +645,7 @@ function performHashtagSearch() {
 				var downloaded = DownloadManager.hasBeenDownloaded(results[i].vid) ? 'downloaded' : '';
 
 				let isLive = results[i].hlsvideosource.endsWith('flv') || results[i].hlsvideosource.indexOf('liveplay') > 0, videoUrl = results[i].hlsvideosource;
-				
+
 				if (!isLive && results[i].hlsvideosource.indexOf('hlslive') > 0) {
 					videoUrl = results[i].videosource;
 				}
@@ -689,7 +689,7 @@ function performHashtagSearch() {
 									<a class="button icon icon-download" onClick="downloadVideo('${results[i].userid}', '${results.uname}', '${results[i].vid}', '${results[i].title.replace("'", "")}', '${results[i].vtime}', '${videoUrl}')" title="Download Replay"></a>
 					`;
 				}
-					
+
 				h += `
 								</div>
 							</div>
@@ -715,7 +715,7 @@ function performHashtagSearch() {
 				`;
 
 				$('.list').append(h);
-				
+
 			}
 
 			current_search = 'performHashtagSearch';
@@ -725,13 +725,13 @@ function performHashtagSearch() {
 				has_more = true;
 			} else if (results.length < 10) {
 				has_more = false;
-			} 
+			}
 
 			if (results.length == 0 && current_page == 1) {
 				$('.list').html('<div class="empty">No videos were found on LiveMe matching the specified hashtag.</div>');
 			}
-			
-		});	
+
+		});
 }
 
 function showSettings() {
