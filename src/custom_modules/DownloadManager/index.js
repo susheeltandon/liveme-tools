@@ -162,7 +162,7 @@ class DownloadManager {
                     }
                 }
                 fs.writeFileSync(concatPath, concatStr);
-                exec(`${this._ffmpegPath} -f concat -safe 0 -i "${concatPath}" -c copy "${this._getLocalFilename(playlist)}"`, (error, stdout, stderr) => {
+                exec(`${this._ffmpegPath} -y -f concat -safe 0 -i "${concatPath}" -c copy -bsf:a aac_adtstoasc -vsync 2 -movflags +faststart "${this._getLocalFilename(playlist)}"`, (error, stdout, stderr) => {
                     if (error) {
                         let log = path.join(this._appSettings.get('downloads.directory'), 'ffmpeg-error.log');
                         fs.writeFileSync(log, `${error}\n\n${stderr}\n\n${stdout}`);
