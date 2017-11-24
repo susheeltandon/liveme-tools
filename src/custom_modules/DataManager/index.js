@@ -10,21 +10,22 @@ const 	low = require('lowdb'),
 		path = require('path'),
 		events = require('events'),
 		axios = require('axios'),
-		{ app } = require('electron');
+		{ app } = require('electron'),
+		LiveMe = require('liveme-api');
 
 var		index = 0, adapter, db;
 
 class DataManager {
 
-    constructor() {
-    	this._favorites = [];
-    	this._visited = [];
+	constructor() {
+		this._favorites = [];
+		this._visited = [];
 		this.events = new (events.EventEmitter)();
 
 		fs.ensureDirSync(path.join(app.getPath('appData'), app.getName()));
 		adapter = new FileSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db.json'));
 		db = low(adapter);
-    }
+	}
 
 	ResetDB() {
 		db.defaults({
@@ -44,30 +45,35 @@ class DataManager {
 		Favorites
 	*/
 	addFavorite(e) {
-		db.get('favorites')
-			.push({
-				id: e.uid,
-				face: e.face,
-				nickname: e.nickname,
-				sex: e.sex,
-				level: e.level,
-				video_count: e.video_count,
-				usign: e.usign,
-				stars: e.stars
-			})
-			.write();
 
-		var list = db.get('favorites').cloneDeep().value();
-		this.events.emit('refresh_favorites', list);
+		LiveMe.getUserInfo(e.uid)
+				.then(user => {
+
+					db.get('favorites').push({
+						id : user.user_info.uid,
+						face: user.user_info.face,
+						nickname: user.user_info.uname,
+						sex: user.user_info.sex > -1 ? ( user.user_info.sex > 0 ? 'male' : 'female') : '' }),
+						level: user.user_info.level,
+						video_count: user.count_info.video_count,
+						usign: user.user_info.usign,
+						stars: user.user_info.stars
+					}).write();
+
+					var list = db.get('favorites').cloneDeep().value();
+					this.events.emit('refresh_favorites', list);
+
+				});
 	}
-	
+
 	loadFavorites() {
 		var list = db.get('favorites').cloneDeep().value();
 		this.events.emit('refresh_favorites', list);
 	}
 
 	removeFavorite(u) {
-		db.get('favorites').remove({ id: u.uid }).write();
+		db.get('favorites').remove({ id: u }).write();
+		this.loadFavorites();
 	}
 
 
@@ -82,32 +88,28 @@ class DataManager {
 
 	}
 	_updateFavorites() {
-		axios.get('http://live.ksmobile.net/user/getinfo',{
-			params: {
-				userid: db.get('favorites['+index+'].id').value()
-			}
-		}).then(function(resp) {
-			var j = resp.data.data.user;
+			LiveMe.getUserInfo(db.get('favorites['+index+'].id').value())
+				.then(user => {
 
-			if (resp.data.status == 200) {
-				db.get('favorites').find({ id: j.user_info.uid })
-					.assign({ face: 	j.user_info.face })
-					.assign({ nickname: j.user_info.nickname })
-					.assign({ usign: 	j.user_info.usign })
-					.assign({ level: 	j.user_info.level })
-					.assign({ stars: 	j.user_info.stars })
-					.assign({ sex: 		j.user_info.sex > -1 ? ( j.user_info.sex > 0 ? 'male' : 'female') : '' })
-					.assign({ video_count: 	j.count_info.video_count })
-					.write();
-			}
+					db.get('favorites').find({ id: user.user_info.uid })
+						.assign({ face: 	user.user_info.face })
+						.assign({ nickname: user.user_info.nickname })
+						.assign({ usign: 	user.user_info.usign })
+						.assign({ level: 	user.user_info.level })
+						.assign({ stars: 	user.user_info.stars })
+						.assign({ sex: 		user.user_info.sex > -1 ? ( user.user_info.sex > 0 ? 'male' : 'female') : '' })
+						.assign({ video_count: 	user.count_info.video_count })
+						.write();
 
-		});
+				});
+
 		index++;
 
 		var count = db.get('favorites').size().value();
 		if (count == index) {
 			index = 0;
-			this.loadFavorites();
+			var list = db.get('favorites').cloneDeep().value();
+			this.events.emit('refresh_favorites', list);
 		} else {
 			this._updateFavorites();
 		}
