@@ -51,7 +51,6 @@ requests to us.
 * [destruck51](https://github.com/destruck51)
 * [mmind99](https://github.com/mmind99)
 
-
 ## License
 This project is licensed under the GPL-3 License - see the [LICENSE](LICENSE)
 file for details
