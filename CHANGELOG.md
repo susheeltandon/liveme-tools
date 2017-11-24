@@ -2,6 +2,10 @@
 
 ### 7.x.x Releases
 
+**Sorry, it's gotten too crazy to keep up with the changes that are constantly going on right now.**
+
+#### 2017-11-23 - v7.0.4
+
 #### 2017-11-21 - v7.0.2
 **Fixed:**
 - Fixed download issue #111 and issue #107
@@ -74,7 +78,7 @@
 
 #### 2017-10-20 - v6.0.12
 **Added:**
-- Updated the player skin to support displaying total video length 
+- Updated the player skin to support displaying total video length
 - Updated the player progress bar to show a better buffer state and position indicator
 
 #### 2017-10-17 - v6.0.11
@@ -89,7 +93,7 @@
 - Fixed rendering issue when replays were unavailable when a search was performed.
 - Fixed VideoID List import bugs.
 
-#### 2017-10-15 - v6.0.9 
+#### 2017-10-15 - v6.0.9
 **Fixed:**
 - Fixed video search bug
 
@@ -151,7 +155,7 @@
 
 #### 2017-09-24 - v6.0.0
 **Added:**
-- Migrated to using LiveMe API module 
+- Migrated to using LiveMe API module
 - Whole new UI styling added
 - Added custom video player UI
 - Added ability to jump to video time index from message history by click on the time
@@ -167,7 +171,7 @@
 
 ### 5.x.x Releases
 
-#### 2017-09-17 - v5.0.9 
+#### 2017-09-17 - v5.0.9
 **Added:**
 - Can now delete active downloads as well.
 
@@ -215,7 +219,7 @@
 
 **Fixed:**
 - Disabled Live Video download so it doesn't cause a hangup of the queue
-- Moved custom modules to main thread to fix multiple instance issues and lost data 
+- Moved custom modules to main thread to fix multiple instance issues and lost data
 - Adding a URL to downloader igored Pause state (See #47)
 - Fixed critical download and queue bugs (See #47)
 - Fixed critical FFMPEG bug (See #47)
