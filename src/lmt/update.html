@@ -18,7 +18,7 @@ const 	path = require('path'),
 $(function(){
 	$('overlay').show();
 
-	/*var stats = fs.statSync(path.join(remote.app.getPath('appData'), remote.app.getName(), 'livemetools_db.json')); 
+	/*var stats = fs.statSync(path.join(remote.app.getPath('appData'), remote.app.getName(), 'livemetools_db.json'));
 	if (stats.size < 64) {
 		setTimeout(function(){
 			buildTables();
@@ -41,7 +41,7 @@ function buildTables() {
 
 	setTimeout(function(){
 		convertFavorites();
-	}, 500);	
+	}, 500);
 }
 
 function convertFavorites() {
@@ -57,16 +57,7 @@ function convertFavorites() {
 			var i, j = JSON.parse(data);
 			for (i = 0; i < j.length; i++) {
 
-				DataManager.addFavorite({
-					'uid' : j[i].uid,
-					'face' : j[i].face,
-					'nickname' : j[i].nickname,
-					'sex' : j[i].sex,
-					'level' : j[i].level,
-					'video_count' : j[i].video_count,
-					'usign' : j[i].usign,
-					'stars' : j[i].stars
-				});
+				DataManager.addFavorite({ uid : j[i].uid });
 			}
 		}
 
