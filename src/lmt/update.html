@@ -18,7 +18,7 @@ const 	path = require('path'),
 $(function(){
 	$('overlay').show();
 
-	/*var stats = fs.statSync(path.join(remote.app.getPath('appData'), remote.app.getName(), 'livemetools_db.json'));
+	var stats = fs.statSync(path.join(remote.app.getPath('appData'), remote.app.getName(), 'livemetools_db.json'));
 	if (stats.size < 64) {
 		setTimeout(function(){
 			buildTables();
@@ -27,11 +27,8 @@ $(function(){
 		setTimeout(function(){
 			window.close();
 		}, 500);
-	}*/
+	}
 
-	setTimeout(function(){
-		buildTables();
-	}, 500);
 });
 
 function buildTables() {
