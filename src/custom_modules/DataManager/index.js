@@ -53,7 +53,7 @@ class DataManager {
 						id : user.user_info.uid,
 						face: user.user_info.face,
 						nickname: user.user_info.uname,
-						sex: user.user_info.sex > -1 ? ( user.user_info.sex > 0 ? 'male' : 'female') : '' }),
+						sex: user.user_info.sex > -1 ? ( user.user_info.sex > 0 ? 'male' : 'female') : '',
 						level: user.user_info.level,
 						video_count: user.count_info.video_count,
 						usign: user.user_info.usign,
@@ -154,7 +154,7 @@ class DataManager {
 								.write();
 
 						});
-										
+
 				}
 
 				this.updateFavorites();
@@ -190,7 +190,11 @@ class DataManager {
 			db.get('visited').push({
 				id: e.id,
 				dt: e.dt
-			}).write();
+			});
+
+			setTimeout(function(){
+				db.write();
+			}, 100);
 		}
 
 	}
