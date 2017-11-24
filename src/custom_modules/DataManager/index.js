@@ -140,35 +140,21 @@ class DataManager {
 					}
 
 
-					/*
-						TODO:
+					LiveMe.getUserInfo(id)
+						.then(user => {
 
-						Need to update this to use the LiveMe-API module for getting the user info
-						instead of doing it directly like this.
-					*/
-					axios.get('http://live.ksmobile.net/user/getinfo',{
-						params: {
-							userid: id
-						}
-					}).then(function(resp) {
-						var j = resp.data.data.user;
+							db.get('favorites').find({ id: user.user_info.uid })
+								.assign({ face: 	user.user_info.face })
+								.assign({ nickname: user.user_info.nickname })
+								.assign({ usign: 	user.user_info.usign })
+								.assign({ level: 	user.user_info.level })
+								.assign({ stars: 	user.user_info.stars })
+								.assign({ sex: 		user.user_info.sex > -1 ? ( user.user_info.sex > 0 ? 'male' : 'female') : '' })
+								.assign({ video_count: 	user.count_info.video_count })
+								.write();
 
-						if (resp.data.status == 200) {
-
-							db.get('favorites')
-								.push({
-									id: j.user_info.uid,
-									face: j.user_info.face,
-									nickname: j.user_info.nickname,
-									sex: j.user_info.sex > -1 ? ( j.user_info.sex > 0 ? 'male' : 'female') : '',
-									level: j.user_info.level,
-									video_count: j.count_info.video_count,
-									usign: j.user_info.usign,
-									stars: j.user_info.stars
-								}).write();
-						}
-					});
-
+						});
+										
 				}
 
 				this.updateFavorites();
