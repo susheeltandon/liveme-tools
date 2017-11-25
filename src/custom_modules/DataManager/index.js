@@ -9,7 +9,6 @@ const 	low = require('lowdb'),
 		fs = require('fs-extra'),
 		path = require('path'),
 		events = require('events'),
-		axios = require('axios'),
 		{ app } = require('electron'),
 		LiveMe = require('liveme-api');
 
