@@ -2,7 +2,23 @@
 
 ### 7.x.x Releases
 
-**Sorry, it's gotten too crazy to keep up with the changes that are constantly going on right now.**
+#### 2017-11-25 - v7.0.8
+**Fixed:**
+- Addressed multiple crash and other bug issues
+- Clean up of database commit code to reduce disk writes
+
+#### 2017-11-24 - v7.0.7
+**Fixed:**
+- Addressed bug issues
+
+#### 2017-11-24 - v7.0.6
+**Fixed:**
+- Addressed bug issues
+
+#### 2017-11-23 - v7.0.5
+**Fixed:**
+- Addressed bug issues
+
 
 #### 2017-11-23 - v7.0.4
 
