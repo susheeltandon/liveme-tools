@@ -33,12 +33,7 @@ You can download the [latest release](https://github.com/thecoder75/liveme-tools
 * [Electron](http://electron.atom.io)
 * [NodeJS](http://nodejs.org)
 
-## Contributing
-Please read [CONTRIBUTING.md](CONTRIBUTING.md)
-for details on our code of conduct, and the process for submitting pull
-requests to us.
-
-## Developers/Maintainers
+## Developers/Contributors
 * [thecoder75](https://github.com/thecoder75)
 * [polydragon](https://github.com/polydragon)
 * [zp](https://github.com/zp)
