@@ -185,10 +185,14 @@ function startApplication() {
         })
         .loadURL(`file://${__dirname}/lmt/update.html`);
 
-
-
     // Build our custom menubar
     Menu.setApplicationMenu(Menu.buildFromTemplate(getMenuTemplate()));
+
+    setInterval(function(){
+        // We want to commit the database every 300 seconds
+        // to avoid too many system writes.
+        DataManager.commitDatabases();
+    }, (300 * 1000));
 
     setTimeout(function () {
         CheckForUpgrade();
