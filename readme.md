@@ -27,7 +27,7 @@ This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux design
 
 *The 7.0.x releases seem to be buggy or problematic for some users and therefore its is recommended to download the [6.2.1 stable release](https://github.com/thecoder75/liveme-tools/releases/tag/6.2.1) for now.*
 
-You can download the [latest pre-release](https://github.com/thecoder75/liveme-tools/releases/latest)
+You can still download the [latest pre-release](https://github.com/thecoder75/liveme-tools/releases/latest) if you want to check out the latest features and more.
 
 **This project now uses the `yarn` package manager instead of `npm`.**
 
