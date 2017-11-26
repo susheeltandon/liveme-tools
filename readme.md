@@ -1,5 +1,7 @@
 # LiveMe Tools
 
+*I (The Coder) am stepping down as the primary maintainer for this project.  Anyone who is interested in becoming a contributor to keep it going and growing please contact me.*
+
 ### Build Status
 [![Build status](https://ci.appveyor.com/api/projects/status/al0lo5cr41ssqd74/branch/master?svg=true)](https://ci.appveyor.com/project/thecoder75/liveme-tools/branch/master)
 [![Build Status](https://travis-ci.org/thecoder75/liveme-tools.svg?branch=master)](https://travis-ci.org/thecoder75/liveme-tools)
@@ -33,7 +35,7 @@ You can download the [latest release](https://github.com/thecoder75/liveme-tools
 * [Electron](http://electron.atom.io)
 * [NodeJS](http://nodejs.org)
 
-## Developers/Contributors
+## Contributors
 * [thecoder75](https://github.com/thecoder75)
 * [polydragon](https://github.com/polydragon)
 * [zp](https://github.com/zp)
