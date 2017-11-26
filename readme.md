@@ -25,7 +25,9 @@ This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux design
 
 [![All Downloads](https://img.shields.io/github/downloads/thecoder75/liveme-tools/total.svg)](https://github.com/thecoder75/liveme-tools/releases)
 
-You can download the [latest release](https://github.com/thecoder75/liveme-tools/releases/latest)
+*The 7.0.x releases seem to be buggy or problematic for some users and therefore its is recommended to download the [6.2.1 stable release](https://github.com/thecoder75/liveme-tools/releases/tag/6.2.1) for now.*
+
+You can download the [latest pre-release](https://github.com/thecoder75/liveme-tools/releases/latest)
 
 **This project now uses the `yarn` package manager instead of `npm`.**
 
