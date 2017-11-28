@@ -1,10 +1,9 @@
 # LiveMe Tools
 
-*I (The Coder) am stepping down as the primary maintainer for this project.  Anyone who is interested in becoming a contributor to keep it going and growing please contact me.*
+*Please direct all inquiries about bug issues and feature requests to @polydragon for now.  If you are interested in becoming a contributor please submit a pull request with a fix or feature addition for review.*
 
 ### Build Status
-[![Build status](https://ci.appveyor.com/api/projects/status/al0lo5cr41ssqd74/branch/master?svg=true)](https://ci.appveyor.com/project/thecoder75/liveme-tools/branch/master)
-[![Build Status](https://travis-ci.org/thecoder75/liveme-tools.svg?branch=master)](https://travis-ci.org/thecoder75/liveme-tools)
+**Windows:** [![Build status](https://ci.appveyor.com/api/projects/status/al0lo5cr41ssqd74/branch/master?svg=true)](https://ci.appveyor.com/project/thecoder75/liveme-tools/branch/master) **macOS/Linux:** [![Build Status](https://travis-ci.org/thecoder75/liveme-tools.svg?branch=master)](https://travis-ci.org/thecoder75/liveme-tools)
 
 This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux designed to:
 - Allow viewing a list of live videos with filter options
@@ -16,7 +15,7 @@ This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux design
 - Import and Export Favorites lists
 - Import a list of Replay URLs or VideoIDs for downloading
 - Ability to add a single URL
-- Uses a custom chunk downloader and [FFMPEG](ffmpeg.md) to download replays
+- Uses a custom chunk downloader and [FFMPEG](/thecoder75/liveme-tools/blob/master/docs/ffmpeg.md) to download replays
 - and much more!
 
 ## Getting Started
@@ -29,9 +28,13 @@ This is an Electron-based desktop app for Windows, macOS and Ubuntu Linux design
 
 You can still download the [latest pre-release](https://github.com/thecoder75/liveme-tools/releases/latest) if you want to check out the latest features and more.
 
-**This project now uses the `yarn` package manager instead of `npm`.**
+### Building from Scratch
 
-**This uses the custom [LiveMe API](https://github.com/thecoder75/liveme-api) module also developed by our developers and contributors.**
+You will need to download and install `yarn` package manager if you wish to build executables.  This also relies on the [LiveMe API](https://github.com/thecoder75/liveme-api) module for the main communications with the Live.me servers.
+
+Extract to a folder and execute either `yarn install` or `npm install` to install all of the required modules.  
+
+To execute in developer mode, run `yarn dev` or `npm run dev`.  To build executables for your OS, run `yarn dist` or `npm run dist`.
 
 ## Built With
 * [Electron](http://electron.atom.io)
