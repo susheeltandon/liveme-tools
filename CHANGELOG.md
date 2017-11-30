@@ -2,7 +2,9 @@
 
 ### 7.x.x Releases
 
-#### 2017-11-25 - v7.0.8
+**No more releases are scheduled at this time, please use the stable 6.x.x branch as the 7.x.x branch is buggy still.**
+
+#### 2017-11-25 - v7.0.8 (EOL)
 **Fixed:**
 - Addressed multiple crash and other bug issues
 - Clean up of database commit code to reduce disk writes
