@@ -23,7 +23,7 @@ const { app, BrowserWindow, ipcMain, Menu, shell, dialog } = require('electron')
     path = require('path'),
     request = require('request'),
     appSettings = require('electron-settings'),
-    DataManager = new(require('./custom_modules/DataManager').DataManager)(),
+    Favorites = require('./custom_modules/Favorites'),
     DownloadManager = new (require('./custom_modules/DownloadManager').DownloadManager)(),
     LiveMe = require('liveme-api');
 
@@ -90,7 +90,8 @@ function startApplication() {
         maximizable: true,
         closable: true,
         frame: true,
-        backgroundColor: '#000000',
+        vibrancy: 'dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
         show: false,
         webPreferences: {
             webSecurity: false,
@@ -135,7 +136,8 @@ function startApplication() {
         maximizable: false,
         closable: false,
         frame: true,
-        backgroundColor: '#000000',
+        vibrancy: 'dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
         webPreferences: {
             webSecurity: false,
             plugins: true,
@@ -170,7 +172,7 @@ function startApplication() {
         maximizable: false,
         closable: true,
         frame: false,
-        vibrancy: 'ultra-dark',
+        vibrancy: 'dark',
         backgroundColor: '#000000',
         webPreferences: {
             webSecurity: false,
@@ -185,14 +187,10 @@ function startApplication() {
         })
         .loadURL(`file://${__dirname}/lmt/update.html`);
 
+
+
     // Build our custom menubar
     Menu.setApplicationMenu(Menu.buildFromTemplate(getMenuTemplate()));
-
-    setInterval(function(){
-        // We want to commit the database every 300 seconds
-        // to avoid too many system writes.
-        DataManager.commitDatabases();
-    }, (300 * 1000));
 
     setTimeout(function () {
         CheckForUpgrade();
@@ -206,9 +204,9 @@ function startApplication() {
         showSplash();
     }, 500);
 
-    //DataManager.load();
+    Favorites.load();
     DownloadManager.init(appSettings);
-    global.DataManager = DataManager;
+    global.Favorites = Favorites;
     global.DownloadManager = DownloadManager;
 
     DownloadManager.events.on('show-queue', () => {
@@ -217,22 +215,42 @@ function startApplication() {
         }
     });
 
+
+    // Temporary:
+    setTimeout(function(){
+        aboutwin.on('close', () => {
+            mainwin.show();
+        });
+    }, 1500);
+
+    /*
+
+
+
+        When the changeover is made to use a database type file vs the current file structure,
+        then this code will be executed to launch the update windoow which will handle all
+        the data conversions and cleanup.
+
+
+
     setTimeout(function() {
-        if (!fs.existsSync(path.join(app.getPath('appData'), app.getName(), 'favorites.json'))) {
+        if (fs.existsSync(path.join(app.getPath('appData'), app.getName(), 'livemetools_db'))) {
             aboutwin.on('close', () => {
                 mainwin.show();
             });
         } else {
-            updatewin.on('close', () => {
-                mainwin.show();
-            });
-
             aboutwin.on('close', () => {
                 updatewin.show();
             });
-        }
-    }, 500);
+            updatewin.on('close', () => {
+                setTimeout(function(){
+                    mainwin.show();
+                }, 500);
 
+            });
+        }
+    }, 1500);
+    */
 
 }
 
@@ -269,7 +287,8 @@ function showSplash() {
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
-        backgroundColor: '#000000',
+        vibrancy: 'dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
         maximizable: false,
         frame: false,
         movable: false,
@@ -288,14 +307,15 @@ function showSplash() {
 function showSettings() {
     let settingsWindow = new BrowserWindow({
         width: 900,
-        height: 420,
+        height: 400,
         resizable: false,
         darkTheme: true,
         autoHideMenuBar: true,
         show: false,
         skipTaskbar: false,
         center: true,
-        backgroundColor: '#000000',
+        vibrancy: 'dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
@@ -326,7 +346,8 @@ function showLiveMeOMG() {
         show: false,
         skipTaskbar: false,
         center: true,
-        backgroundColor: '#000000',
+        vibrancy: 'dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
@@ -374,7 +395,8 @@ function openFavoritesWindow() {
             autoHideMenuBar: true,
             show: false,
             skipTaskbar: false,
-            backgroundColor: '#000000',
+            vibrancy: 'dark',
+            backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
             disableAutoHideCursor: true,
             titleBarStyle: 'default',
             fullscreen: false,
@@ -446,7 +468,8 @@ ipcMain.on('open-window', (event, arg) => {
         darkTheme: true,
         autoHideMenuBar: false,
         skipTaskbar: false,
-        backgroundColor: '#000000',
+        vibrancy: 'dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
@@ -551,7 +574,8 @@ ipcMain.on('open-chat', (event, arg) => {
         autoHideMenuBar: false,
         show: false,
         skipTaskbar: false,
-        backgroundColor: '#000000',
+        vibrancy: 'dark',
+        backgroundColor: process.platform == 'darwin' ? null : '#000000',     // We utilize the macOS Vibrancy mode
         disableAutoHideCursor: true,
         titleBarStyle: 'default',
         fullscreen: false,
@@ -735,6 +759,10 @@ function _importVideoIdList(list) {
                     mainwin.send('hide-status');
                 }, 1000);
             }
+        })
+        .catch(err => {
+            console.log(`getVideoInfo() failed, ${err}`);
+            return_code = 1;
         });
 }
 
@@ -747,7 +775,7 @@ function exportFavorites() {
         (filePath) => {
 
             if (filePath != null)
-                DataManager.exportFavorites(filePath);
+                Favorites.export(filePath);
         }
     );
 }
@@ -760,7 +788,7 @@ function importFavorites() {
         },
         (filePath) => {
             if (filePath != null)
-                DataManager.importFavorites(filePath[0]);
+                Favorites.import(filePath[0]);
         }
     );
 }
@@ -776,7 +804,7 @@ function shutdownApp() {
         updatewin.close();
     }
 
-    DataManager.commitDatabases();
+    Favorites.forceSave();
     DownloadManager.save();
     //Downloader.killActiveDownload();
 
@@ -831,7 +859,7 @@ function getMenuTemplate() {
                 },
                 {
                     label: 'Refresh Entries',
-                    click: () => DataManager.updateFavorites()
+                    click: () => Favorites.update()
                 },
                 {
                     label: 'Export Favorites List',
@@ -978,7 +1006,7 @@ function CheckForUpgrade() {
     var r = new Date().getTime();
 
     request({ url: 'https://raw.githubusercontent.com/thecoder75/liveme-tools/master/src/package.json?random=' + r, timeout: 15000 }, function (err, response, body) {
-        var js = JSON.parse(body), nv = parseFloat(js.version.replace('.', '')), ov = parseFloat(app.getVersion().replace('.', '')), isCurrent = nv > ov;
+        var js = JSON.parse(body), nv = parseFloat(js.minversion.replace('.', '')), ov = parseFloat(app.getVersion().replace('.', '')), isCurrent = nv > ov;
 
         if (nv > ov) {
             let win = new BrowserWindow({

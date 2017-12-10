@@ -1,18 +1,11 @@
-const 	{ remote, ipcRenderer } = require('electron'), DataManager = remote.getGlobal('DataManager');
+const 	{ remote, ipcRenderer } = require('electron'), Favorites = remote.getGlobal('Favorites');
 
 $(function(){
-	
-	setTimeout(function(){
-		DataManager.loadFavorites();
-	}, 50);
-
-	DataManager.events.on('refresh_favorites', (data) => {
-
+	Favorites.events.on('refresh', (data) => {
 		$('#small_user_list').empty();
-
 		for (i = 0; i < data.length; i++) {
 			$("#small_user_list").append(`
-				<div title="Click to view user's videos." class="item small clickable" onClick="getVideos('${data[i].id}')">
+				<div title="Click to view user's videos." class="item small clickable" onClick="getVideos('${data[i].uid}')">
 					<div class="avatar">
 						<img src="${data[i].face}" class="${data[i].sex}" onerror="this.src='images/blank.png'">
 					</div>
@@ -27,6 +20,12 @@ $(function(){
 			`);
 		}		
 	});
+
+	Favorites.events.on('status', (m) => {
+		$('#small_user_list').html(`<div class="empty">${m}</div>`);
+	});
+
+	Favorites.refresh();	
 
 
 });

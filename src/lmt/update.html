@@ -10,60 +10,31 @@
 		<script src="javascript/jquery-3.2.1.min.js"></script>
 		<script>
 
-const 	path = require('path'),
-		fs = require('fs-extra'),
-		{ remote } = require('electron'),
-		DataManager = remote.getGlobal('DataManager');
+var path = require('path'),
+	{ remote } = require('electron'),
+	datastore = null, 
+	db = null;
 
 $(function(){
 	$('overlay').show();
 
-	var stats = fs.statSync(path.join(remote.app.getPath('appData'), remote.app.getName(), 'livemetools_db.json'));
-	if (stats.size < 64) {
-		setTimeout(function(){
-			buildTables();
-		}, 500);
-	} else {
-		setTimeout(function(){
-			window.close();
-		}, 1000);
-	}
+	Datastore = require('nedb');
+	db = new Datastore({ 
+		filename: path.join(remote.app.getPath('appData'), remote.app.getName(), 'livemetools_db'), 
+		autoload: true 
+	});
 
 });
 
 function buildTables() {
-	$('.status').html('Initializing data storage...');
-
-	DataManager.ResetDB();
-
-	setTimeout(function(){
-		convertFavorites();
-	}, 500);
+	
 }
 
 function convertFavorites() {
-	let favPath = path.join(remote.app.getPath('appData'), remote.app.getName(), 'favorites.json');
 
-	fs.readFile(favPath, 'utf8', function (err,data) {
-		if (err) {
-			setTimeout(function(){
-				window.close();
-			}, 500);
-		} else {
-			$('.status').html('Converting Favorites, please wait...');
-			var i, j = JSON.parse(data);
-			for (i = 0; i < j.length; i++) {
+}
 
-				DataManager.addFavorite({ uid : j[i].uid });
-			}
-		}
-
-		setTimeout(function(){
-			fs.moveSync(favPath, favPath.replace('.json', '-backup.json'));
-			window.close();
-		}, 2000);
-
-	});
+function convertHistory() {
 
 }
 
@@ -71,14 +42,14 @@ function convertFavorites() {
 
 		</script>
 		<style>
-			.status { font-size: 13pt; }
+			.status { font-size: 14pt; }
 		</style>
 	</head>
 
 	<body>
 		<overlay>
 			<div class="status">
-				Preparing to begin update...
+				Updating data files to new format...
 			</div>
 		</overlay>
 	</body>

@@ -1,6 +1,6 @@
 # Setting up ffmpeg
 
-You **must** have ffmpeg installed on your computer to enable the merging of the download chunks. 
+You **must** have ffmpeg installed on your computer to enable downloading broadcasts. 
 
 ### Linux Users
 
@@ -8,7 +8,7 @@ You can obtain the latest version from the repository for your distribution.
 
 ### macOS Users
 
-Download the prebuilt binaries and copy them to `/usr/local/bin` directory using the Terminal app.  Be sure to also set their permissions
+Download the prebuilt binaries and copy them to `/usr/local/bin` directory using the Terminal app.  Be sure to also set their permissions 
 using `chmod +x /usr/local/bin/ff*`
 
 ### Windows Users
