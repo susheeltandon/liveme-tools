@@ -2,6 +2,8 @@
 
 *This project for the most part has been abandoned and the code is being left here for reference and use in future apps.  A new fork/version of this is available at [LiveMe Toolkit Repo](https://github.com/polydragon/liveme-toolkit).*
 
+***It is recommended that if you do wish to use the LiveMe Tools, download a 6.x.x release for now as the 7.x.x releases are unstable.***
+
 ### Build Status
 **Windows:** [![Build status](https://ci.appveyor.com/api/projects/status/al0lo5cr41ssqd74/branch/master?svg=true)](https://ci.appveyor.com/project/thecoder75/liveme-tools/branch/master) **macOS/Linux:** [![Build Status](https://travis-ci.org/thecoder75/liveme-tools.svg?branch=master)](https://travis-ci.org/thecoder75/liveme-tools)
 
